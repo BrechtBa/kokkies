@@ -1,0 +1,364 @@
+
+<link rel="import" href="../bower_components/polymer/polymer.html">
+<link rel="import" href="../bower_components/iron-localstorage/iron-localstorage.html">
+
+<link rel="import" href="../bower_components/app-route/app-route.html">
+
+<link rel="import" href="../bower_components/iron-pages/iron-pages.html">
+<link rel="import" href="../bower_components/iron-flex-layout/iron-flex-layout-classes.html">
+<link rel="import" href="../bower_components/iron-icons/iron-icons.html">
+
+<link rel="import" href="../bower_components/paper-button/paper-button.html">
+<link rel="import" href="../bower_components/paper-icon-button/paper-icon-button.html">
+<link rel="import" href="../bower_components/paper-material/paper-material.html">
+<link rel="import" href="../bower_components/paper-dialog/paper-dialog.html">
+<link rel="import" href="../bower_components/paper-dialog-scrollable/paper-dialog-scrollable.html">
+<link rel="import" href="../bower_components/paper-input/paper-input.html">
+
+<link rel="import" href="shared-styles.html">
+
+
+<dom-module id="view-periods">
+
+    <template>
+
+        <style include="iron-flex iron-flex-alignment"></style>
+        <style include="shared-styles"></style>
+        <style>
+            :host {
+                display: block;
+                padding: 10px;
+            }
+            .productgroup{
+                background-color: #ffffff;
+            }
+            .productgroup .name{
+            }
+            .btn{
+                cursor: pointer;
+            }
+            .product .name{
+                max-width: 200px;
+            }
+            .product .quantity{
+                margin-left: 10px;
+                width: 40px;
+                text-align: right;
+            }
+            .product .unit{
+                width: 30px;
+                margin-left: 3px;
+            }
+            .product .secondquantity{
+                width: 30px;
+                text-align: right;
+            }
+            .product paper-icon-button{
+                width: 40px;
+            }
+            paper-input.search{
+                margin-top: 8px;
+                margin-bottom: 8px;
+            }
+            #productgroupDetail paper-dialog-scrollable{
+                margin-top: 5px !important;
+                --paper-dialog-scrollable:{
+                    padding: 5px;
+                };
+            }
+            #shoppinglist paper-dialog-scrollable{
+                margin-top: 25px !important;
+                --paper-dialog-scrollable:{
+                    padding: 5px;
+                };
+            }
+            paper-dialog paper-button.close{
+                position: absolute;
+                top: -20px;
+                right: 0;
+            }
+        </style>
+
+
+        <firebase-document app-name="kokkies" path="/[[user.uid]]/meals/[[tempKey]]/" data="{{mealsFirebase}}"></firebase-document>
+        <app-indexeddb-mirror key="shoppinglist" data="{{mealsFirebase}}" persisted-data="{{meals}}"></app-indexeddb-mirror>
+
+        <firebase-document app-name="kokkies" path="/[[user.uid]]/days/[[tempKey]]/" data="{{daysFirebase}}"></firebase-document>
+        <app-indexeddb-mirror key="shoppinglist" data="{{daysFirebase}}" persisted-data="{{days}}"></app-indexeddb-mirror>
+        
+        <app-route route="{{route}}" pattern="/:key" data="{{routeData}}" tail="{{subroute}}"></app-route>
+        
+        
+        <iron-pages role="main" selected="[[page]]" attr-for-selected="name">
+            <div name="list">
+                <div class="horizontal layout">
+                    <paper-button raised on-tap="newItem">Nieuw bivak</paper-button>
+                    <div class="flex">&nbsp;</div>
+                </div>
+
+                <template is="dom-repeat" items="{{_toArray(periods)}}" as="period">
+                    <paper-material class="period horizontal layout center wrap">
+                        <div class="name flex">{{period.val.name}}</div>
+                        <paper-icon-button raised icon="create" on-tap="editItem">Edit</paper-icon-button>
+                    </paper-material>
+                </template>
+            </div>
+            
+            <div name="detail">
+                <paper-input label="Name" value="{{tempItem.name}}"></paper-input>
+
+                <template is="dom-repeat" items="{{_toArray(days)}}" as="period">
+                    <paper-material class="period horizontal layout center wrap">
+                        <div class="date flex">{{day.val.date}}</div>
+                        <paper-icon-button raised icon="create" on-tap="editItem">Edit</paper-icon-button>
+                    </paper-material>
+                </template>
+                
+                
+                
+                
+                <div class="product horizontal layout center">
+                    <div class="name flex"></div>
+                    <div class="flex">Klein</div>
+                    <div class="flex">Groot</div>
+                    <div class="flex">Veggi</div>
+                </div>
+                
+                <template is="dom-repeat" items="{{_getProducts(tempItem.*)}}" as="product">
+                    <div class="product horizontal layout center">
+                        <div class="name flex">{{_getObjectListProperty(products,product.key,'name')}}</div>
+                        
+                        <div class="flex horizontal layout center">
+                            <div class="quantity"><paper-input label="Quantity klein" value="{{product.val.quantity_y}}" no-label-float="true"></paper-input></div>
+                            <div class="unit">{{_getObjectListProperty(products,product.key,'unit')}}</div>
+                            <div class="secondquantity">{{getProductSecondQuantity(products,product.key,product.val.quantity_y)}}</div>
+                            <div class="unit">{{_getObjectListProperty(products,product.key,'secondunit')}}</div>
+                        </div>
+                        
+                        <div class="flex horizontal layout center">
+                            <div class="quantity"><paper-input label="Quantity groot" value="{{product.val.quantity_o}}" no-label-float="true"></paper-input></div>
+                            <div class="unit">{{_getObjectListProperty(products,product.key,'unit')}}</div>
+                            <div class="secondquantity">{{getProductSecondQuantity(products,product.key,product.val.quantity_o)}}</div>
+                            <div class="unit">{{_getObjectListProperty(products,product.key,'secondunit')}}</div>
+                        </div>
+                        
+                        <div class="flex horizontal layout center">
+                            <div class="quantity"><paper-input label="Quantity veggi" value="{{product.val.quantity_v}}" no-label-float="true"></paper-input></div>
+                            <div class="unit">{{_getObjectListProperty(products,product.key,'unit')}}</div>
+                            <div class="secondquantity">{{getProductSecondQuantity(products,product.key,product.val.quantity_v)}}</div>
+                            <div class="unit">{{_getObjectListProperty(products,product.key,'secondunit')}}</div>
+                        </div>
+                        
+                        <paper-icon-button icon="delete" raised on-tap="deleteProduct">Delete</paper-icon-button>
+                    </div>
+                </template>
+
+                <paper-button raised on-tap="addProduct">Add product</paper-button>
+
+                <div class="buttons">
+                    <paper-button raised dialog-dismiss>Cancel</paper-button>
+                    <paper-button raised dialog-confirm on-tap="saveItem">Save</paper-button>
+                    <!--<paper-button raised on-tap="deleteItemDialog">Delete</paper-button>-->
+                </div>
+
+                
+
+                <paper-dialog id="deleteItemDialog">
+                    <h2>Are you sure?</h2>
+                    <div class="buttons">
+                        <paper-button dialog-dismiss>Cancel</paper-button>
+                        <paper-button dialog-confirm on-tap="deleteItem">Delete</paper-button>
+                    </div>
+                </paper-dialog>
+
+
+
+                <paper-dialog id="addProductDialog">
+                    <paper-button class="close" dialog-dismiss>close</paper-button>
+                    <paper-dialog-scrollable>
+                        <h3>Add products</h3>
+                        <paper-input label="search" no-label-float value="{{productSearch}}"><iron-icon icon="search" suffix></iron-icon></paper-input>
+                        <template is="dom-repeat" items="{{_toArray(products)}}" as="product" filter="{{_computeFilter(productSearch)}}" observe="name">
+                            <paper-material class="product btn horizontal layout wrap" on-tap="addProductToProductgroup">
+                                <div class="name flex">{{product.val.name}}</div>
+                                <div class="store flex">{{product.val.store}}</div>
+                            </paper-material>
+                        </template>
+                    </paper-dialog-scrollable>
+                </paper-dialog>
+
+            </div>
+        </iron-pages>
+
+    </template>
+
+    <script>
+
+        Polymer({
+            is: 'view-periods',
+            properties:{
+                user: {
+                    type: 'Object'
+                },
+                products: {
+                    type: 'Object',
+                    notify: true
+                },
+                dishes: {
+                    type: 'Object',
+                    notify: true
+                },
+                periods: {
+                    type: 'Object',
+                    notify: true
+                },
+                route: {
+                    type: 'string'
+                }
+            },
+
+            observers: [
+                '_routeKeyChanged(routeData.key)',
+                '_dishesChanged(dishes.*)'
+            ],
+
+            newItem: function(){
+                this.set('route.path','/-1');
+            },
+
+            editItem: function(e){
+                e.stopPropagation();
+                var key = e.model.__data__.productgroup.key;
+                this.set('route.path','/'+key);
+            },
+
+            saveItem: function(e){
+                this.set('dishes.'+this.tempKey,this.tempItem);
+                this._showList();
+            },
+
+            deleteItemDialog: function(e){
+                e.stopPropagation();
+                this.$.deleteItemDialog.open();
+            },
+
+            deleteItem: function(e){
+                this.fire('delete-productgroup',this.tempKey);
+                this._showList();
+            },
+
+            addProduct: function(){
+                this.$.addProductDialog.open()
+            },
+
+            addProductToProductgroup: function(e){
+                var key = e.model.__data__.product.key;
+
+                if(typeof this.tempItem.products == 'undefined'){
+                    this.set('tempItem.products',{})
+                }
+
+                if(typeof this.tempItem.products[key] == 'undefined'){
+                    // add the key and set 1 packageunit for the quantity
+                    this.set('tempItem.products.'+key,{'quantity_y':0,'quantity_o':0,'quantity_v':0});
+                }
+                this.$.addProductDialog.close()
+            },
+
+            deleteProduct: function(e){
+                var key = e.model.__data__.product.key;
+                this.set('tempItem.products.'+key,null);
+            },
+
+
+            _getObjectListProperty: function(list,key,property){
+                if(typeof list != 'undefined'){
+                    return list[key][property];
+                }
+            },
+
+            _getProducts: function(change){
+                return this._toArray(change.base.products);
+            },
+
+            _toArray: function(obj){
+                if(typeof obj != 'undefined' && obj !== null){
+                    var array = Object.keys(obj).map(function(key){
+                        if(obj[key] != null){
+                            return {key:key, val:obj[key]};
+                        }
+                    });
+                    // remove undefined elements
+                    array = array.filter(function( val ) {
+                       return val !== undefined;
+                    });
+                    return array;
+                }
+            },
+
+            _showList: function(e){
+                this.set('route.path','');
+                this.set('routeData.key','');
+            },
+
+            _computeFilter: function(string){
+
+                string = string.toLowerCase();
+                return function(product) {
+                    var name = product.val.name.toLowerCase();
+                    return (name.indexOf(string) != -1 );
+                  };
+            },
+
+            _periodsChanged(change){
+                if(typeof this.tempKey != 'undefined' && typeof this.periods[this.tempKey] != 'undefined'){
+                    this.tempItem = JSON.parse(JSON.stringify(this.periods[this.tempKey]));
+                }
+            },
+
+            _routeKeyChanged(key){
+                if(typeof key=='undefined' || key==''){
+                    this.page = 'list';
+                }
+                else{ 
+                    this.page = 'detail';
+                    if(key=='-1'){
+                        this.tempKey = btoa(this.user.uid + Date.now());
+                        this.tempItem = {
+                            'name':'2016',
+                            'days': [],
+                        };
+                    }
+                    else if(key=='current'){
+                        // show the latest period
+                        var lastkey = -1;
+                        var lastdate = 0;
+                        this._toArray(this.periods).forEach(funtion(period){
+                            if(period.val.date > lastdate){
+                                lastkey = period.key;
+                                lastdate = period.val.date
+                            }
+                        });
+                        
+                        this.tempKey = lastkey;
+                        if(typeof this.periods[key] != 'undefined'){
+                            this.tempItem = JSON.parse(JSON.stringify(this.periods[key]));
+                        }
+                        else{
+                            this._showList();
+                        }
+                    }
+                    else{
+                        this.tempKey = key;
+                        if(typeof this.periods[key] != 'undefined'){
+                            this.tempItem = JSON.parse(JSON.stringify(this.periods[key]));
+                        }
+                    }
+                }
+            }
+                        
+        });
+
+    </script>
+
+</dom-module>

@@ -33,7 +33,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 <link rel="import" href="view-login.html">
 
 
-<dom-module id="shoppinglist-app">
+<dom-module id="kokkies-app">
 
     <template>
 
@@ -82,23 +82,25 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         <app-location route="{{route}}"></app-location>
         <app-route route="{{route}}" pattern="/:page" data="{{routeData}}" tail="{{subroute}}"></app-route>
         <app-route route="{{route}}" pattern="/products" tail="{{productsSubroute}}"></app-route>
-        <app-route route="{{route}}" pattern="/productgroups" tail="{{productgroupsSubroute}}"></app-route>
+        <app-route route="{{route}}" pattern="/dishes" tail="{{dishesSubroute}}"></app-route>
+        <app-route route="{{route}}" pattern="/period" tail="{{periodSubroute}}"></app-route>
+        <app-route route="{{route}}" pattern="/meals" tail="{{mealsSubroute}}"></app-route>
+        
+        
+        <firebase-app name="kokkies" auth-domain="kokkies-c0e33.firebaseapp.com" database-url="https://kokkies-c0e33.firebaseio.com" api-key="AIzaSyCBdtXwGw5bSK0MOqSOeRUgGMd0HYs4mWs"></firebase-app>
+        <firebase-auth id="auth" app-name="kokkies" provider="google" user="{{user}}" signed-in="{{signedIn}}"></firebase-auth>
 
-        <firebase-app name="shoppinglist" auth-domain="shoppinglist-c18fc.firebaseapp.com" database-url="https://shoppinglist-c18fc.firebaseio.com" api-key="AIzaSyDKIknBiXaobbcuNLJ90x2MT7mmEFmmoOA"></firebase-app>
-        <firebase-auth id="auth" app-name="shoppinglist" provider="google" user="{{user}}" signed-in="{{signedIn}}"></firebase-auth>
 
-
-        <firebase-document app-name="shoppinglist" path="/[[user.uid]]/products" data="{{productsFirebase}}"></firebase-document>
+        <firebase-document app-name="kokkies" path="/[[user.uid]]/products" data="{{productsFirebase}}"></firebase-document>
         <app-indexeddb-mirror key="products" data="{{productsFirebase}}" persisted-data="{{products}}"></app-indexeddb-mirror>
 
-
-        <firebase-document app-name="shoppinglist" path="/[[user.uid]]/productgroups" data="{{productgroupsFirebase}}"></firebase-document>
-        <app-indexeddb-mirror key="productgroups" data="{{productgroupsFirebase}}" persisted-data="{{productgroups}}"></app-indexeddb-mirror>
-
-        <firebase-document app-name="shoppinglist" path="/[[user.uid]]/shoppinglist" data="{{shoppinglistFirebase}}"></firebase-document>
-        <app-indexeddb-mirror key="shoppinglist" data="{{shoppinglistFirebase}}" persisted-data="{{shoppinglist}}"></app-indexeddb-mirror>
-
-        <firebase-document app-name="shoppinglist" path="/[[user.uid]]/shoppinglistproducts" data="{{shoppinglistproducts}}"></firebase-document>
+        <firebase-document app-name="kokkies" path="/[[user.uid]]/dishes" data="{{dishesFirebase}}"></firebase-document>
+        <app-indexeddb-mirror key="productgroups" data="{{dishesFirebase}}" persisted-data="{{dishes}}"></app-indexeddb-mirror>
+        
+        <firebase-document app-name="kokkies" path="/[[user.uid]]/periods" data="{{periodsFirebase}}"></firebase-document>
+        <app-indexeddb-mirror key="shoppinglist" data="{{periodsFirebase}}" persisted-data="{{periods}}"></app-indexeddb-mirror>
+        
+        <!--<firebase-document app-name="kokkies" path="/[[user.uid]]/shoppinglistproducts" data="{{shoppinglistproducts}}"></firebase-document>-->
         <!--<app-indexeddb-mirror key="shoppinglistproducts" data="{{shoppinglistproductsFirebase}}" persisted-data="{{shoppinglistproducts}}"></app-indexeddb-mirror>-->
 
 
@@ -109,9 +111,9 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
             <app-drawer>
                 <app-toolbar>Menu</app-toolbar>
                 <iron-selector selected="[[page]]" attr-for-selected="name" class="drawer-list" role="navigation">
-                    <a name="shoppinglist" href="/shoppinglist">Shopping Lists</a>
-                    <a name="products" href="/products">Products</a>
-                    <a name="productgroups" href="/productgroups">Product Groups</a>
+                    <a name="periods" href="/periods/current">Bivak</a>
+                    <a name="products" href="/products">Producten</a>
+                    <a name="dishes" href="/dishes">Gerechten</a>
                     <a name="signout" href="" on-tap="signOut">Sign out</a>
                 </iron-selector>
             </app-drawer>
@@ -122,15 +124,15 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
                 <app-header condenses reveals effects="waterfall">
                     <app-toolbar hidden="[[!signedIn]]">
                         <paper-icon-button icon="menu" drawer-toggle></paper-icon-button>
-                        <div title>Shoppinglists</div>
+                        <div title>Kokkies</div>
                     </app-toolbar>
                 </app-header>
 
                 <iron-pages role="main" selected="[[page]]" attr-for-selected="name">
-                    <view-login         id="login"         name="login" on-sign-in="signIn" signed-in="[[signedIn]]" disables=[[!online]]></view-login>
-                    <view-shoppinglist  id="shoppinglist"  name="shoppinglist"  user="[[user]]"  shoppinglist="{{shoppinglist}}" products="{{products}}" productgroups="{{productgroups}}" shoppinglistproducts="{{shoppinglistproducts}}" on-clear-shoppinglist="clearShoppinglist"></view-shoppinglist>
-                    <view-products      id="products"      name="products"      user="[[user]]"  shoppinglist="{{shoppinglist}}" products="{{products}}" productgroups="{{productgroups}}" route="{{productsSubroute}}" on-delete-product="handleDeleteProduct"></view-products>
-                    <view-productgroups id="productgroups" name="productgroups" user="[[user]]"  shoppinglist="{{shoppinglist}}" products="{{products}}" productgroups="{{productgroups}}" route="{{productgroupsSubroute}}" on-delete-productgroup="handleDeleteProductgroup"></view-productgroups>
+                    <view-login     id="login"     name="login"         on-sign-in="signIn" signed-in="[[signedIn]]" disables=[[!online]]></view-login>
+                    <view-periods   id="periods"   name="periods"       user="[[user]]"  products="{{products}}" dishes="{{dishes}}" meals="{{meals}}" periods="{{periods}}" days="{{days}}" route="{{periodSubroute}}"></view-period>
+                    <view-products  id="products"  name="products"      user="[[user]]"  products="{{products}}" dishes="{{dishes}}" route="{{productsSubroute}}"></view-products>
+                    <view-dishes    id="dishes"    name="dishes"        user="[[user]]"  products="{{products}}" dishes="{{dishes}}" route="{{dishesSubroute}}"></view-dishes>
                 </iron-pages>
 
             </app-header-layout>
@@ -142,7 +144,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
         Polymer({
 
-            is: 'shoppinglist-app',
+            is: 'kokkies-app',
 
             properties: {
 
@@ -158,8 +160,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
             ],
             observers: [
                 '_routePageChanged(routeData.page)',
-                '_signedInChanged(signedIn)',
-                'getAllProducts(shoppinglist.*,products.*,productgroups.*)'
+                '_signedInChanged(signedIn)'
             ],
 
             signIn: function(e){
@@ -271,7 +272,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
             _signedInChanged: function(signedIn){
                 if(signedIn){
                     if(typeof this.page=='undefined' || this.page=='login'){
-                        this.set('route.path','/shoppinglist')
+                        this.set('route.path','/periods')
                     }
                 }
                 else{
@@ -283,7 +284,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
                 this.updateStyles()
             },
 
-            _routePageChanged: function(page) {
+            _routePageChanged: function(page){
                 if(page==''){
                     this.set('route.path','/login')
                 }

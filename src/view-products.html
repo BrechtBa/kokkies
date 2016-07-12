@@ -15,7 +15,6 @@
 <link rel="import" href="../bower_components/paper-dialog-scrollable/paper-dialog-scrollable.html">
 <link rel="import" href="../bower_components/paper-input/paper-input.html">
 
-<link rel="import" href="shoppinglist-detail.html">
 <link rel="import" href="shared-styles.html">
 
 <dom-module id="view-products">
@@ -56,13 +55,12 @@
         <div class="horizontal layout">
             <paper-button raised on-tap="newItem">New product</paper-button>
             <div class="flex">&nbsp;</div>
-            <paper-button raised on-tap="showShoppinglist">Shoppinglist</paper-button>
         </div>
 
         <paper-input class="search" label="search" no-label-float value="{{productSearch}}"><iron-icon icon="search" suffix></iron-icon></paper-input>
 
         <template is="dom-repeat" items="{{_toArray(products)}}" as="product" filter="{{_computeFilter(productSearch)}}" observe="name">
-            <paper-material class="product horizontal layout center wrap" on-tap="addItemToShoppinglist">
+            <paper-material class="product horizontal layout center wrap">
                 <div class="name flex">{{product.val.name}}</div>
                 <div class="store flex">{{product.val.store}}</div>
                 <paper-icon-button icon="create" raised on-tap="editItem">Edit</paper-icon-button>
@@ -90,12 +88,11 @@
                 <paper-input label="Package quantity" value="{{tempItem.packagequantity}}"></paper-input>
                 <paper-input label="Store" value="{{tempItem.store}}"></paper-input>
                 <paper-input label="Price" value="{{tempItem.price}}"></paper-input>
-                <paper-input label="Order" value="{{tempItem.order}}"></paper-input>
 
                 <div class="buttons">
                     <paper-button raised dialog-dismiss>Cancel</paper-button>
                     <paper-button raised dialog-confirm on-tap="saveItem">Save</paper-button>
-                    <paper-button raised on-tap="deleteItemDialog">Delete</paper-button>
+                    <!--<paper-button raised on-tap="deleteItemDialog">Delete</paper-button>-->
                 </div>
             </paper-dialog-scrollable>
         </paper-dialog>
@@ -109,16 +106,6 @@
                 <paper-button dialog-confirm on-tap="deleteItem">Delete</paper-button>
             </div>
         </paper-dialog>
-
-
-
-        <paper-dialog id="shoppinglistDialog" vertical-align="top" horizontal-align="right">
-            <paper-button class="close" on-tap="hideShoppinglist">close</paper-button>
-            <paper-dialog-scrollable>
-                <shoppinglist-detail shoppinglist="{{shoppinglist}}" products="{{products}}" productgroups="{{productgroups}}"></shoppinglist-detail>
-            </paper-dialog-scrollable>
-        </paper-dialog>
-
 
 
     </template>
@@ -183,38 +170,6 @@
                 this._showList();
             },
 
-            addItemToShoppinglist: function(e){
-                var key = e.model.__data__.product.key;
-
-                if(typeof this.shoppinglist.products == 'undefined'){
-                    this.set('shoppinglist.products',{})
-                }
-
-                if(typeof this.shoppinglist.products[key] == 'undefined'){
-                    // add the key and set 1 packageunit for the quantity
-                    this.set('shoppinglist.products.'+key,{'quantity':this.products[key].packagequantity});
-                }
-                else{
-                    // add 1 packageunit to the qunatity
-                    this.set('shoppinglist.products.'+key+'.quantity',parseFloat(this.shoppinglist.products[key].quantity) + parseFloat(this.products[key].packagequantity));
-                }
-
-                // open a the shoppinglist dialog
-                this.showShoppinglist();
-                /*var that = this
-                setTimeout(function(){
-                    that.hideShoppinglist();
-                },1000);*/
-            },
-        
-            showShoppinglist: function(e){
-                this.$.shoppinglistDialog.open();
-            },
-
-            hideShoppinglist: function(e){
-                this.$.shoppinglistDialog.close();
-            },
-
             _getObjectListProperty: function(list,key,property){
                 if(typeof list != 'undefined'){
                     return list[key][property];
@@ -270,8 +225,7 @@
                             'unitconversion':1,
                             'packagequantity':1,
                             'price':0,
-                            'store':'',
-                            'order': Object.keys(this.products).length
+                            'store':''
                         };
                     }
                     else{
