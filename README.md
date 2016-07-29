@@ -1,2 +1,2 @@
-# Shoppinglist
-An app to create ordered shoppinglists for easy shopping
+# Kokkies
+Een app voor winkellijstjes te maken voor grote groepen op bivak
