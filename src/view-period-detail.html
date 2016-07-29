@@ -15,6 +15,10 @@
 <link rel="import" href="../bower_components/paper-dialog/paper-dialog.html">
 <link rel="import" href="../bower_components/paper-dialog-scrollable/paper-dialog-scrollable.html">
 <link rel="import" href="../bower_components/paper-input/paper-input.html">
+<link rel="import" href="../bower_components/paper-dropdown-menu/paper-dropdown-menu.html">
+<link rel="import" href="../bower_components/paper-listbox/paper-listbox.html">
+<link rel="import" href="../bower_components/paper-item/paper-item.html">
+
 
 <link rel="import" href="shared-styles.html">
 
@@ -39,11 +43,26 @@
                 min-width: 200px;
             }
             .productgroup .quantity{
-                width: 60px;
+                width: 80px;
             }
-            
+            .product-list{
+                margin-left: 50px;
+            }
+            .product .name{
+                min-width: 150px;
+                margin-top: 20px;
+            }
+            .product .unit{
+                width: 50px;
+                margin-left: 5px;
+                margin-top: 20px;
+            }
             .shoppinglist .name{
                 min-width: 300px;
+            }
+            paper-input{
+                margin-top: -8px;
+                margin-bottom: -8px;
             }
         </style>
 
@@ -68,14 +87,32 @@
                     <div class="content">
                         <template is="dom-repeat" items="{{_toArray(day.val.productgroups)}}" as="productgroup">
                             <paper-material class="productgroup vertical layout">
-                                <div class="btn horizontal layout center" on-tap="_toggleCollapse">
-                                    <div class="name">{{_getObjectListProperty(productgroups,productgroup.key,'name')}}</div>
-                                    <div class="quantity"><paper-input label="Hoeveelheid" value="{{productgroup.val.quantity}}" on-change="_handleProductgroupQuantityChange" day-key="{{day.key}}"></paper-input></div>
+                                <div class="horizontal layout center">
+                                    <div class="name btn" on-tap="_toggleCollapse">{{_getObjectListProperty(productgroups,productgroup.key,'name')}}</div>
+                                    <div class="quantity"><paper-input label="Aantal" value="{{productgroup.val.quantity}}" on-change="_handleProductgroupQuantityChange" day-key="[[day.key]]"></paper-input></div>
                                 </div>
                                 
                                 <iron-collapse>
-                                    <div class="content">
-                                        details
+                                    <div class="content product-list">
+                                        <template is="dom-repeat" items="{{_toArray(productgroup.val.products)}}" as="product">
+                                            <div class="product horizontal layout center">
+                                                <div class="name">{{_getObjectListProperty(products,product.key,'name')}}</div>
+                                                <div class="quantity"><paper-input label="Hoeveelheid" value="{{_round(product.val.quantity)}}" disabled></paper-input></div>
+                                                <div class="unit">{{_getObjectListProperty(products,product.key,'unit')}}</div>
+                                                <div class="shoppinglist">
+                                                    <paper-dropdown-menu label="Winkellijst">
+                                                        <paper-listbox class="dropdown-content" attrForSelected="key" selected="{{product.val.shoppinglist}}" on-iron-select="_handleProductShoppinglistChange" day-key="[[day.key]]" productgroup-key="[[productgroup.key]]">
+                                                            <template is="dom-repeat" items="{{_toArray(shoppinglists)}}" as="shoppinglist">
+                                                                <paper-item key="[[shoppinglist.key]]">{{shoppinglist.val.name}}</paper-item>
+                                                            </template>
+                                                        </paper-listbox>
+                                                    </paper-dropdown-menu>
+                                                </div>
+                                                <div class="flex">&nbsp;</div>
+                                                <div class="quantity"><paper-input label="Gebruikt" value="{{product.val.used}}" on-change="_handleProductUsedChange" ></paper-input></div>
+                                                <div class="unit">{{_getObjectListProperty(products,product.key,'unit')}}</div>
+                                            </div>
+                                        </template>
                                     </div>
                                 </iron-collapse>
                                 
@@ -166,15 +203,16 @@
 
             observers: [
                 '_routeKeyChanged(routeData.key)',
+                '_productgroupsChanged(productgroups.*)',
             ],
 
             _toggleCollapse: function(e){
-                try{
+                //try{
                     var parent = Polymer.dom(e).rootTarget.offsetParent;
                     parent.querySelector('iron-collapse').toggle();
-                }
+                /*}
                 catch(e){
-                }
+                }*/
             },
             
             _plusOne: function(n){
@@ -210,7 +248,11 @@
                     // add the key
                     this.set('days.'+dayKey+'.productgroups.'+key,{'quantity':0,'products':{}});
                 }
-                this.$.addProductgroupDialog.close()
+                this.$.addProductgroupDialog.close();
+                
+                var dayKeys = {};
+                dayKeys[dayKey] = true;
+                this.calculateProducts(dayKeys);
             },
             
             
@@ -226,6 +268,62 @@
             },
 
 
+            calculateProducts: function(dayKeys){
+            
+                if(typeof dayKeys == 'undefined'){
+                    var dayKeys = {}
+                    for (var key in this.days) {
+                        if(this.days.hasOwnProperty(key)){
+                            dayKeys[key] = true;                            
+                        }
+                    }
+                }
+                
+                for(var dayKey in dayKeys){
+                    var day = this.days[ dayKey ];
+                    
+                    if(typeof day.productgroups != 'undefined'){
+                        for(var productgroupKey in day.productgroups){
+                        
+                            var productgroup = day.productgroups[productgroupKey]
+                            
+                            
+                            if(typeof productgroup.products == 'undefined'){
+                                this.set('days.'+dayKey+'.productgroups.'+productgroupKey+'.products',{});
+                            }
+                            
+                            for(var productKey in this.productgroups[productgroupKey].products){
+                                
+                                if(typeof productgroup.products[productKey] == 'undefined'){
+                                    this.set('days.'+dayKey+'.productgroups.'+productgroupKey+'.products.'+productKey,{});
+                                }
+                                
+                                var quantity = parseFloat(productgroup.quantity)*parseFloat(this.productgroups[productgroupKey].products[productKey].quantity);
+                                this.set('days.'+dayKey+'.productgroups.'+productgroupKey+'.products.'+productKey+'.quantity',quantity);
+                                
+                            }
+                        }
+                    }
+                }
+            },
+            
+            _productgroupsChanged: function(change){
+                this.calculateProducts();
+            },
+            
+            
+            
+            _round: function(val){
+                var decimals = 0;
+                if(val < 20){
+                    decimals = 1;
+                }
+                if(val < 1){
+                    decimals = 2;
+                }
+                return val.toFixed(decimals);
+            },
+            
             _getObjectListProperty: function(list,key,property){
                 if(typeof list != 'undefined'){
                     return list[key][property];
@@ -265,6 +363,38 @@
                 var localobj='productgroup';
                 var obj='days.'+dayKey+'.productgroups';
                 var prop='quantity';
+                
+                var key = e.model.__data__[localobj].key;
+                var val = e.model.__data__[localobj].val[prop];
+                
+                this.set(obj+'.'+key+'.'+prop,JSON.parse(JSON.stringify(val)));
+                
+                var dayKeys = {};
+                dayKeys[dayKey] = true;
+                this.calculateProducts(dayKeys);
+            },
+            
+            _handleProductShoppinglistChange: function(e){
+                var dayKey = e.model.day.key;
+                var productgroupKey = e.model.productgroup.key;
+                
+                var localobj='product';
+                var obj='days.'+dayKey+'.productgroups.'+productgroupKey+'.products';
+                var prop='shoppinglist';
+                
+                var key = e.model.__data__[localobj].key;
+                var val = e.model.__data__[localobj].val[prop];
+                
+                this.set(obj+'.'+key+'.'+prop,JSON.parse(JSON.stringify(val)));
+            },
+            
+            _handleProductUsedChange: function(e){
+                var dayKey = e.model.day.key;
+                var productgroupKey = e.model.productgroup.key;
+                
+                var localobj='product';
+                var obj='days.'+dayKey+'.productgroups.'+productgroupKey+'.products';
+                var prop='used';
                 
                 var key = e.model.__data__[localobj].key;
                 var val = e.model.__data__[localobj].val[prop];
