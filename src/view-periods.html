@@ -46,7 +46,7 @@
         </div>
 
         <template is="dom-repeat" items="{{_toArray(periods)}}" as="period">
-            <paper-material class="period horizontal layout">
+            <paper-material class="period horizontal layout center">
                 <div class="name flex">{{period.val.name}}</div>
                 <paper-icon-button raised icon="create" on-tap="editItem">Edit</paper-icon-button>
             </paper-material>

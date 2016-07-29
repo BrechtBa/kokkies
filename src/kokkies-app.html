@@ -36,7 +36,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 <link rel="import" href="view-products.html">
 <link rel="import" href="view-product-detail.html">
 <link rel="import" href="view-productgroups.html">
-
+<link rel="import" href="view-productgroup-detail.html">
 
 <dom-module id="kokkies-app">
 
@@ -130,12 +130,13 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
                 </app-header>
 
                 <iron-pages role="main" selected="[[page]]" attr-for-selected="name">
-                    <view-login           id="login"          name="login" on-sign-in="signIn" signed-in="[[signedIn]]" disables=[[!online]]></view-login>
-                    <view-periods         id="periods"        name="periods"          user="[[user]]"  periods="{{periods}}" route="{{periodsSubroute}}"></view-periods>
-                    <view-period-detail   id="period-detail"  name="period-detail"    user="[[user]]"  products="{{products}}" productgroups="{{productgroups}}" route="{{periodsSubroute}}" on-delete-product="handleDeletePeriod"></view-period-detail>
-                    <view-products        id="products"       name="products"         user="[[user]]"  products="{{products}}" route="{{productsSubroute}}"></view-products>
-                    <view-product-detail  id="product-detail" name="product-detail"   user="[[user]]"  products="{{products}}" route="{{productsSubroute}}" on-delete-product="handleDeleteProduct"></view-product-detail>
-                    <view-productgroups   id="productgroups"  name="productgroups"    user="[[user]]"  products="{{products}}" productgroups="{{productgroups}}" route="{{productgroupsSubroute}}"></view-productgroups>
+                    <view-login                 id="login"                  name="login" on-sign-in="signIn" signed-in="[[signedIn]]" disables=[[!online]]></view-login>
+                    <view-periods               id="periods"                name="periods"              user="[[user]]"  periods="{{periods}}" route="{{periodsSubroute}}"></view-periods>
+                    <view-period-detail         id="period-detail"          name="period-detail"        user="[[user]]"  products="{{products}}" productgroups="{{productgroups}}" route="{{periodsSubroute}}" on-delete-product="handleDeletePeriod"></view-period-detail>
+                    <view-products              id="products"               name="products"             user="[[user]]"  products="{{products}}" route="{{productsSubroute}}"></view-products>
+                    <view-product-detail        id="product-detail"         name="product-detail"       user="[[user]]"  products="{{products}}" route="{{productsSubroute}}" on-delete-product="handleDeleteProduct"></view-product-detail>
+                    <view-productgroups         id="productgroups"          name="productgroups"        user="[[user]]"  productgroups="{{productgroups}}" route="{{productgroupsSubroute}}"></view-productgroups>
+                    <view-productgroup-detail   id="productgroup-detail"    name="productgroup-detail"  user="[[user]]"  productgroups="{{productgroups}}" products="{{products}}" route="{{productgroupsSubroute}}" on-delete-product="handleDeleteProduct"></view-productgroup-detail>
                 </iron-pages>
 
             </app-header-layout>
@@ -240,7 +241,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
                         this.hideBackButton = true;
                     }
                     else{
-                        this.page = 'productgroups';
+                        this.page = 'productgroup-detail';
                         this.pageTitle = 'Productgroep detail';
                         this.hideBackButton = false;
                     }
