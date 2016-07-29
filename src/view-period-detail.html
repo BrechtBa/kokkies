@@ -35,6 +35,16 @@
             .shoppinglist{
                 background-color: #ffffff;
             }
+            .productgroup .name{
+                min-width: 200px;
+            }
+            .productgroup .quantity{
+                width: 60px;
+            }
+            
+            .shoppinglist .name{
+                min-width: 300px;
+            }
         </style>
 
         <firebase-document app-name="kokkies" path="/[[user.uid]]/periods/[[periodKey]]" data="{{period}}"></firebase-document>
@@ -50,15 +60,25 @@
         <template is="dom-repeat" items="{{_toArray(days)}}" as="day">
             <paper-material class="day vertical layout">
                 <div class="btn horizontal layout" on-tap="_toggleCollapse">
-                    <div class="flex">Dag [[_plusOne(index)}}</div>
+                    <h3 class="flex">Dag [[_plusOne(index)}}</h3>
                     <div class="date">{{day.val.date}}</div>
                 </div>
 
                 <iron-collapse>
                     <div class="content">
                         <template is="dom-repeat" items="{{_toArray(day.val.productgroups)}}" as="productgroup">
-                            <paper-material class="productgroup horizontal layout wrap">
-                                productgroup
+                            <paper-material class="productgroup vertical layout">
+                                <div class="btn horizontal layout center" on-tap="_toggleCollapse">
+                                    <div class="name">{{_getObjectListProperty(productgroups,productgroup.key,'name')}}</div>
+                                    <div class="quantity"><paper-input label="Hoeveelheid" value="{{productgroup.val.quantity}}" on-change="_handleProductgroupQuantityChange" day-key="{{day.key}}"></paper-input></div>
+                                </div>
+                                
+                                <iron-collapse>
+                                    <div class="content">
+                                        details
+                                    </div>
+                                </iron-collapse>
+                                
                             </paper-material>
                         </template>
                         
@@ -74,18 +94,18 @@
         
         
         
-        <h3>Winkellijstjes</h3>
+        <h2>Winkellijstjes</h2>
         
         <template is="dom-repeat" items="{{_toArray(shoppinglists)}}" as="shoppinglist">
             <paper-material class="shoppinglist vertical layout">
-                <div class="btn horizontal layout" on-tap="_toggleCollapse">
-                    <div class="flex">{{shoppinglist.val.name}}</div>
+                <div class="btn horizontal layout center" on-tap="_toggleCollapse">
+                    <div class="name"><paper-input label="Naam" value="{{shoppinglist.val.name}}" on-change="_handleShoppinlgistNameChange"></div>
+                    <div class="flex">&nbsp;</div>
                     <div class="date">{{shoppinglist.val.date}}</div>    
                 </div>
 
                 <iron-collapse>
                     <div class="content vertical layout">
-                        <paper-input label="Naam" value="{{shoppinglist.val.name}}" on-change="_handleShoppinlgistNameChange">
                         content 123
                     </div>
                 </iron-collapse>
@@ -112,7 +132,7 @@
             <paper-dialog-scrollable>
                 <h3>Gerecht toevoegen</h3>
                 <paper-input label="search" no-label-float value="{{productgroupSearch}}"><iron-icon icon="search" suffix></iron-icon></paper-input>
-                <template is="dom-repeat" items="{{_toArray(productgroups)}}" as="product" filter="{{_computeFilter(productgroupSearch)}}" observe="name">
+                <template is="dom-repeat" items="{{_toArray(productgroups)}}" as="productgroup" filter="{{_computeFilter(productgroupSearch)}}" observe="name">
                     <paper-material class="productgroup btn horizontal layout wrap" on-tap="addProductgroupToDay">
                         <div class="name">{{productgroup.val.name}}</div>
                     </paper-material>
@@ -149,8 +169,12 @@
             ],
 
             _toggleCollapse: function(e){
-                var parent = Polymer.dom(e).rootTarget.offsetParent;
-                parent.querySelector('iron-collapse').toggle();
+                try{
+                    var parent = Polymer.dom(e).rootTarget.offsetParent;
+                    parent.querySelector('iron-collapse').toggle();
+                }
+                catch(e){
+                }
             },
             
             _plusOne: function(n){
@@ -236,7 +260,18 @@
                   };
             },
             
-
+            _handleProductgroupQuantityChange: function(e){
+                var dayKey = e.model.day.key;
+                var localobj='productgroup';
+                var obj='days.'+dayKey+'.productgroups';
+                var prop='quantity';
+                
+                var key = e.model.__data__[localobj].key;
+                var val = e.model.__data__[localobj].val[prop];
+                
+                this.set(obj+'.'+key+'.'+prop,JSON.parse(JSON.stringify(val)));
+            },
+            
             _handleShoppinlgistNameChange: function(e){
                 var localobj='shoppinglist';
                 var obj='shoppinglists';
