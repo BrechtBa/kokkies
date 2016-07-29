@@ -4,7 +4,6 @@
 
 <link rel="import" href="../bower_components/app-route/app-route.html">
 
-<link rel="import" href="../bower_components/iron-pages/iron-pages.html">
 <link rel="import" href="../bower_components/iron-flex-layout/iron-flex-layout-classes.html">
 <link rel="import" href="../bower_components/iron-icons/iron-icons.html">
 
@@ -15,10 +14,10 @@
 <link rel="import" href="../bower_components/paper-dialog-scrollable/paper-dialog-scrollable.html">
 <link rel="import" href="../bower_components/paper-input/paper-input.html">
 
+
 <link rel="import" href="shared-styles.html">
 
-
-<dom-module id="view-dishes">
+<dom-module id="view-productgroups">
 
     <template>
 
@@ -29,13 +28,10 @@
                 display: block;
                 padding: 10px;
             }
-            .dish{
+            .productgroup{
                 background-color: #ffffff;
             }
-            .dish .name{
-            }
-            .btn{
-                cursor: pointer;
+            .productgroup .name{
             }
             .product .name{
                 max-width: 200px;
@@ -60,7 +56,18 @@
                 margin-top: 8px;
                 margin-bottom: 8px;
             }
-            
+            #productgroupDetail paper-dialog-scrollable{
+                margin-top: 5px !important;
+                --paper-dialog-scrollable:{
+                    padding: 5px;
+                };
+            }
+            #shoppinglist paper-dialog-scrollable{
+                margin-top: 25px !important;
+                --paper-dialog-scrollable:{
+                    padding: 5px;
+                };
+            }
             paper-dialog paper-button.close{
                 position: absolute;
                 top: -20px;
@@ -72,60 +79,39 @@
 
         <app-route route="{{route}}" pattern="/:key" data="{{routeData}}" tail="{{subroute}}"></app-route>
 
-        
-        <iron-pages role="main" selected="[[page]]" attr-for-selected="name">
-            <div name="list">
-                <div class="horizontal layout">
-                    <paper-button raised on-tap="newItem">Nieuw gerecht</paper-button>
-                    <div class="flex">&nbsp;</div>
-                </div>
 
-                <paper-input class="search" label="search" no-label-float value="{{dishSearch}}"><iron-icon icon="search" suffix></iron-icon></paper-input>
 
-                <template is="dom-repeat" items="{{_toArray(dishes)}}" as="dish" filter="{{_computeFilter(dishSearch)}}" observe="name">
-                    <paper-material class="dish horizontal layout center wrap">
-                        <div class="name flex">{{dish.val.name}}</div>
-                        <paper-icon-button raised icon="create" on-tap="editItem">Edit</paper-icon-button>
-                    </paper-material>
-                </template>
-            </div>
-            <div name="detail">
+        <div class="horizontal layout">
+            <paper-button raised on-tap="newItem">New product group</paper-button>
+            <div class="flex">&nbsp;</div>
+            <paper-button raised on-tap="showShoppinglist">Shoppinglist</paper-button>
+        </div>
 
-                <h3>Gerecht details</h3>
+        <paper-input class="search" label="search" no-label-float value="{{productgroupSearch}}"><iron-icon icon="search" suffix></iron-icon></paper-input>
+
+        <template is="dom-repeat" items="{{_toArray(productgroups)}}" as="productgroup" filter="{{_computeFilter(productgroupSearch)}}" observe="name">
+            <paper-material class="productgroup horizontal layout center wrap" on-tap="addItemToShoppinglist">
+                <div class="name flex">{{productgroup.val.name}}</div>
+                <paper-icon-button raised icon="create" on-tap="editItem">Edit</paper-icon-button>
+            </paper-material>
+        </template>
+
+
+
+        <paper-dialog id="productgroupDetail" on-iron-overlay-closed="_showList">
+            <paper-dialog-scrollable>
+                <h3>Product group Details</h3>
+
                 <paper-input label="Name" value="{{tempItem.name}}"></paper-input>
 
-                <div class="product horizontal layout center">
-                    <div class="name flex"></div>
-                    <div class="flex">Klein</div>
-                    <div class="flex">Groot</div>
-                    <div class="flex">Veggi</div>
-                </div>
-                
                 <template is="dom-repeat" items="{{_getProducts(tempItem.*)}}" as="product">
                     <div class="product horizontal layout center">
                         <div class="name flex">{{_getObjectListProperty(products,product.key,'name')}}</div>
-                        
-                        <div class="flex horizontal layout center">
-                            <div class="quantity"><paper-input label="Quantity klein" value="{{product.val.quantity_y}}" no-label-float="true"></paper-input></div>
-                            <div class="unit">{{_getObjectListProperty(products,product.key,'unit')}}</div>
-                            <div class="secondquantity">{{getProductSecondQuantity(products,product.key,product.val.quantity_y)}}</div>
-                            <div class="unit">{{_getObjectListProperty(products,product.key,'secondunit')}}</div>
-                        </div>
-                        
-                        <div class="flex horizontal layout center">
-                            <div class="quantity"><paper-input label="Quantity groot" value="{{product.val.quantity_o}}" no-label-float="true"></paper-input></div>
-                            <div class="unit">{{_getObjectListProperty(products,product.key,'unit')}}</div>
-                            <div class="secondquantity">{{getProductSecondQuantity(products,product.key,product.val.quantity_o)}}</div>
-                            <div class="unit">{{_getObjectListProperty(products,product.key,'secondunit')}}</div>
-                        </div>
-                        
-                        <div class="flex horizontal layout center">
-                            <div class="quantity"><paper-input label="Quantity veggi" value="{{product.val.quantity_v}}" no-label-float="true"></paper-input></div>
-                            <div class="unit">{{_getObjectListProperty(products,product.key,'unit')}}</div>
-                            <div class="secondquantity">{{getProductSecondQuantity(products,product.key,product.val.quantity_v)}}</div>
-                            <div class="unit">{{_getObjectListProperty(products,product.key,'secondunit')}}</div>
-                        </div>
-                        
+                        <div class="quantity"><paper-input label="Quantity" value="{{product.val.quantity}}" no-label-float="true"></paper-input></div>
+                        <div class="unit">{{_getObjectListProperty(products,product.key,'unit')}}</div>
+                        <div class="secondquantity">{{getProductSecondQuantity(products,product.key,product.val.quantity)}}</div>
+                        <div class="unit">{{_getObjectListProperty(products,product.key,'secondunit')}}</div>
+
                         <paper-icon-button icon="delete" raised on-tap="deleteProduct">Delete</paper-icon-button>
                     </div>
                 </template>
@@ -133,46 +119,55 @@
                 <paper-button raised on-tap="addProduct">Add product</paper-button>
 
                 <div class="buttons">
-                    <paper-button raised dialog-dismiss on-tap="_showList">Cancel</paper-button>
+                    <paper-button raised dialog-dismiss>Cancel</paper-button>
                     <paper-button raised dialog-confirm on-tap="saveItem">Save</paper-button>
-                    <!--<paper-button raised on-tap="deleteItemDialog">Delete</paper-button>-->
+                    <paper-button raised on-tap="deleteItemDialog">Delete</paper-button>
                 </div>
-
-                
-
-                <paper-dialog id="deleteItemDialog">
-                    <h2>Are you sure?</h2>
-                    <div class="buttons">
-                        <paper-button dialog-dismiss>Cancel</paper-button>
-                        <paper-button dialog-confirm on-tap="deleteItem">Delete</paper-button>
-                    </div>
-                </paper-dialog>
+            </paper-dialog-scrollable>
+        </paper-dialog>
 
 
 
-                <paper-dialog id="addProductDialog">
-                    <paper-button class="close" dialog-dismiss>close</paper-button>
-                    <paper-dialog-scrollable>
-                        <h3>Add products</h3>
-                        <paper-input label="search" no-label-float value="{{productSearch}}"><iron-icon icon="search" suffix></iron-icon></paper-input>
-                        <template is="dom-repeat" items="{{_toArray(products)}}" as="product" filter="{{_computeFilter(productSearch)}}" observe="name">
-                            <paper-material class="product btn horizontal layout wrap" on-tap="addProductToProductgroup">
-                                <div class="name flex">{{product.val.name}}</div>
-                                <div class="store flex">{{product.val.store}}</div>
-                            </paper-material>
-                        </template>
-                    </paper-dialog-scrollable>
-                </paper-dialog>
-
+        <paper-dialog id="deleteItemDialog">
+            <h2>Are you sure?</h2>
+            <div class="buttons">
+                <paper-button dialog-dismiss>Cancel</paper-button>
+                <paper-button dialog-confirm on-tap="deleteItem">Delete</paper-button>
             </div>
-        </iron-pages>
+        </paper-dialog>
+
+
+
+        <paper-dialog id="addProductDialog">
+            <paper-button class="close" dialog-dismiss>close</paper-button>
+            <paper-dialog-scrollable>
+                <h3>Add products</h3>
+                <paper-input label="search" no-label-float value="{{productSearch}}"><iron-icon icon="search" suffix></iron-icon></paper-input>
+                <template is="dom-repeat" items="{{_toArray(products)}}" as="product" filter="{{_computeFilter(productSearch)}}" observe="name">
+                    <paper-material class="product horizontal layout wrap" on-tap="addProductToProductgroup">
+                        <div class="name flex">{{product.val.name}}</div>
+                        <div class="store flex">{{product.val.store}}</div>
+                    </paper-material>
+                </template>
+            </paper-dialog-scrollable>
+        </paper-dialog>
+
+
+
+        <paper-dialog id="shoppinglistDialog" vertical-align="top" horizontal-align="right">
+            <paper-button class="close" dialog-dismiss>close</paper-button>
+            <paper-dialog-scrollable>
+                <shoppinglist-detail shoppinglist="{{shoppinglist}}" products="{{products}}" productgroups="{{productgroups}}"></shoppinglist-detail>
+            </paper-dialog-scrollable>
+        </paper-dialog>
+
+
 
     </template>
 
     <script>
-
         Polymer({
-            is: 'view-dishes',
+            is: 'view-productgroups',
             properties:{
                 user: {
                     type: 'Object'
@@ -181,7 +176,11 @@
                     type: 'Object',
                     notify: true
                 },
-                dishes: {
+                productgroups: {
+                    type: 'Object',
+                    notify: true
+                },
+                shoppinglist: {
                     type: 'Object',
                     notify: true
                 },
@@ -189,52 +188,42 @@
                     type: 'string'
                 }
             },
-
             observers: [
                 '_routeKeyChanged(routeData.key)',
-                '_dishesChanged(dishes.*)'
+                '_productgroupsChanged(productgroups.*)'
             ],
-
             newItem: function(){
                 this.set('route.path','/-1');
             },
-
             editItem: function(e){
                 e.stopPropagation();
-                var key = e.model.__data__.dish.key;
+                var key = e.model.__data__.productgroup.key;
                 this.set('route.path','/'+key);
             },
-
             saveItem: function(e){
-                this.set('dishes.'+this.tempKey,this.tempItem);
-                this._showList();
+                this.set('productgroups.'+this.tempKey,this.tempItem);
             },
-
             deleteItemDialog: function(e){
                 e.stopPropagation();
                 this.$.deleteItemDialog.open();
+                
             },
-
             deleteItem: function(e){
-                this.fire('delete-dish',this.tempKey);
+                this.fire('delete-productgroup',this.tempKey);
                 this._showList();
             },
-
-
             addItemToShoppinglist: function(e){
-                var key = e.model.__data__.dish.key;
-
-                if(typeof this.shoppinglist.dishes == 'undefined'){
-                    this.set('shoppinglist.dishes',{})
+                var key = e.model.__data__.productgroup.key;
+                if(typeof this.shoppinglist.productgroups == 'undefined'){
+                    this.set('shoppinglist.productgroups',{})
                 }
-
-                if(typeof this.shoppinglist.dishes[key] == 'undefined'){
+                if(typeof this.shoppinglist.productgroups[key] == 'undefined'){
                     // add the key and set 1 for the quantity
-                    this.set('shoppinglist.dishes.'+key,{'quantity':1});
+                    this.set('shoppinglist.productgroups.'+key,{'quantity':1});
                 }
                 else{
                     // add 1 packageunit to the qunatity
-                    this.set('shoppinglist.dishes.'+key+'.quantity',parseFloat(this.shoppinglist.dishes[key].quantity) + 1);
+                    this.set('shoppinglist.productgroups.'+key+'.quantity',parseFloat(this.shoppinglist.productgroups[key].quantity) + 1);
                 }
     
                 // open a the shoppinglist dialog
@@ -244,52 +233,44 @@
                     that.hideShoppinglist();
                 },1000);*/
             },
-
             showShoppinglist: function(e){
                 this.$.shoppinglistDialog.open();
             },
-
             hideShoppinglist: function(e){
                 this.$.shoppinglistDialog.close();
             },
-
             addProduct: function(){
                 this.$.addProductDialog.open()
             },
-
             addProductToProductgroup: function(e){
                 var key = e.model.__data__.product.key;
-
                 if(typeof this.tempItem.products == 'undefined'){
                     this.set('tempItem.products',{})
                 }
-
                 if(typeof this.tempItem.products[key] == 'undefined'){
                     // add the key and set 1 packageunit for the quantity
-                    this.set('tempItem.products.'+key,{'quantity_y':0,'quantity_o':0,'quantity_v':0});
+                    this.set('tempItem.products.'+key,{'quantity':this.products[key].packagequantity});
                 }
-                this.$.addProductDialog.close()
+                else{
+                    // add 1 packageunit to the qunatity
+                    this.set('tempItem.products.'+key+'.quantity',parseFloat(this.tempItem.products[key].quantity) + parseFloat(this.products[key].packagequantity));
+                }
             },
-
             deleteProduct: function(e){
                 var key = e.model.__data__.product.key;
                 this.set('tempItem.products.'+key,null);
             },
-
             getProductSecondQuantity: function(products,key,quantity){
                 return quantity*products[key]['unitconversion'];
             },
-
             _getObjectListProperty: function(list,key,property){
                 if(typeof list != 'undefined'){
                     return list[key][property];
                 }
             },
-
             _getProducts: function(change){
                 return this._toArray(change.base.products);
             },
-
             _toArray: function(obj){
                 if(typeof obj != 'undefined' && obj !== null){
                     var array = Object.keys(obj).map(function(key){
@@ -304,30 +285,25 @@
                     return array;
                 }
             },
-
             _showList: function(e){
                 this.set('route.path','');
                 this.set('routeData.key','');
             },
-
             _computeFilter: function(string){
-
                 string = string.toLowerCase();
                 return function(product) {
                     var name = product.val.name.toLowerCase();
                     return (name.indexOf(string) != -1 );
                   };
             },
-
-            _dishesChanged(change){
-                if(typeof this.tempKey != 'undefined' && typeof this.dishes[this.tempKey] != 'undefined'){
-                    this.tempItem = JSON.parse(JSON.stringify(this.dishes[this.tempKey]));
+            _productgroupsChanged: function(change){
+                if(typeof this.tempKey != 'undefined' && typeof this.productgroups[this.tempKey] != 'undefined'){
+                    this.tempItem = JSON.parse(JSON.stringify(this.productgroups[this.tempKey]));
                 }
             },
-
-            _routeKeyChanged(key){
+            _routeKeyChanged: function(key){
                 if(typeof key=='undefined' || key==''){
-                    this.page = 'list';
+                    this.$.productgroupDetail.close();
                 }
                 else{
                     if(key=='-1'){
@@ -339,16 +315,15 @@
                     }
                     else{
                         this.tempKey = key;
-                        if(typeof this.dishes[key] != 'undefined'){
-                            this.tempItem = JSON.parse(JSON.stringify(this.dishes[key]));
+                        if(typeof this.productgroups[key] != 'undefined'){
+                            this.tempItem = JSON.parse(JSON.stringify(this.productgroups[key]));
                         }
                     }
-                    this.page = 'detail';
+                    this.$.productgroupDetail.open();
                 }
             }
                         
         });
-
     </script>
 
 </dom-module>

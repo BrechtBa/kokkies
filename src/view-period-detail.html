@@ -1,0 +1,275 @@
+
+<link rel="import" href="../bower_components/polymer/polymer.html">
+<link rel="import" href="../bower_components/iron-localstorage/iron-localstorage.html">
+
+<link rel="import" href="../bower_components/app-route/app-route.html">
+
+<link rel="import" href="../bower_components/iron-pages/iron-pages.html">
+<link rel="import" href="../bower_components/iron-flex-layout/iron-flex-layout-classes.html">
+<link rel="import" href="../bower_components/iron-icons/iron-icons.html">
+<link rel="import" href="../bower_components/iron-collapse/iron-collapse.html">
+
+<link rel="import" href="../bower_components/paper-button/paper-button.html">
+<link rel="import" href="../bower_components/paper-icon-button/paper-icon-button.html">
+<link rel="import" href="../bower_components/paper-material/paper-material.html">
+<link rel="import" href="../bower_components/paper-dialog/paper-dialog.html">
+<link rel="import" href="../bower_components/paper-dialog-scrollable/paper-dialog-scrollable.html">
+<link rel="import" href="../bower_components/paper-input/paper-input.html">
+
+<link rel="import" href="shared-styles.html">
+
+<dom-module id="view-period-detail">
+
+    <template>
+
+        <style include="iron-flex iron-flex-alignment"></style>
+        <style include="shared-styles"></style>
+        <style>
+            :host {
+                display: block;
+                padding: 10px;
+            }
+            .btn{
+                cursor: pointer;
+            }
+            .day{
+                background-color: #ffffff;
+            }
+            .shoppinglist{
+                background-color: #ffffff;
+            }
+        </style>
+
+        <firebase-document app-name="kokkies" path="/[[user.uid]]/periods/[[periodKey]]" data="{{period}}"></firebase-document>
+
+        <firebase-document app-name="kokkies" path="/[[user.uid]]/days/[[periodKey]]" data="{{days}}"></firebase-document>
+        <firebase-document app-name="kokkies" path="/[[user.uid]]/shoppinglists/[[periodKey]]" data="{{shoppinglists}}"></firebase-document>
+       
+        <app-route route="{{route}}" pattern="/:key" data="{{routeData}}" tail="{{subroute}}"></app-route>
+        
+        
+        <paper-input label="Periode" value="{{period.name}}"></paper-input>
+
+        <template is="dom-repeat" items="{{_toArray(days)}}" as="day">
+            <paper-material class="day vertical layout">
+                <div class="btn horizontal layout" on-tap="_toggleCollapse">
+                    <div class="flex">Dag [[_plusOne(index)}}</div>
+                    <div class="date">{{day.val.date}}</div>
+                </div>
+
+                <iron-collapse>
+                    <div class="content">
+                        <template is="dom-repeat" items="{{_toArray(day.val.productgroups)}}" as="productgroup">
+                            <paper-material class="productgroup horizontal layout wrap">
+                                productgroup
+                            </paper-material>
+                        </template>
+                        
+                        <paper-button raised on-tap="addProductgroupDialog">Gerecht toevoegen</paper-button>
+                    </div>
+                </iron-collapse>
+
+            </paper-material>
+        </template>
+        
+        <paper-button raised on-tap="newDay">Dag toevoegen</paper-button>
+        
+        
+        
+        
+        <h3>Winkellijstjes</h3>
+        
+        <template is="dom-repeat" items="{{_toArray(shoppinglists)}}" as="shoppinglist">
+            <paper-material class="shoppinglist vertical layout">
+                <div class="btn horizontal layout" on-tap="_toggleCollapse">
+                    <div class="flex">{{shoppinglist.val.name}}</div>
+                    <div class="date">{{shoppinglist.val.date}}</div>    
+                </div>
+
+                <iron-collapse>
+                    <div class="content vertical layout">
+                        <paper-input label="Naam" value="{{shoppinglist.val.name}}" on-change="_handleShoppinlgistNameChange">
+                        content 123
+                    </div>
+                </iron-collapse>
+
+            </paper-material>
+        </template>
+        
+        <paper-button raised on-tap="newShoppinglist">Winkellijst toevoegen</paper-button>
+
+        
+        
+        
+        <paper-dialog id="deletePeriodDialog">
+            <h2>Are you sure?</h2>
+            <div class="buttons">
+                <paper-button dialog-dismiss>Cancel</paper-button>
+                <paper-button dialog-confirm on-tap="deletePeriod">Delete</paper-button>
+            </div>
+        </paper-dialog>
+
+        <paper-dialog id="addProductgroupDialog">
+            <paper-button class="close" dialog-dismiss>close</paper-button>
+            <paper-dialog-scrollable>
+                <h3>Gerecht toevoegen</h3>
+                <paper-input label="search" no-label-float value="{{productgroupSearch}}"><iron-icon icon="search" suffix></iron-icon></paper-input>
+                <template is="dom-repeat" items="{{_toArray(productgroups)}}" as="product" filter="{{_computeFilter(productgroupSearch)}}" observe="name">
+                    <paper-material class="productgroup btn horizontal layout wrap" on-tap="addProductgroupToDay">
+                        <div class="name">{{productgroup.val.name}}</div>
+                    </paper-material>
+                </template>
+            </paper-dialog-scrollable>
+        </paper-dialog>
+
+        
+    </template>
+
+    <script>
+
+        Polymer({
+            is: 'view-period-detail',
+            properties:{
+                user: {
+                    type: 'Object'
+                },
+                products: {
+                    type: 'Object',
+                    notify: true
+                },
+                productgroups: {
+                    type: 'Object',
+                    notify: true
+                },
+                route: {
+                    type: 'string'
+                }
+            },
+
+            observers: [
+                '_routeKeyChanged(routeData.key)',
+            ],
+
+            _toggleCollapse: function(e){
+                var parent = Polymer.dom(e).rootTarget.offsetParent;
+                parent.querySelector('iron-collapse').toggle();
+            },
+            
+            _plusOne: function(n){
+                return n+1;
+            },
+           
+            newDay: function(e){
+                var key = btoa(this.user.uid + Date.now());
+                console.log(this.days)
+                
+                this.set('days.'+key,{'date':0,'productgroups':{}});
+            },
+            
+            newShoppinglist: function(e){
+                var key = btoa(this.user.uid + Date.now());
+                this.set('shoppinglists.'+key,{'name':'newlist','date':0,'products':{}});
+            },
+            
+            addProductgroupDialog: function(e){
+                this.dayKey = e.model.__data__.day.key
+                this.$.addProductgroupDialog.open();
+            },
+            
+            addProductgroupToDay: function(e){
+                var key = e.model.__data__.productgroup.key;
+                var dayKey = this.dayKey;
+                
+                if(typeof this.days[dayKey].productgroups == 'undefined'){
+                    this.set('days.'+dayKey+'.productgroups',{})
+                }
+
+                if(typeof this.days[dayKey].productgroups[key] == 'undefined'){
+                    // add the key
+                    this.set('days.'+dayKey+'.productgroups.'+key,{'quantity':0,'products':{}});
+                }
+                this.$.addProductgroupDialog.close()
+            },
+            
+            
+
+            deleteItemDialog: function(e){
+                e.stopPropagation();
+                this.$.deleteItemDialog.open();
+            },
+
+            deleteItem: function(e){
+                this.fire('delete-productgroup',this.tempKey);
+                this._showList();
+            },
+
+
+            _getObjectListProperty: function(list,key,property){
+                if(typeof list != 'undefined'){
+                    return list[key][property];
+                }
+            },
+
+            _getProducts: function(change){
+                return this._toArray(change.base.products);
+            },
+
+            _toArray: function(obj){
+                if(typeof obj != 'undefined' && obj !== null){
+                    var array = Object.keys(obj).map(function(key){
+                        if(obj[key] != null){
+                            return {key:key, val:obj[key]};
+                        }
+                    });
+                    // remove undefined elements
+                    array = array.filter(function( val ) {
+                       return val !== undefined;
+                    });
+                    return array;
+                }
+            },
+
+            _computeFilter: function(string){
+
+                string = string.toLowerCase();
+                return function(product) {
+                    var name = product.val.name.toLowerCase();
+                    return (name.indexOf(string) != -1 );
+                  };
+            },
+            
+
+            _handleShoppinlgistNameChange: function(e){
+                var localobj='shoppinglist';
+                var obj='shoppinglists';
+                var prop='name';
+                
+                var key = e.model.__data__[localobj].key;
+                var val = e.model.__data__[localobj].val[prop];
+                this.set(obj+'.'+key+'.'+prop,JSON.parse(JSON.stringify(val)));
+ 
+            },
+            
+            _routeKeyChanged(key){
+                if(typeof key!='undefined' && key!=''){ 
+                    if(key=='new'){
+                        var key = btoa(this.user.uid + Date.now());
+                        this.set('periods.'+key,{'name':'newperiod','startdate': 0});
+                        this.periodKey = key;
+                                                
+                        this.set('days',{});
+                        this.set('shoppinglists',{});
+                        
+                        this.set('route.path','/'+key);
+                    }
+                    else{
+                        this.set('periodKey',key);
+                    }
+                }
+            }
+                        
+        });
+
+    </script>
+
+</dom-module>

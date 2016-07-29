@@ -1,0 +1,150 @@
+
+<link rel="import" href="../bower_components/polymer/polymer.html">
+<link rel="import" href="../bower_components/iron-localstorage/iron-localstorage.html">
+
+<link rel="import" href="../bower_components/app-route/app-route.html">
+
+<link rel="import" href="../bower_components/iron-flex-layout/iron-flex-layout-classes.html">
+<link rel="import" href="../bower_components/iron-icons/iron-icons.html">
+<link rel="import" href="../bower_components/iron-icon/iron-icon.html">
+
+<link rel="import" href="../bower_components/paper-button/paper-button.html">
+<link rel="import" href="../bower_components/paper-icon-button/paper-icon-button.html">
+<link rel="import" href="../bower_components/paper-material/paper-material.html">
+<link rel="import" href="../bower_components/paper-dialog/paper-dialog.html">
+<link rel="import" href="../bower_components/paper-dialog-scrollable/paper-dialog-scrollable.html">
+<link rel="import" href="../bower_components/paper-input/paper-input.html">
+
+<link rel="import" href="shared-styles.html">
+
+<dom-module id="view-product-detail">
+
+    <template>
+
+        <style include="iron-flex iron-flex-alignment"></style>
+        <style include="shared-styles"></style>
+        <style>
+            :host {
+                display: block;
+                padding: 10px;
+            }
+        </style>
+
+
+        <app-route route="{{route}}" pattern="/:key" data="{{routeData}}" tail="{{subroute}}"></app-route>
+
+
+        <h3>Product Details</h3>
+
+        <paper-input label="Name" value="{{tempItem.name}}"></paper-input>
+        <div class="horizontal layout">
+            <div>
+                <paper-input label="Unit" value="{{tempItem.unit}}"></paper-input>
+            </div>
+            <div>&nbsp;</div>
+            <div>
+                <paper-input label="Second unit" value="{{tempItem.secondunit}}"></paper-input>
+                <paper-input label="Unit conversion" value="{{tempItem.unitconversion}}"></paper-input>
+            </div>
+        </div>
+
+        <paper-input label="Package quantity" value="{{tempItem.packagequantity}}"></paper-input>
+        <paper-input label="Store" value="{{tempItem.store}}"></paper-input>
+        <paper-input label="Price" value="{{tempItem.price}}"></paper-input>
+
+        <div class="buttons">
+            <!--<paper-button raised on-tap="cancelItem" hidden="[[!isNewItem(routeData.key)]]">Cancel</paper-button>
+            <paper-button raised on-tap="saveItem" hidden="[[!isNewItem(routeData.key)]]">Save</paper-button>-->
+            <paper-button raised on-tap="deleteItemDialog">Delete</paper-button>
+        </div>
+
+
+
+        <paper-dialog id="deleteItemDialog">
+            <h2>Are you sure?</h2>
+            <div class="buttons">
+                <paper-button dialog-dismiss>Cancel</paper-button>
+                <paper-button dialog-confirm on-tap="deleteItem">Delete</paper-button>
+            </div>
+        </paper-dialog>
+
+
+    </template>
+
+    <script>
+        Polymer({
+            is: 'view-product-detail',
+            properties:{
+                user: {
+                    type: 'Object'
+                },
+                products: {
+                    type: 'Object',
+                    notify: true
+                },
+                tempItem: {
+                    type: 'Object'
+                },
+                tempKey: {
+                    type: 'Object'
+                },
+                route: {
+                    type: 'string'
+                }
+            },
+            observers: [
+                '_routeKeyChanged(routeData.key,products)',
+                'tempItemChanged(tempItem.*)'
+            ],
+            isNewItem: function(key){
+                return (key == 'new')
+            },
+            saveItem: function(e){
+                this.set('products.'+this.tempKey,this.tempItem);
+                this.set('route.path','');
+            },
+            cancelItem: function(e){
+                this.set('route.path','');
+            },
+            deleteItemDialog: function(e){
+                e.stopPropagation();
+                this.$.deleteItemDialog.open();
+            },
+            deleteItem: function(e){
+                // fire an event to delete the product
+                this.fire('delete-product',this.tempKey);
+                this.set('route.path','');
+            },
+            tempItemChanged: function(change){
+                this.set('products.'+this.tempKey, JSON.parse(JSON.stringify(this.tempItem)) )
+            },
+            _routeKeyChanged: function(key,products){
+                if(typeof key!='undefined' && key!=''){
+                    if(key=='new'){
+                        this.tempKey = btoa(this.user.uid + Date.now());
+                        this.tempItem = {
+                            'name':'newproduct',
+                            'unit':'',
+                            'secondunit':'',
+                            'unitconversion':1,
+                            'packagequantity':1,
+                            'price':0,
+                            'store':'',
+                            'order': Object.keys(this.products).length
+                        };
+                        this.set('products.'+this.tempKey,this.tempItem);
+                        this.set('route.path','/'+this.tempKey);
+                    }
+                    else{
+                        this.tempKey = key;
+                        if(typeof this.products != 'undefined' && typeof this.products[key] != 'undefined'){
+                            this.tempItem = this.products[key];
+                        }
+                    }
+                }
+            },
+ 
+        });
+    </script>
+
+</dom-module>

@@ -31,6 +31,11 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
 <link rel="import" href="my-icons.html">
 <link rel="import" href="view-login.html">
+<link rel="import" href="view-periods.html">
+<link rel="import" href="view-period-detail.html">
+<link rel="import" href="view-products.html">
+<link rel="import" href="view-product-detail.html">
+<link rel="import" href="view-productgroups.html">
 
 
 <dom-module id="kokkies-app">
@@ -82,38 +87,33 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         <app-location route="{{route}}"></app-location>
         <app-route route="{{route}}" pattern="/:page" data="{{routeData}}" tail="{{subroute}}"></app-route>
         <app-route route="{{route}}" pattern="/products" tail="{{productsSubroute}}"></app-route>
-        <app-route route="{{route}}" pattern="/dishes" tail="{{dishesSubroute}}"></app-route>
-        <app-route route="{{route}}" pattern="/period" tail="{{periodSubroute}}"></app-route>
-        <app-route route="{{route}}" pattern="/meals" tail="{{mealsSubroute}}"></app-route>
+        <app-route route="{{route}}" pattern="/productgroups" tail="{{productgroupsSubroute}}"></app-route>
+        <app-route route="{{route}}" pattern="/periods" tail="{{periodsSubroute}}"></app-route>
         
         
         <firebase-app name="kokkies" auth-domain="kokkies-c0e33.firebaseapp.com" database-url="https://kokkies-c0e33.firebaseio.com" api-key="AIzaSyCBdtXwGw5bSK0MOqSOeRUgGMd0HYs4mWs"></firebase-app>
         <firebase-auth id="auth" app-name="kokkies" provider="google" user="{{user}}" signed-in="{{signedIn}}"></firebase-auth>
 
 
-        <firebase-document app-name="kokkies" path="/[[user.uid]]/products" data="{{productsFirebase}}"></firebase-document>
-        <app-indexeddb-mirror key="products" data="{{productsFirebase}}" persisted-data="{{products}}"></app-indexeddb-mirror>
+        <firebase-document app-name="kokkies" path="/[[user.uid]]/products" data="{{products}}"></firebase-document>
+        <!--<app-indexeddb-mirror key="products" data="{{productsFirebase}}" persisted-data="{{products}}"></app-indexeddb-mirror>-->
 
-        <firebase-document app-name="kokkies" path="/[[user.uid]]/dishes" data="{{dishesFirebase}}"></firebase-document>
-        <app-indexeddb-mirror key="productgroups" data="{{dishesFirebase}}" persisted-data="{{dishes}}"></app-indexeddb-mirror>
+        <firebase-document app-name="kokkies" path="/[[user.uid]]/productgroups" data="{{productgroups}}"></firebase-document>
+         <!--<app-indexeddb-mirror key="productgroups" data="{{dishesFirebase}}" persisted-data="{{dishes}}"></app-indexeddb-mirror>-->
         
-        <firebase-document app-name="kokkies" path="/[[user.uid]]/periods" data="{{periodsFirebase}}"></firebase-document>
-        <app-indexeddb-mirror key="shoppinglist" data="{{periodsFirebase}}" persisted-data="{{periods}}"></app-indexeddb-mirror>
+        <firebase-document app-name="kokkies" path="/[[user.uid]]/periods" data="{{periods}}"></firebase-document>
+         <!--<app-indexeddb-mirror key="shoppinglist" data="{{periodsFirebase}}" persisted-data="{{periods}}"></app-indexeddb-mirror>-->
         
-        <!--<firebase-document app-name="kokkies" path="/[[user.uid]]/shoppinglistproducts" data="{{shoppinglistproducts}}"></firebase-document>-->
-        <!--<app-indexeddb-mirror key="shoppinglistproducts" data="{{shoppinglistproductsFirebase}}" persisted-data="{{shoppinglistproducts}}"></app-indexeddb-mirror>-->
-
-
-     
+        
         <app-drawer-layout id="app" fullbleed>
 
             <!-- Drawer content -->
             <app-drawer>
                 <app-toolbar>Menu</app-toolbar>
-                <iron-selector selected="[[page]]" attr-for-selected="name" class="drawer-list" role="navigation">
-                    <a name="periods" href="/periods/current">Bivak</a>
+                <iron-selector selected="[[mainpage]]" attr-for-selected="name" class="drawer-list" role="navigation">
+                    <a name="periods" href="/periods">Periodes</a>
                     <a name="products" href="/products">Producten</a>
-                    <a name="dishes" href="/dishes">Gerechten</a>
+                    <a name="productgroups" href="/productgroups">Product groepen</a>
                     <a name="signout" href="" on-tap="signOut">Sign out</a>
                 </iron-selector>
             </app-drawer>
@@ -123,16 +123,19 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
                 <app-header condenses reveals effects="waterfall">
                     <app-toolbar hidden="[[!signedIn]]">
+                        <paper-icon-button icon="arrow-back" on-tap="back" hidden="[[hideBackButton]]"></paper-icon-button>
                         <paper-icon-button icon="menu" drawer-toggle></paper-icon-button>
-                        <div title>Kokkies</div>
+                        <div title>{{pageTitle}}</div>
                     </app-toolbar>
                 </app-header>
 
                 <iron-pages role="main" selected="[[page]]" attr-for-selected="name">
-                    <view-login     id="login"     name="login"         on-sign-in="signIn" signed-in="[[signedIn]]" disables=[[!online]]></view-login>
-                    <view-periods   id="periods"   name="periods"       user="[[user]]"  products="{{products}}" dishes="{{dishes}}" meals="{{meals}}" periods="{{periods}}" days="{{days}}" route="{{periodSubroute}}"></view-period>
-                    <view-products  id="products"  name="products"      user="[[user]]"  products="{{products}}" dishes="{{dishes}}" route="{{productsSubroute}}"></view-products>
-                    <view-dishes    id="dishes"    name="dishes"        user="[[user]]"  products="{{products}}" dishes="{{dishes}}" route="{{dishesSubroute}}"></view-dishes>
+                    <view-login           id="login"          name="login" on-sign-in="signIn" signed-in="[[signedIn]]" disables=[[!online]]></view-login>
+                    <view-periods         id="periods"        name="periods"          user="[[user]]"  periods="{{periods}}" route="{{periodsSubroute}}"></view-periods>
+                    <view-period-detail   id="period-detail"  name="period-detail"    user="[[user]]"  products="{{products}}" productgroups="{{productgroups}}" route="{{periodsSubroute}}" on-delete-product="handleDeletePeriod"></view-period-detail>
+                    <view-products        id="products"       name="products"         user="[[user]]"  products="{{products}}" route="{{productsSubroute}}"></view-products>
+                    <view-product-detail  id="product-detail" name="product-detail"   user="[[user]]"  products="{{products}}" route="{{productsSubroute}}" on-delete-product="handleDeleteProduct"></view-product-detail>
+                    <view-productgroups   id="productgroups"  name="productgroups"    user="[[user]]"  products="{{products}}" productgroups="{{productgroups}}" route="{{productgroupsSubroute}}"></view-productgroups>
                 </iron-pages>
 
             </app-header-layout>
@@ -141,49 +144,47 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
     </template>
 
     <script>
-
         Polymer({
-
             is: 'kokkies-app',
-
             properties: {
-
                 page: {
                     type: String,
                     reflectToAttribute: true,
-                    observer: '_pageChanged'
+                    //observer: '_pageChanged'
                 },
-
             },
             behaviours:[
                 'AppNetworkStatusBehavior'
             ],
             observers: [
-                '_routePageChanged(routeData.page)',
-                '_signedInChanged(signedIn)'
+                '_routeChanged(route.*)',
+                '_signedInChanged(signedIn)',
             ],
-
             signIn: function(e){
                 this.$.auth.signInWithPopup();
                 //this.$.auth.signInWithEmailAndPassword(e.detail.email,e.detail.password);
             },
-
+            signOutDialog: function(e){
+                this.$.signOutDialog.open();
+            },
             signOut: function(){
+                this.$.signOutDialog.close();
                 this.$.auth.signOut();
             },
-
-            clearShoppinglist: function(){
-                this.set('shoppinglist.products',null);
-                this.set('shoppinglist.productgroups',null);
+            back: function(e){
+                if(this.page=='period-detail'){
+                    this.set('route.path','/periods');
+                }
+                if(this.page=='product-detail'){
+                    this.set('route.path','/products');
+                }
+                else if(this.page=='productgroup-detail'){
+                    this.set('route.path','/productgroups');
+                }
             },
-
-            initializeProductgroups: function(){
-                this.productgroups = [];
-            },
-
-            handleDeleteProduct(e,key){
-
-                if(typeof this.shoppinglist.products != 'undefined' && typeof this.shoppinglist.products[key] != 'undefined'){
+            handleDeleteProduct: function(e,key){
+                console.log('delete product: ' + key);
+                /*if(typeof this.shoppinglist.products != 'undefined' && typeof this.shoppinglist.products[key] != 'undefined'){
                     this.set('shoppinglist.products.'+key,null);
                 }
                 if(typeof this.productgroups.products != 'undefined' && typeof this.productgroups.products[key] != 'undefined'){
@@ -192,83 +193,14 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
                 var that = this;
                 this.async(function(){
                     that.set('products.'+key,null);
-                });
+                });*/
+                
             },
-
+            
             handleDeleteProductgroup: function(e,key){
-
-
+                console.log('delete productgroup: ' + key);
             },
-
-            getAllProducts: function(shoppinglistChange,allproductsChange,allproductgroupsChange){
-                var shoppinglist = this.shoppinglist;
-                var allproducts = this.products;
-                var allproductgroups = this.productgroups;
-
-                var products = {};
-
-                var that = this;
-                var shoppinglistProductsArray = this._toArray(shoppinglist.products);
-                var shoppinglistProductgroupsArray = this._toArray(shoppinglist.productgroups)
-
-                // add products
-                if(typeof shoppinglistProductsArray != 'undefined'){
-                    this._toArray(shoppinglist.products).forEach(function(product){
-                        if(product.val != null){
-                            products[product.key] = {'quantity': parseFloat(product.val.quantity), 'checked': false};
-                        }
-                    });
-                }
-
-                // add productgroups
-                if(typeof shoppinglistProductgroupsArray != 'undefined'){
-                    shoppinglistProductgroupsArray.forEach(function(productgroup){
-
-                        if(productgroup.val != null){
-                            var productgroupProducts = that._toArray(allproductgroups[productgroup.key].products);
-                            if(typeof productgroupProducts != 'undefined'){
-                                productgroupProducts.forEach(function(product){
-
-                                    if(typeof products[product.key] == 'undefined'){
-                                        products[product.key]= {'quantity': parseFloat(product.val.quantity*productgroup.val.quantity), 'checked': false};
-                                    }
-                                    else{
-                                        products[product.key]['quantity'] += parseFloat(product.val.quantity*productgroup.val.quantity);
-                                    }
-                                });
-                            }
-                        }
-                    });
-                }
-
-                // filter 0 quantity products
-                var filteredproducts = {};
-                for(var key in products){
-                    if(products[key].quantity > 0){ 
-                        filteredproducts[key] = products[key];
-                    }
-                }
-                var that = this;
-                this.async(function(){
-                    that.set('shoppinglistproducts',filteredproducts);
-                },200);
-            },
-
-            _toArray: function(obj){
-                if(typeof obj != 'undefined' && obj !== null){
-                    var array = Object.keys(obj).map(function(key){
-                        if(obj[key] != null){
-                            return {key:key, val:obj[key]};
-                        }
-                    });
-                    // remove undefined elements
-                    array = array.filter(function( val ) {
-                       return val !== undefined;
-                    });
-                    return array;
-                }
-            },
-
+  
             _signedInChanged: function(signedIn){
                 if(signedIn){
                     if(typeof this.page=='undefined' || this.page=='login'){
@@ -278,26 +210,67 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
                 else{
                     this.set('route.path','/login')
                 }
-
-
                 //this.toggleClass('signedout',!signedIn,this.$.app);
                 this.updateStyles()
             },
-
-            _routePageChanged: function(page){
-                if(page==''){
-                    this.set('route.path','/login')
+            
+            _routeChanged: function(change){
+                if(this.routeData.page==''){
+                    //this.set('route.path','/login')
+                    this.page = 'login';
                 }
-                this.page = page || 'login';
+                else if(this.routeData.page=='products'){
+                    this.mainpage = 'products';
+                    if(typeof this.subroute == 'undefined' || this.subroute.path==null || this.subroute.path==''){
+                        this.page = 'products';
+                        this.pageTitle = 'Producten';
+                        this.hideBackButton = true;
+                    }
+                    else{
+                        this.page = 'product-detail';
+                        this.pageTitle = 'Product detail';
+                        this.hideBackButton = false;
+                    }
+                }
+                else if(this.routeData.page=='productgroups'){
+                    this.mainpage = 'productgroups';
+                    if(typeof this.subroute == 'undefined' || this.subroute.path==null || this.subroute.path==''){
+                        this.page = 'productgroups';
+                        this.pageTitle = 'Productgroepen';
+                        this.hideBackButton = true;
+                    }
+                    else{
+                        this.page = 'productgroups';
+                        this.pageTitle = 'Productgroep detail';
+                        this.hideBackButton = false;
+                    }
+                }
+                else if(this.routeData.page=='periods'){
+                    this.mainpage = 'periods';
+                    if(typeof this.subroute == 'undefined' || this.subroute.path==null || this.subroute.path==''){
+                        this.page = 'periods';
+                        this.pageTitle = 'Periodes';
+                        this.hideBackButton = true;
+                    }
+                    else{
+                        this.page = 'period-detail';
+                        this.pageTitle = 'Periode detail';
+                        this.hideBackButton = false;
+                    }
+                }
+                else{
+                    this.page = this.routeData.page || 'login';
+                }
             },
-
-            _pageChanged: function(page) {
+            /*_pageChanged: function(page) {
+                console.log(page)
                 // load page import on demand.
-                this.importHref( this.resolveUrl('view-' + page + '.html'), null, null, true );
-            },
-
+                //if(page != 'login'){
+                    this.importHref( this.resolveUrl('view-' + page + '.html'), null, null, true );
+                //}
+                console.log(page)
+            },*/
         });
-
     </script>
 
 </dom-module>
