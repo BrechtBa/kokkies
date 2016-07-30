@@ -131,7 +131,7 @@
                                     </div>
                                     <div class="edit-uncollapsed">
                                         <paper-icon-button icon="create"></paper-icon-button>
-                                        <paper-icon-button icon="delete"></paper-icon-button>
+                                        <paper-icon-button icon="delete" on-tap="deleteProductgroupDialog"></paper-icon-button>
                                     </div>
                                 </iron-collapse>
                                 
@@ -181,11 +181,11 @@
         
         
         
-        <paper-dialog id="deletePeriodDialog">
+        <paper-dialog id="deleteProductgroupDialog">
             <h2>Are you sure?</h2>
             <div class="buttons">
                 <paper-button dialog-dismiss>Cancel</paper-button>
-                <paper-button dialog-confirm on-tap="deletePeriod">Delete</paper-button>
+                <paper-button dialog-confirm on-tap="deleteProductgroup">Delete</paper-button>
             </div>
         </paper-dialog>
         
@@ -283,16 +283,20 @@
             
             
 
-            deleteItemDialog: function(e){
+            deleteProductgroupDialog: function(e){
                 e.stopPropagation();
-                this.$.deleteItemDialog.open();
+                this.deleteProductgroupDayKey = e.model.__data__.day.key;
+                this.deleteProductgroupKey = e.model.__data__.productgroup.key;
+                this.$.deleteProductgroupDialog.open();
             },
 
-            deleteItem: function(e){
-                this.fire('delete-productgroup',this.tempKey);
-                this._showList();
+            deleteProductgroup: function(e){
+                this.set('days.'+this.deleteProductgroupDayKey+'.productgroups.'+this.deleteProductgroupKey,null);
+                
+                var dayKeys = {};
+                dayKeys[this.deleteProductgroupDayKey] = true;
+                this.calculateProducts(dayKeys);
             },
-
 
             calculateProducts: function(dayKeys){
             
@@ -313,20 +317,21 @@
                         
                             var productgroup = day.productgroups[productgroupKey]
                             
-                            
-                            if(typeof productgroup.products == 'undefined'){
-                                this.set('days.'+dayKey+'.productgroups.'+productgroupKey+'.products',{});
-                            }
-                            
-                            for(var productKey in this.productgroups[productgroupKey].products){
-                                
-                                if(typeof productgroup.products[productKey] == 'undefined'){
-                                    this.set('days.'+dayKey+'.productgroups.'+productgroupKey+'.products.'+productKey,{});
+                            if(productgroup!=null){
+                                if(typeof productgroup.products == 'undefined'){
+                                    this.set('days.'+dayKey+'.productgroups.'+productgroupKey+'.products',{});
                                 }
                                 
-                                var quantity = parseFloat(productgroup.quantity)*parseFloat(this.productgroups[productgroupKey].products[productKey].quantity);
-                                this.set('days.'+dayKey+'.productgroups.'+productgroupKey+'.products.'+productKey+'.quantity',quantity);
-                                
+                                for(var productKey in this.productgroups[productgroupKey].products){
+                                    
+                                    if(typeof productgroup.products[productKey] == 'undefined'){
+                                        this.set('days.'+dayKey+'.productgroups.'+productgroupKey+'.products.'+productKey,{});
+                                    }
+                                    
+                                    var quantity = parseFloat(productgroup.quantity)*parseFloat(this.productgroups[productgroupKey].products[productKey].quantity);
+                                    this.set('days.'+dayKey+'.productgroups.'+productgroupKey+'.products.'+productKey+'.quantity',quantity);
+                                    
+                                }
                             }
                         }
                     }
@@ -350,14 +355,16 @@
                         for(var productgroupKey in day.productgroups){
                             var productgroup = day.productgroups[productgroupKey];
                             
-                            for(var productKey in productgroup.products){
-                                var product = productgroup.products[productKey];
-                                
-                                if(product.shoppinglist == shoppinglistKey){
-                                    if(typeof products[productKey] == 'undefined'){
-                                        products[productKey] = {'quantity': 0,'checked': false};
+                            if(productgroup != null){
+                                for(var productKey in productgroup.products){
+                                    var product = productgroup.products[productKey];
+                                    
+                                    if(product.shoppinglist == shoppinglistKey){
+                                        if(typeof products[productKey] == 'undefined'){
+                                            products[productKey] = {'quantity': 0,'checked': false};
+                                        }
+                                        products[productKey].quantity += product.quantity;
                                     }
-                                    products[productKey].quantity += product.quantity;
                                 }
                             }
                         }
