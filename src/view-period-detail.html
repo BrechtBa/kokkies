@@ -39,11 +39,25 @@
             .shoppinglist{
                 background-color: #ffffff;
             }
+            iron-icon{
+                color: #555555;
+            }
+            paper-icon-button{
+                color: #555555;
+            }
+            .reorder{
+                width: 40px;
+            }
             .productgroup .name{
                 min-width: 200px;
             }
             .productgroup .quantity{
                 width: 80px;
+            }
+            .productgroup .edit-uncollapsed{
+                position: absolute;
+                top: 10px;
+                right: 10px;
             }
             .product-list{
                 margin-left: 50px;
@@ -88,6 +102,7 @@
                         <template is="dom-repeat" items="{{_toArray(day.val.productgroups)}}" as="productgroup">
                             <paper-material class="productgroup vertical layout">
                                 <div class="horizontal layout center">
+                                    <div class="reorder btn"><iron-icon icon="reorder"></iron-icon></div>
                                     <div class="name btn" on-tap="_toggleCollapse">{{_getObjectListProperty(productgroups,productgroup.key,'name')}}</div>
                                     <div class="quantity"><paper-input label="Aantal" value="{{productgroup.val.quantity}}" on-change="_handleProductgroupQuantityChange" day-key="[[day.key]]"></paper-input></div>
                                 </div>
@@ -113,6 +128,10 @@
                                                 <div class="unit">{{_getObjectListProperty(products,product.key,'unit')}}</div>
                                             </div>
                                         </template>
+                                    </div>
+                                    <div class="edit-uncollapsed">
+                                        <paper-icon-button icon="create"></paper-icon-button>
+                                        <paper-icon-button icon="delete"></paper-icon-button>
                                     </div>
                                 </iron-collapse>
                                 
