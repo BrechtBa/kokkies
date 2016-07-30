@@ -18,7 +18,7 @@
 <link rel="import" href="../bower_components/paper-dropdown-menu/paper-dropdown-menu.html">
 <link rel="import" href="../bower_components/paper-listbox/paper-listbox.html">
 <link rel="import" href="../bower_components/paper-item/paper-item.html">
-
+<link rel="import" href="../bower_components/paper-checkbox/paper-checkbox.html">
 
 <link rel="import" href="shared-styles.html">
 
@@ -146,9 +146,9 @@
                         <template is="dom-repeat" items="{{_toArray(shoppinglist.val.products)}}" as="product">
                             <paper-material class="product horizontal layout center">
                                 <div class="name">{{_getObjectListProperty(products,product.key,'name')}}</div>
-                                
                                 <div class="quantity">{{_round(product.val.quantity)}}</div>
-                                <div class="unit">{{_getObjectListProperty(products,product.key,'unit')}}</div>
+                                <div class="unit flex">{{_getObjectListProperty(products,product.key,'unit')}}</div>
+                                <div class="checked"><paper-checkbox checked="{{product.val.checked}}" on-change="_handleShoppinglistProductCheckedChange" shoppinglist-key="[[shoppinglist.key]]"></paper-checkbox></div>
                             </paper-material>
                         </template>
                     </div>
@@ -468,7 +468,19 @@
                 this.set(obj+'.'+key+'.'+prop,JSON.parse(JSON.stringify(val)));
  
             },
-            
+
+            _handleShoppinglistProductCheckedChange: function(e){
+                var shoppinglistKey = e.model.shoppinglist.key;
+                
+                var localobj='product';
+                var obj='shoppinglists.'+shoppinglistKey+'.products';
+                var prop='checked';
+                
+                var key = e.model.__data__[localobj].key;
+                var val = e.model.__data__[localobj].val[prop];
+                this.set(obj+'.'+key+'.'+prop,JSON.parse(JSON.stringify(val)));
+            },
+
             _routeKeyChanged(key){
                 if(typeof key!='undefined' && key!=''){ 
                     if(key=='new'){
