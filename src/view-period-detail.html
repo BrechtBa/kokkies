@@ -101,7 +101,7 @@
                                                 <div class="unit">{{_getObjectListProperty(products,product.key,'unit')}}</div>
                                                 <div class="shoppinglist">
                                                     <paper-dropdown-menu label="Winkellijst">
-                                                        <paper-listbox class="dropdown-content" attrForSelected="key" selected="{{product.val.shoppinglist}}" on-iron-select="_handleProductShoppinglistChange" day-key="[[day.key]]" productgroup-key="[[productgroup.key]]">
+                                                        <paper-listbox class="dropdown-content" attr-for-selected="key" selected="{{product.val.shoppinglist}}" on-iron-select="_handleProductShoppinglistChange" day-key="[[day.key]]" productgroup-key="[[productgroup.key]]">
                                                             <template is="dom-repeat" items="{{_toArray(shoppinglists)}}" as="shoppinglist">
                                                                 <paper-item key="[[shoppinglist.key]]">{{shoppinglist.val.name}}</paper-item>
                                                             </template>
@@ -143,7 +143,14 @@
 
                 <iron-collapse>
                     <div class="content vertical layout">
-                        content 123
+                        <template is="dom-repeat" items="{{_toArray(shoppinglist.val.products)}}" as="product">
+                            <paper-material class="product horizontal layout center">
+                                <div class="name">{{_getObjectListProperty(products,product.key,'name')}}</div>
+                                
+                                <div class="quantity">{{_round(product.val.quantity)}}</div>
+                                <div class="unit">{{_getObjectListProperty(products,product.key,'unit')}}</div>
+                            </paper-material>
+                        </template>
                     </div>
                 </iron-collapse>
 
@@ -305,6 +312,53 @@
                         }
                     }
                 }
+                this.calculateShoppinglists();
+            },
+
+            calculateShoppinglists: function(){
+                for(var shoppinglistKey in this.shoppinglists){
+                    var shoppinglist = this.shoppinglists[shoppinglistKey];
+
+                    var oldproducts = {};
+                    if(typeof shoppinglist.products != 'undefined'){
+                        oldproducts = JSON.parse(JSON.stringify(shoppinglist.products));
+                    }
+                    var products = {};
+
+                    for(var dayKey in this.days){
+                        var day = this.days[dayKey];
+                        
+                        for(var productgroupKey in day.productgroups){
+                            var productgroup = day.productgroups[productgroupKey];
+                            
+                            for(var productKey in productgroup.products){
+                                var product = productgroup.products[productKey];
+                                
+                                if(product.shoppinglist == shoppinglistKey){
+                                    if(typeof products[productKey] == 'undefined'){
+                                        products[productKey] = {'quantity': 0,'checked': false};
+                                    }
+                                    products[productKey].quantity += product.quantity;
+                                }
+                            }
+                        }
+                    }
+
+                    this.set('shoppinglists.'+shoppinglistKey+'.products',{});
+                    for(productKey in products){
+                        this.set('shoppinglists.'+shoppinglistKey+'.products.'+productKey,{});
+                        this.set('shoppinglists.'+shoppinglistKey+'.products.'+productKey+'.quantity',products[productKey].quantity);
+
+                        // check checked
+                        if(typeof oldproducts[productKey] != 'undefined'){
+                            if(oldproducts[productKey].quantity == products[productKey].quantity){
+                                products[productKey].checked = oldproducts[productKey].checked;
+                            }
+                        }
+                        this.set('shoppinglists.'+shoppinglistKey+'.products.'+productKey+'.checked',products[productKey].checked);
+                    }
+                }
+                
             },
             
             _productgroupsChanged: function(change){
@@ -384,8 +438,10 @@
                 
                 var key = e.model.__data__[localobj].key;
                 var val = e.model.__data__[localobj].val[prop];
-                
+
                 this.set(obj+'.'+key+'.'+prop,JSON.parse(JSON.stringify(val)));
+
+                this.calculateShoppinglists();
             },
             
             _handleProductUsedChange: function(e){
