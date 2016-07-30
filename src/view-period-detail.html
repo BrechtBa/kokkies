@@ -36,6 +36,11 @@
             .day{
                 background-color: #ffffff;
             }
+            .day .edit-uncollapsed{
+                position: absolute;
+                bottom: 20px;
+                right: 20px;
+            }
             .shoppinglist{
                 background-color: #ffffff;
             }
@@ -140,6 +145,9 @@
                         
                         <paper-button raised on-tap="addProductgroupDialog">Gerecht toevoegen</paper-button>
                     </div>
+                    <div class="edit-uncollapsed">
+                        <paper-icon-button icon="delete" on-tap="deleteDayDialog"></paper-icon-button>
+                    </div>
                 </iron-collapse>
 
             </paper-material>
@@ -189,6 +197,14 @@
             </div>
         </paper-dialog>
         
+        <paper-dialog id="deleteDayDialog">
+            <h2>Are you sure?</h2>
+            <div class="buttons">
+                <paper-button dialog-dismiss>Cancel</paper-button>
+                <paper-button dialog-confirm on-tap="deleteDay">Delete</paper-button>
+            </div>
+        </paper-dialog>
+
 
         <paper-dialog id="addProductgroupDialog">
             <paper-button class="close" dialog-dismiss>close</paper-button>
@@ -247,11 +263,22 @@
            
             newDay: function(e){
                 var key = btoa(this.user.uid + Date.now());
-                console.log(this.days)
                 
                 this.set('days.'+key,{'date':0,'productgroups':{}});
             },
             
+            deleteDayDialog: function(e){
+                e.stopPropagation();
+                this.deleteDayKey = e.model.__data__.day.key;
+                this.$.deleteDayDialog.open();
+            },
+
+            deleteDay: function(e){
+                this.set('days.'+this.deleteDayKey,null);
+
+                this.calculateProducts();
+            },
+
             newShoppinglist: function(e){
                 var key = btoa(this.user.uid + Date.now());
                 this.set('shoppinglists.'+key,{'name':'newlist','date':0,'products':{}});
@@ -281,8 +308,6 @@
                 this.calculateProducts(dayKeys);
             },
             
-            
-
             deleteProductgroupDialog: function(e){
                 e.stopPropagation();
                 this.deleteProductgroupDayKey = e.model.__data__.day.key;
@@ -312,25 +337,27 @@
                 for(var dayKey in dayKeys){
                     var day = this.days[ dayKey ];
                     
-                    if(typeof day.productgroups != 'undefined'){
-                        for(var productgroupKey in day.productgroups){
-                        
-                            var productgroup = day.productgroups[productgroupKey]
+                    if(day != null){
+                        if(typeof day.productgroups != 'undefined'){
+                            for(var productgroupKey in day.productgroups){
                             
-                            if(productgroup!=null){
-                                if(typeof productgroup.products == 'undefined'){
-                                    this.set('days.'+dayKey+'.productgroups.'+productgroupKey+'.products',{});
-                                }
+                                var productgroup = day.productgroups[productgroupKey]
                                 
-                                for(var productKey in this.productgroups[productgroupKey].products){
-                                    
-                                    if(typeof productgroup.products[productKey] == 'undefined'){
-                                        this.set('days.'+dayKey+'.productgroups.'+productgroupKey+'.products.'+productKey,{});
+                                if(productgroup!=null){
+                                    if(typeof productgroup.products == 'undefined'){
+                                        this.set('days.'+dayKey+'.productgroups.'+productgroupKey+'.products',{});
                                     }
                                     
-                                    var quantity = parseFloat(productgroup.quantity)*parseFloat(this.productgroups[productgroupKey].products[productKey].quantity);
-                                    this.set('days.'+dayKey+'.productgroups.'+productgroupKey+'.products.'+productKey+'.quantity',quantity);
-                                    
+                                    for(var productKey in this.productgroups[productgroupKey].products){
+                                        
+                                        if(typeof productgroup.products[productKey] == 'undefined'){
+                                            this.set('days.'+dayKey+'.productgroups.'+productgroupKey+'.products.'+productKey,{});
+                                        }
+                                        
+                                        var quantity = parseFloat(productgroup.quantity)*parseFloat(this.productgroups[productgroupKey].products[productKey].quantity);
+                                        this.set('days.'+dayKey+'.productgroups.'+productgroupKey+'.products.'+productKey+'.quantity',quantity);
+                                        
+                                    }
                                 }
                             }
                         }
@@ -352,18 +379,20 @@
                     for(var dayKey in this.days){
                         var day = this.days[dayKey];
                         
-                        for(var productgroupKey in day.productgroups){
-                            var productgroup = day.productgroups[productgroupKey];
-                            
-                            if(productgroup != null){
-                                for(var productKey in productgroup.products){
-                                    var product = productgroup.products[productKey];
-                                    
-                                    if(product.shoppinglist == shoppinglistKey){
-                                        if(typeof products[productKey] == 'undefined'){
-                                            products[productKey] = {'quantity': 0,'checked': false};
+                        if(day != null){
+                            for(var productgroupKey in day.productgroups){
+                                var productgroup = day.productgroups[productgroupKey];
+                                
+                                if(productgroup != null){
+                                    for(var productKey in productgroup.products){
+                                        var product = productgroup.products[productKey];
+                                        
+                                        if(product.shoppinglist == shoppinglistKey){
+                                            if(typeof products[productKey] == 'undefined'){
+                                                products[productKey] = {'quantity': 0,'checked': false};
+                                            }
+                                            products[productKey].quantity += product.quantity;
                                         }
-                                        products[productKey].quantity += product.quantity;
                                     }
                                 }
                             }
