@@ -1,0 +1,16 @@
+
+<script>
+    collapsibleBehavior = {
+        _toggleCollapse: function(e){
+            //try{
+                var parent = Polymer.dom(e).rootTarget.offsetParent;
+                parent.querySelector('iron-collapse').toggle();
+            /*}
+            catch(e){
+            }*/
+        },
+    };
+
+</script>
+
+

@@ -1,0 +1,146 @@
+
+<link rel="import" href="../bower_components/polymer/polymer.html">
+<link rel="import" href="../bower_components/iron-localstorage/iron-localstorage.html">
+
+<link rel="import" href="../bower_components/app-route/app-route.html">
+
+<link rel="import" href="../bower_components/iron-pages/iron-pages.html">
+<link rel="import" href="../bower_components/iron-flex-layout/iron-flex-layout-classes.html">
+<link rel="import" href="../bower_components/iron-icons/iron-icons.html">
+<link rel="import" href="../bower_components/iron-collapse/iron-collapse.html">
+
+<link rel="import" href="../bower_components/paper-button/paper-button.html">
+<link rel="import" href="../bower_components/paper-icon-button/paper-icon-button.html">
+<link rel="import" href="../bower_components/paper-material/paper-material.html">
+<link rel="import" href="../bower_components/paper-dialog/paper-dialog.html">
+<link rel="import" href="../bower_components/paper-dialog-scrollable/paper-dialog-scrollable.html">
+<link rel="import" href="../bower_components/paper-input/paper-input.html">
+<link rel="import" href="../bower_components/paper-dropdown-menu/paper-dropdown-menu.html">
+<link rel="import" href="../bower_components/paper-listbox/paper-listbox.html">
+<link rel="import" href="../bower_components/paper-item/paper-item.html">
+
+<link rel="import" href="shared-styles.html">
+<link rel="import" href="object-list-behavior.html">
+<link rel="import" href="search-filter-behavior.html">
+<link rel="import" href="collapsible-behavior.html">
+
+<link rel="import" href="day-productgroup.html">
+
+<dom-module id="day-productgroup-product">
+
+    <template>
+
+        <style include="iron-flex iron-flex-alignment"></style>
+        <style include="shared-styles"></style>
+        <style>
+            :host {
+                display: block;
+            }
+            paper-input{
+                margin-top: -8px;
+                margin-bottom: -8px;
+            }
+            .name{
+                min-width: 150px;
+                margin-top: 20px;
+            }
+            .unit{
+                width: 50px;
+                margin-left: 5px;
+                margin-top: 20px;
+            }
+        </style>
+
+        <firebase-document app-name="kokkies" path="/[[user.uid]]/dayproductgroupproducts/[[day]]/[[productgroup]]/[[key]]" data="{{dayproductgroupproduct}}"></firebase-document>
+
+        <div class=" horizontal layout center">
+            <div class="name">{{_getObjectProperty(products,key,'name')}}</div>
+            <div class="quantity"><paper-input label="Hoeveelheid" value="{{_computeQuantity(quantity,productgroup,key,productgroups)}}" disabled></paper-input></div>
+            <div class="unit">{{_getObjectProperty(products,key,'unit')}}</div>
+            <div class="shoppinglist">
+                <paper-dropdown-menu label="Winkellijst">
+                    <paper-listbox class="dropdown-content" attr-for-selected="key" selected="{{dayproductgroupproduct.shoppinglist}}">
+                        <template is="dom-repeat" items="{{_toArray(shoppinglists)}}" as="shoppinglist">
+                            <paper-item key="[[shoppinglist.key]]">{{shoppinglist.val.name}}</paper-item>
+                        </template>
+                    </paper-listbox>
+                </paper-dropdown-menu>
+            </div>
+            <div class="flex">&nbsp;</div>
+            <div class="quantity"><paper-input label="Gebruikt" value="{{dayproductgroupproduct.used}}"></paper-input></div>
+            <div class="unit">{{_getObjectProperty(products,product.key,'unit')}}</div>
+        </div>
+
+
+    </template>
+
+    <script>
+
+        Polymer({
+            is: 'day-productgroup-product',
+
+            behaviors: [
+                objectListBehavior,
+                searchFilterBehavior,
+            ],
+
+            properties:{
+                user: {
+                    type: Object
+                },
+                day: {
+                    type: String
+                },
+                productgroup: {
+                    type: String
+                },
+                key: {
+                    type: String
+                },
+                products: {
+                    type: Object,
+                    notify: true,
+                },
+                productgroups: {
+                    type: Object,
+                    notify: true,
+                },
+                quantity: {
+                    type: Number,
+                },
+            },
+
+            _computeQuantity: function(quantity,productgroup,key,productgroups){
+                if( typeof this.dayproductgroupproduct == 'undefined' || JSON.stringify(this.dayproductgroupproduct) == {} ){
+                    this.set('dayproductgroupproduct',{'used':0,'shoppinglist':''})
+                }
+                if(typeof productgroups[productgroup] != 'undefined' && typeof productgroups[productgroup].products[key] != 'undefined' && typeof quantity != 'undefined'){
+                    return this._round( quantity*productgroups[productgroup].products[key].quantity );
+                }
+            },
+
+            _round: function(val){
+                if(typeof val != 'undefined'){
+                    var decimals = 0;
+                    if(val < 20){
+                        decimals = 1;
+                    }
+                    if(val < 1){
+                        decimals = 2;
+                    }
+                    return val.toFixed(decimals);
+                }
+            },
+    
+            deleteProductgroupProduct: function(){
+                this.set('dayproductgroupproduct',null)
+            },
+
+        });
+
+    </script>
+
+</dom-module>
+
+
+

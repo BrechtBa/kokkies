@@ -1,0 +1,60 @@
+
+<script>
+    objectListBehavior = {
+        _getObjectProperty(object,key,property){
+            return object[key][property];
+        },
+
+        _getObjectListProperty: function(list,id,property){
+            var index = this._getIndexFromId(list,id);
+            return list[index][property];
+        },
+
+        _getIndexFromId(list,id){
+            var index = -1;
+            list.forEach(function(object,ind){
+                if(object.id==id){
+                    index = ind;
+                }
+            });
+            return index;
+        },
+
+        _toArray: function(obj){
+            if(typeof obj != 'undefined' && obj !== null){
+                var array = Object.keys(obj).map(function(key){
+                    if(obj[key] != null){
+                        return {key:key, val:obj[key]};
+                    }
+                });
+                // remove undefined elements
+                array = array.filter(function( val ) {
+                   return val !== undefined;
+                });
+                return array;
+            }
+        },
+
+        _keys: function(obj){
+            if(typeof obj != 'undefined' && obj !== null){
+                var array = Object.keys(obj).map(function(key){
+                    if(obj[key] != null){
+                        return key;
+                    }
+                });
+                return array;
+            }
+        },
+
+        _val: function(obj,key){
+            return obj[key];
+        },
+
+        _sortByVal: function(a,b){
+            return a.val-b.val;
+        },
+    };
+
+</script>
+
+

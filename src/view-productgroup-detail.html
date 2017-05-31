@@ -16,6 +16,7 @@
 <link rel="import" href="../bower_components/paper-input/paper-input.html">
 
 <link rel="import" href="shared-styles.html">
+<link rel="import" href="object-list-behavior.html">
 
 <dom-module id="view-productgroup-detail">
 
@@ -91,6 +92,9 @@
     <script>
         Polymer({
             is: 'view-productgroup-detail',
+
+            behaviors: [objectListBehavior],
+
             properties:{
                 user: {
                     type: 'Object'
@@ -134,7 +138,11 @@
 
                 if(typeof this.tempItem.products[key] == 'undefined'){
                     // add the key
-                    this.set('tempItem.products.'+key,{'quantity':0});
+                    var order = 0;
+                    for(k in this.tempItem.products){
+                        order = Math.max(this.tempItem.products[k]['order']+1,order)
+                    }
+                    this.set('tempItem.products.'+key,{'quantity':0,'order':order});
                 }
                 this.$.addProductDialog.close()
             },

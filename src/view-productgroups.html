@@ -16,6 +16,7 @@
 
 
 <link rel="import" href="shared-styles.html">
+<link rel="import" href="object-list-behavior.html">
 
 <dom-module id="view-productgroups">
 
@@ -63,6 +64,9 @@
     <script>
         Polymer({
             is: 'view-productgroups',
+
+            behaviors: [objectListBehavior],
+
             properties:{
                 user: {
                     type: 'Object'
@@ -90,26 +94,6 @@
                 this.set('route.path','/'+key);
             },
 
-            _getObjectListProperty: function(list,key,property){
-                if(typeof list != 'undefined'){
-                    return list[key][property];
-                }
-            },
-
-            _toArray: function(obj){
-                if(typeof obj != 'undefined' && obj !== null){
-                    var array = Object.keys(obj).map(function(key){
-                        if(obj[key] != null){
-                            return {key:key, val:obj[key]};
-                        }
-                    });
-                    // remove undefined elements
-                    array = array.filter(function( val ) {
-                       return val !== undefined;
-                    });
-                    return array;
-                }
-            },
             
             _computeFilter: function(string){
                 string = string.toLowerCase();
@@ -120,8 +104,8 @@
             },
             
             _sortByName: function(a,b){
-                var a_order = this._getObjectListProperty(this.productgroups,a.key,'name');
-                var b_order = this._getObjectListProperty(this.productgroups,b.key,'name');
+                var a_order = this._getObjectProperty(this.productgroups,a.key,'name');
+                var b_order = this._getObjectProperty(this.productgroups,b.key,'name');
                 if(a_order>b_order){
                     return 1;
                 }

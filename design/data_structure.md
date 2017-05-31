@@ -23,9 +23,11 @@
                 "name": "",
                 "products": {
                     "prkey1": {
+                        "order": 0,
                         "quantity": 0
                     },
                     "prkey2": {
+                        "order": 1,
                         "quantity": 0
                     }
                 }
@@ -34,42 +36,52 @@
         "periods": {
             "pdkey1": {
                 "name": "",
-                "startdate": 0
-            },
-            "pdkey2": {
-                "name": "",
-                "startdate": 0
-            }
-        },
-        "days": {
-            "pdkey1": {
-                "dakey1": {
-                    "date": 0,
-                    "productgroups": {
-                        "pgkey1": {
-                            "quantity": 0,
-                            "products": {
-                                "prkey1": {
-                                    "shoppinglist": "slkey1",
-                                    "quantity": 0,
-                                    "used": 0
-                                }
-                            }
-                        },
-                        "pgkey2": {
-                            "quantity": 0,
-                            "products": {
-                                "prkey2": {
-                                    "shoppinglist": "slkey2",
-                                    "quantity": 0,
-                                    "used": 0
-                                }
-                            }
-                        }
-                    }
+                "startdate": 0,
+                "days": {
+                    "dakey1": 1,
+                    "dakey2": 2,
                 }
             },
             "pdkey2": {
+                "name": "",
+                "startdate": 0,
+                "days": {
+                }
+            }
+        },
+        "days": {
+            "dakey1": {
+                "date": 0,
+                "productgroups": {
+                    "pgkey1": 1,
+                    "pgkey2": 2,
+                }
+            }
+        },
+        "daygroductgroups": {
+            "dakey1":{
+                "pgkey1": {
+                    "quantity": 0,
+                },
+                "pgkey2": {
+                    "quantity": 0,
+                }
+            }
+        },
+        "dayproductgroupproducts": {
+            "dakey1":{
+                "pgkey1": {
+                    "prkey1": {
+                        "shoppinglist": "slkey1",
+                        "used": 0
+                    }
+                },
+                "pgkey2": {
+                    "prkey2": {
+                        "shoppinglist": "slkey2",
+                        "used": 0
+                    }
+                }
             }
         },
         "shoppinglists": {
@@ -92,3 +104,5 @@
     }
 }
 ```
+
+

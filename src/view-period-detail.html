@@ -21,6 +21,11 @@
 <link rel="import" href="../bower_components/paper-checkbox/paper-checkbox.html">
 
 <link rel="import" href="shared-styles.html">
+<link rel="import" href="object-list-behavior.html">
+<link rel="import" href="search-filter-behavior.html">
+<link rel="import" href="collapsible-behavior.html">
+
+<link rel="import" href="period-day.html">
 
 <dom-module id="view-period-detail">
 
@@ -41,6 +46,9 @@
                 bottom: 20px;
                 right: 20px;
             }
+            .day h3{
+                margin-top: 5px;
+            }
             .shoppinglist{
                 background-color: #ffffff;
             }
@@ -49,9 +57,6 @@
             }
             paper-icon-button{
                 color: #555555;
-            }
-            .reorder{
-                width: 40px;
             }
             .productgroup .name{
                 min-width: 200px;
@@ -80,77 +85,27 @@
                 min-width: 300px;
             }
             paper-input{
-                margin-top: -8px;
-                margin-bottom: -8px;
+                /*margin-top: -8px;
+                margin-bottom: -8px;*/
             }
         </style>
 
         <firebase-document app-name="kokkies" path="/[[user.uid]]/periods/[[periodKey]]" data="{{period}}"></firebase-document>
-
-        <firebase-document app-name="kokkies" path="/[[user.uid]]/days/[[periodKey]]" data="{{days}}"></firebase-document>
         <firebase-document app-name="kokkies" path="/[[user.uid]]/shoppinglists/[[periodKey]]" data="{{shoppinglists}}"></firebase-document>
        
+
         <app-route route="{{route}}" pattern="/:key" data="{{routeData}}" tail="{{subroute}}"></app-route>
         
-        
-        <paper-input label="Periode" value="{{period.name}}"></paper-input>
+        <div class="horizontal layout">
+            <paper-input label="Periode" value="{{period.name}}"></paper-input>
+            <div class="flex">&nbsp;</div>
+            <paper-input label="Start Datum" value="{{period.startdate}}" pattern="[0-9][0-9]-[0-9][0-9]-[0-9][0-9][0-9][0-9]" auto-validate error-message="dd-mm-yyyy"></paper-input>
+        </div>
 
-        <template is="dom-repeat" items="{{_toArray(days)}}" as="day">
-            <paper-material class="day vertical layout">
-                <div class="btn horizontal layout" on-tap="_toggleCollapse">
-                    <h3 class="flex">Dag [[_plusOne(index)}}</h3>
-                    <div class="date">{{day.val.date}}</div>
-                </div>
+        <template is="dom-repeat" items="{{_toArray(period.days)}}" as="day" sort=_sortByVal>
 
-                <iron-collapse>
-                    <div class="content">
-                        <template is="dom-repeat" items="{{_toArray(day.val.productgroups)}}" as="productgroup">
-                            <paper-material class="productgroup vertical layout">
-                                <div class="horizontal layout center">
-                                    <div class="reorder btn"><iron-icon icon="reorder"></iron-icon></div>
-                                    <div class="name btn" on-tap="_toggleCollapse">{{_getObjectListProperty(productgroups,productgroup.key,'name')}}</div>
-                                    <div class="quantity"><paper-input label="Aantal" value="{{productgroup.val.quantity}}" on-change="_handleProductgroupQuantityChange" day-key="[[day.key]]"></paper-input></div>
-                                </div>
-                                
-                                <iron-collapse>
-                                    <div class="content product-list">
-                                        <template is="dom-repeat" items="{{_toArray(productgroup.val.products)}}" as="product">
-                                            <div class="product horizontal layout center">
-                                                <div class="name">{{_getObjectListProperty(products,product.key,'name')}}</div>
-                                                <div class="quantity"><paper-input label="Hoeveelheid" value="{{_round(product.val.quantity)}}" disabled></paper-input></div>
-                                                <div class="unit">{{_getObjectListProperty(products,product.key,'unit')}}</div>
-                                                <div class="shoppinglist">
-                                                    <paper-dropdown-menu label="Winkellijst">
-                                                        <paper-listbox class="dropdown-content" attr-for-selected="key" selected="{{product.val.shoppinglist}}" on-iron-select="_handleProductShoppinglistChange" day-key="[[day.key]]" productgroup-key="[[productgroup.key]]">
-                                                            <template is="dom-repeat" items="{{_toArray(shoppinglists)}}" as="shoppinglist">
-                                                                <paper-item key="[[shoppinglist.key]]">{{shoppinglist.val.name}}</paper-item>
-                                                            </template>
-                                                        </paper-listbox>
-                                                    </paper-dropdown-menu>
-                                                </div>
-                                                <div class="flex">&nbsp;</div>
-                                                <div class="quantity"><paper-input label="Gebruikt" value="{{product.val.used}}" on-change="_handleProductUsedChange" ></paper-input></div>
-                                                <div class="unit">{{_getObjectListProperty(products,product.key,'unit')}}</div>
-                                            </div>
-                                        </template>
-                                    </div>
-                                    <div class="edit-uncollapsed">
-                                        <paper-icon-button icon="create"></paper-icon-button>
-                                        <paper-icon-button icon="delete" on-tap="deleteProductgroupDialog"></paper-icon-button>
-                                    </div>
-                                </iron-collapse>
-                                
-                            </paper-material>
-                        </template>
-                        
-                        <paper-button raised on-tap="addProductgroupDialog">Gerecht toevoegen</paper-button>
-                    </div>
-                    <div class="edit-uncollapsed">
-                        <paper-icon-button icon="delete" on-tap="deleteDayDialog"></paper-icon-button>
-                    </div>
-                </iron-collapse>
+            <period-day user="[[user]]" key="[[day.key]]" number="[[day.val]]" date="[[_computeDayDate(period.startdate,day.val)]]" products="{{products}}" productgroups="{{productgroups}}" on-delete="deleteDay" on-move-up="moveUpDay" on-move-down="moveDownDay"></period-day>
 
-            </paper-material>
         </template>
         
         <paper-button raised on-tap="newDay">Dag toevoegen</paper-button>
@@ -162,7 +117,8 @@
         
         <template is="dom-repeat" items="{{_toArray(shoppinglists)}}" as="shoppinglist">
             <paper-material class="shoppinglist vertical layout">
-                <div class="btn horizontal layout center" on-tap="_toggleCollapse">
+                <div class="horizontal layout center">
+                    <div class="collapse btn" on-tap="_toggleCollapse"><iron-icon icon="expand-more"></iron-icon></div>
                     <div class="name"><paper-input label="Naam" value="{{shoppinglist.val.name}}" on-change="_handleShoppinlgistNameChange"></div>
                     <div class="flex">&nbsp;</div>
                     <div class="date">{{shoppinglist.val.date}}</div>    
@@ -189,36 +145,7 @@
         
         
         
-        <paper-dialog id="deleteProductgroupDialog">
-            <h2>Are you sure?</h2>
-            <div class="buttons">
-                <paper-button dialog-dismiss>Cancel</paper-button>
-                <paper-button dialog-confirm on-tap="deleteProductgroup">Delete</paper-button>
-            </div>
-        </paper-dialog>
         
-        <paper-dialog id="deleteDayDialog">
-            <h2>Are you sure?</h2>
-            <div class="buttons">
-                <paper-button dialog-dismiss>Cancel</paper-button>
-                <paper-button dialog-confirm on-tap="deleteDay">Delete</paper-button>
-            </div>
-        </paper-dialog>
-
-
-        <paper-dialog id="addProductgroupDialog">
-            <paper-button class="close" dialog-dismiss>close</paper-button>
-            <paper-dialog-scrollable>
-                <h3>Gerecht toevoegen</h3>
-                <paper-input label="search" no-label-float value="{{productgroupSearch}}"><iron-icon icon="search" suffix></iron-icon></paper-input>
-                <template is="dom-repeat" items="{{_toArray(productgroups)}}" as="productgroup" filter="{{_computeFilter(productgroupSearch)}}" observe="name">
-                    <paper-material class="productgroup btn horizontal layout wrap" on-tap="addProductgroupToDay">
-                        <div class="name">{{productgroup.val.name}}</div>
-                    </paper-material>
-                </template>
-            </paper-dialog-scrollable>
-        </paper-dialog>
-
         
     </template>
 
@@ -226,6 +153,13 @@
 
         Polymer({
             is: 'view-period-detail',
+
+            behaviors: [
+                objectListBehavior,
+                searchFilterBehavior,
+                collapsibleBehavior,
+            ],
+
             properties:{
                 user: {
                     type: 'Object'
@@ -248,80 +182,105 @@
                 '_productgroupsChanged(productgroups.*)',
             ],
 
-            _toggleCollapse: function(e){
-                //try{
-                    var parent = Polymer.dom(e).rootTarget.offsetParent;
-                    parent.querySelector('iron-collapse').toggle();
-                /*}
-                catch(e){
-                }*/
-            },
-            
-            _plusOne: function(n){
-                return n+1;
-            },
            
             newDay: function(e){
                 var key = btoa(this.user.uid + Date.now());
-                
-                this.set('days.'+key,{'date':0,'productgroups':{}});
+
+                if(typeof this.period.days == 'undefined'){
+                    this.set('period.days',{});
+                }
+                this.set('period.days.'+key,Object.keys(this.period.days).length+1);
             },
             
-            deleteDayDialog: function(e){
-                e.stopPropagation();
-                this.deleteDayKey = e.model.__data__.day.key;
-                this.$.deleteDayDialog.open();
+            deleteDay: function(e,d){
+                this.set('period.days.'+d,null);
+                
+                // reset numbers
+                var object = this.period.days;
+                var array = []
+                for( key in object){
+                    if( object[key] != null ){
+                        array.push([key,object[key]])
+                    }
+                }
+                array.sort(function(a, b) {
+                    return a[1] - b[1];
+                });
+
+                for(var i=0;i<array.length;i++){
+                    this.set('period.days.'+array[i][0],i+1)
+                }
+
+                //this.calculateProducts();
             },
 
-            deleteDay: function(e){
-                this.set('days.'+this.deleteDayKey,null);
+            _computeDayDate: function(startdate,number){
+                var parts = startdate.split("-");
+                d = new Date(parts[2], parts[1] - 1, parts[0])
+                d.setDate(d.getDate() + number-1)
+                
+                var day = ['Zondag', 'Maandag', 'Dinsdag', 'Woensdag','Donderdag', 'Vrijdag', 'Zaterdag'];
 
-                this.calculateProducts();
+                var dayindex = d.getDay();
+                var date = d.getDate();
+                var month = d.getMonth()+1;
+                var year = d.getFullYear();
+
+                return day[dayindex] +' ' + date + '-' + month + '-' + year;
             },
+
+            moveUpDay: function(e,d){
+                var object = this.period.days;
+                var val = object[d];
+
+                if(val!=1){
+                    for(key in object){
+                        if(object[key] == val-1){
+                            this.set('period.days.'+key,val);
+                        }
+                    }
+                    this.set('period.days.'+d,val-1);
+                }
+            },
+
+            moveDownDay: function(e,d){
+                var object = this.period.days;
+                var val = object[d];
+
+                if(val!=Object.keys(object).length){
+                    for( key in object){
+                        if(object[key] == val+1){
+                            this.set('period.days.'+key,val);
+                        }
+                    }
+                    this.set('period.days.'+d,val+1);
+                }
+            },
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
             newShoppinglist: function(e){
                 var key = btoa(this.user.uid + Date.now());
                 this.set('shoppinglists.'+key,{'name':'newlist','date':0,'products':{}});
             },
             
-            addProductgroupDialog: function(e){
-                this.dayKey = e.model.__data__.day.key
-                this.$.addProductgroupDialog.open();
-            },
-            
-            addProductgroupToDay: function(e){
-                var key = e.model.__data__.productgroup.key;
-                var dayKey = this.dayKey;
-                
-                if(typeof this.days[dayKey].productgroups == 'undefined'){
-                    this.set('days.'+dayKey+'.productgroups',{})
-                }
-
-                if(typeof this.days[dayKey].productgroups[key] == 'undefined'){
-                    // add the key
-                    this.set('days.'+dayKey+'.productgroups.'+key,{'quantity':0,'products':{}});
-                }
-                this.$.addProductgroupDialog.close();
-                
-                var dayKeys = {};
-                dayKeys[dayKey] = true;
-                this.calculateProducts(dayKeys);
-            },
-            
-            deleteProductgroupDialog: function(e){
-                e.stopPropagation();
-                this.deleteProductgroupDayKey = e.model.__data__.day.key;
-                this.deleteProductgroupKey = e.model.__data__.productgroup.key;
-                this.$.deleteProductgroupDialog.open();
-            },
-
-            deleteProductgroup: function(e){
-                this.set('days.'+this.deleteProductgroupDayKey+'.productgroups.'+this.deleteProductgroupKey,null);
-                
-                var dayKeys = {};
-                dayKeys[this.deleteProductgroupDayKey] = true;
-                this.calculateProducts(dayKeys);
-            },
 
             calculateProducts: function(dayKeys){
             
@@ -420,8 +379,6 @@
                 this.calculateProducts();
             },
             
-            
-            
             _round: function(val){
                 var decimals = 0;
                 if(val < 20){
@@ -441,30 +398,6 @@
 
             _getProducts: function(change){
                 return this._toArray(change.base.products);
-            },
-
-            _toArray: function(obj){
-                if(typeof obj != 'undefined' && obj !== null){
-                    var array = Object.keys(obj).map(function(key){
-                        if(obj[key] != null){
-                            return {key:key, val:obj[key]};
-                        }
-                    });
-                    // remove undefined elements
-                    array = array.filter(function( val ) {
-                       return val !== undefined;
-                    });
-                    return array;
-                }
-            },
-
-            _computeFilter: function(string){
-
-                string = string.toLowerCase();
-                return function(product) {
-                    var name = product.val.name.toLowerCase();
-                    return (name.indexOf(string) != -1 );
-                  };
             },
             
             _handleProductgroupQuantityChange: function(e){
