@@ -104,7 +104,7 @@
 
         <template is="dom-repeat" items="{{_toArray(period.days)}}" as="day" sort=_sortByVal>
 
-            <period-day user="[[user]]" key="[[day.key]]" number="[[day.val]]" date="[[_computeDayDate(period.startdate,day.val)]]" products="{{products}}" productgroups="{{productgroups}}" on-delete="deleteDay" on-move-up="moveUpDay" on-move-down="moveDownDay"></period-day>
+            <period-day user="[[user]]" key="[[day.key]]" number="[[day.val]]" date="[[_computeDayDate(period.startdate,day.val)]]" products="{{products}}" productgroups="{{productgroups}}" shoppinglists="{{shoppinglists}}" on-delete="deleteDay" on-move-up="moveUpDay" on-move-down="moveDownDay"></period-day>
 
         </template>
         

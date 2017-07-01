@@ -71,9 +71,11 @@
             <iron-collapse>
                 <div class="content">
 
-                    <template is="dom-repeat" items="{{_toArray(day.productgroups)}}" as="productgroup" sort=_sortByVal>
-                        <day-productgroup user="[[user]]" day="[[key]]" key="[[productgroup.key]]" products="{{products}}" productgroups="{{productgroups}}" on-delete="deleteProductgroup" on-move-up="moveUpProductgroup" on-move-down="moveDownProductgroup"></day-productgroup>
-                    </template>
+                    <sortable-js id="sortable" group="dayProductgroups" handle=".drag-handle" on-update="_handleSortable" on-add="_handleSortable" on-remove="_handleSortable">
+                        <template is="dom-repeat" items="{{sortableArray}}" as="productgroup">
+                            <day-productgroup user="[[user]]" day="[[key]]" key="[[productgroup.key]]" products="{{products}}" productgroups="{{productgroups}}" on-delete="deleteProductgroup" on-move-up="moveUpProductgroup" on-move-down="moveDownProductgroup"></day-productgroup>
+                        </template>
+                    </sortable-js>
 
                     <paper-button raised on-tap="addProductgroupDialog">Gerecht toevoegen</paper-button>
 
@@ -146,6 +148,10 @@
                 },
             },
 
+            observers: [
+                '_updateSortableArray(day.productgroups)'
+            ],
+
             addProductgroupDialog: function(e){
                 this.$.addProductgroupDialog.open();
             },
@@ -202,6 +208,78 @@
                 }
 
                 //this.calculateProducts();
+            },
+
+
+
+            _updateSortableArray: function(val){
+                console.log(val)
+                if(typeof val != 'undefined'){
+                    
+                    if(typeof this.sortableArray == 'undefined'){
+                        this.sortableArray = this._toArraySortByVal(val);
+                    }
+                    else if(Object.keys(val).length > Object.keys(this.sortableArray).length){
+                        // push the last element
+                        var sorted = this._toArraySortByVal(val)
+                        this.push('sortableArray',sorted[sorted.length-1])
+                    }
+                    else if(Object.keys(val).length < Object.keys(this.sortableArray).length){
+
+                        for(var i=0;i<this.sortableArray.length;i++){
+                            if( !(this.sortableArray[i].key in val) ){
+                                this.splice('sortableArray',i,1)
+                                break;
+                            }
+                        }
+                    }
+                }
+            },
+
+            _handleSortable: function(e){
+
+                console.log('_handleSortable')
+                console.log(e)
+                console.log(e.type)
+                console.log(this.sortableArray)
+
+                if(e.type == 'sort'){
+                    var order = {}
+                    for(var i=0;i<this.sortableArray.length;i++){
+                        order[this.sortableArray[i].key] = i+1;
+                    }
+                    for(key in order){
+                        //this.day.productgroups[key] = order[key];
+                        this.set( 'day.productgroups.'+key, order[key] )
+                    }
+
+                    this.notifyPath('day.productgroups')
+                }
+                else if(e.type == 'add'){
+                    for(var i=0;i<this.sortableArray.length;i++){
+                        if(!(this.sortableArray[i].key in this.day.productgroups)){
+                            //console.log(this.sortableArray[i])
+                            //this.set( 'day.productgroups.'+this.sortableArray[i].key, this.sortableArray[i].val );
+                            break;
+                        }
+                    }
+                }
+                else if(e.type == 'remove'){
+                    for(key in this.day.productgroups){
+                        var remove = true;
+                        for(var i=0;i<this.sortableArray.length;i++){
+                            if( this.sortableArray[i].key == key ){
+                                remove = false;
+                                break;
+                            }
+                        }
+                        if(remove){
+                            console.log('day.productgroups.'+key)
+                            //this.set( 'day.productgroups.'+key, null );
+                            break;
+                        }
+                    }
+                }
             },
 
             moveUpProductgroup: function(e,d){
