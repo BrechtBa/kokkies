@@ -148,12 +148,12 @@
             newShoppinglist: function(e){
                 var key = btoa(this.user.uid + Date.now());
 
-                if(typeof this.period.shoppinglists == 'undefined'){
-                    this.set('period.shoppinglists',{});
+                if(typeof this.shoppinglists == 'undefined'){
+                    this.set('shoppinglists',{});
                 }
 
-                this.set('period.shoppinglists.'+key,Object.keys(this.period.shoppinglists).length+1);  //{'name':'newlist','date':0,'products':{}}
-                console.log(this.period.shoppinglists)
+                this.set('shoppinglists.'+key,Object.keys(this.shoppinglists).length+1);  //{'name':'newlist','date':0,'products':{}}
+                console.log(this.shoppinglists)
             },
             
             _routeKeyChanged(key){
