@@ -59,7 +59,9 @@
             }
         </style>
 
-        <firebase-document app-name="kokkies" path="/[[user.uid]]/days/[[key]]" data="{{day}}"></firebase-document>
+        <firebase-document app-name="kokkies" path="/[[user.uid]]/days/[[period]]/[[key]]" data="{{day}}"></firebase-document>
+
+
 
         <paper-material class="vertical layout">
             <div class="horizontal layout">
@@ -73,7 +75,7 @@
 
                     <sortable-js id="sortable" group="dayProductgroups" handle=".drag-handle" on-update="_handleSortable" on-add="_handleSortable" on-remove="_handleSortable">
                         <template is="dom-repeat" items="{{sortableArray}}" as="productgroup">
-                            <day-productgroup user="[[user]]" day="[[key]]" key="[[productgroup.key]]" products="{{products}}" productgroups="{{productgroups}}" on-delete="deleteProductgroup" on-move-up="moveUpProductgroup" on-move-down="moveDownProductgroup"></day-productgroup>
+                            <day-productgroup user="[[user]]" period="[[period]]" day="[[key]]" key="[[productgroup.key]]" products="{{products}}" productgroups="{{productgroups}}" shoppinglists="{{shoppinglists}}" on-delete="deleteProductgroup" on-move-up="moveUpProductgroup" on-move-down="moveDownProductgroup"></day-productgroup>
                         </template>
                     </sortable-js>
 
@@ -129,6 +131,9 @@
                 user: {
                     type: Object
                 },
+                period: {
+                    type: String,
+                },
                 key: {
                     type: String,
                 },
@@ -145,6 +150,9 @@
                 productgroups: {
                     type: Object,
                     notify: true,
+                },
+                shoppinglists: {
+                    type: Object,
                 },
             },
 

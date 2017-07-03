@@ -20,12 +20,16 @@
 <link rel="import" href="../bower_components/paper-item/paper-item.html">
 <link rel="import" href="../bower_components/paper-checkbox/paper-checkbox.html">
 
+<link rel="import" href="../bower_components/polymerfire/firebase-document.html">
+<link rel="import" href="../bower_components/polymerfire/firebase-query.html">
+
 <link rel="import" href="shared-styles.html">
 <link rel="import" href="object-list-behavior.html">
 <link rel="import" href="search-filter-behavior.html">
 <link rel="import" href="collapsible-behavior.html">
 
 <link rel="import" href="period-day.html">
+<link rel="import" href="period-shoppinglist.html">
 
 <dom-module id="view-period-detail">
 
@@ -92,7 +96,10 @@
 
         <firebase-document app-name="kokkies" path="/[[user.uid]]/periods/[[periodKey]]" data="{{period}}"></firebase-document>
         <firebase-document app-name="kokkies" path="/[[user.uid]]/shoppinglists/[[periodKey]]" data="{{shoppinglists}}"></firebase-document>
-       
+
+        <firebase-document app-name="kokkies" path="/[[user.uid]]/dayproductgroups/[[periodKey]]" data="{{dayproductgroups}}"></firebase-document>
+        <firebase-document app-name="kokkies" path="/[[user.uid]]/dayproductgroupproducts/[[periodKey]]" data="{{dayproductgroupproducts}}"></firebase-document>
+
 
         <app-route route="{{route}}" pattern="/:key" data="{{routeData}}" tail="{{subroute}}"></app-route>
         
@@ -104,7 +111,7 @@
 
         <template is="dom-repeat" items="{{_toArray(period.days)}}" as="day" sort=_sortByVal>
 
-            <period-day user="[[user]]" key="[[day.key]]" number="[[day.val]]" date="[[_computeDayDate(period.startdate,day.val)]]" products="{{products}}" productgroups="{{productgroups}}" shoppinglists="{{shoppinglists}}" on-delete="deleteDay" on-move-up="moveUpDay" on-move-down="moveDownDay"></period-day>
+            <period-day user="[[user]]" period="[[periodKey]]" key="[[day.key]]" number="[[day.val]]" date="[[_computeDayDate(period.startdate,day.val)]]" products="{{products}}" productgroups="{{productgroups}}" shoppinglists="{{shoppinglists}}" on-delete="deleteDay" on-move-up="moveUpDay" on-move-down="moveDownDay"></period-day>
 
         </template>
         
@@ -115,29 +122,10 @@
         
         <h2>Winkellijstjes</h2>
         
-        <template is="dom-repeat" items="{{_toArray(shoppinglists)}}" as="shoppinglist">
-            <paper-material class="shoppinglist vertical layout">
-                <div class="horizontal layout center">
-                    <div class="collapse btn" on-tap="_toggleCollapse"><iron-icon icon="expand-more"></iron-icon></div>
-                    <div class="name"><paper-input label="Naam" value="{{shoppinglist.val.name}}" on-change="_handleShoppinlgistNameChange"></div>
-                    <div class="flex">&nbsp;</div>
-                    <div class="date">{{shoppinglist.val.date}}</div>    
-                </div>
+        <template is="dom-repeat" items="{{_toArray(period.shoppinglists)}}" as="shoppinglist">
 
-                <iron-collapse>
-                    <div class="content vertical layout">
-                        <template is="dom-repeat" items="{{_toArray(shoppinglist.val.products)}}" as="product">
-                            <paper-material class="product horizontal layout center">
-                                <div class="name">{{_getObjectListProperty(products,product.key,'name')}}</div>
-                                <div class="quantity">{{_round(product.val.quantity)}}</div>
-                                <div class="unit flex">{{_getObjectListProperty(products,product.key,'unit')}}</div>
-                                <div class="checked"><paper-checkbox checked="{{product.val.checked}}" on-change="_handleShoppinglistProductCheckedChange" shoppinglist-key="[[shoppinglist.key]]"></paper-checkbox></div>
-                            </paper-material>
-                        </template>
-                    </div>
-                </iron-collapse>
+            <period-shoppinglist user="[[user]]" period="[[periodKey]]" key="{{shoppinglist.key}}" dayproductgroups="{{dayproductgroups}}" dayproductgroupproducts="{{dayproductgroupproducts}}" products="{{products}}" productgroups="{{productgroups}}" ></period-shoppinglist>
 
-            </paper-material>
         </template>
         
         <paper-button raised on-tap="newShoppinglist">Winkellijst toevoegen</paper-button>
@@ -258,27 +246,15 @@
             },
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
             newShoppinglist: function(e){
                 var key = btoa(this.user.uid + Date.now());
-                this.set('shoppinglists.'+key,{'name':'newlist','date':0,'products':{}});
+
+                if(typeof this.period.shoppinglists == 'undefined'){
+                    this.set('period.shoppinglists',{});
+                }
+
+                this.set('period.shoppinglists.'+key,Object.keys(this.period.shoppinglists).length+1);  //{'name':'newlist','date':0,'products':{}}
+                console.log(this.period.shoppinglists)
             },
             
 

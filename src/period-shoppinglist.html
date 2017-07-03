@@ -1,0 +1,182 @@
+<link rel="import" href="../bower_components/polymer/polymer.html">
+
+<link rel="import" href="../bower_components/iron-flex-layout/iron-flex-layout-classes.html">
+<link rel="import" href="../bower_components/iron-icons/iron-icons.html">
+
+<link rel="import" href="../bower_components/paper-icon-button/paper-icon-button.html">
+<link rel="import" href="../bower_components/paper-material/paper-material.html">
+<link rel="import" href="../bower_components/paper-dialog/paper-dialog.html">
+<link rel="import" href="../bower_components/paper-input/paper-input.html">
+<link rel="import" href="../bower_components/paper-checkbox/paper-checkbox.html">
+
+<link rel="import" href="shared-styles.html">
+
+<dom-module id="period-shoppinglist">
+
+    <template>
+
+        <style include="iron-flex iron-flex-alignment"></style>
+        <style include="shared-styles"></style>
+        <style>
+            :host {
+                display: block;
+            }
+            .product .name{
+                max-width: 200px;
+            }
+            .product .quantity{
+                width: 40px;
+                text-align: right;
+            }
+            .product .unit{
+                width: 40px;
+                margin-left: 3px;
+            }
+            .product .secondquantity{
+                width: 40px;
+                text-align: right;
+            }
+        </style>
+        
+
+        <firebase-document app-name="kokkies" path="/[[user.uid]]/shoppinglists/[[period]]/[[key]]" data="{{shoppinglist}}"></firebase-document>
+
+
+        <paper-material class="shoppinglist vertical layout">
+            <div class="horizontal layout center">
+                <div class="collapse btn" on-tap="_toggleCollapse"><iron-icon icon="expand-more"></iron-icon></div>
+                <div class="name"><paper-input label="Naam" value="{{shoppinglist.name}}"></div>
+                <div class="flex">&nbsp;</div>
+                <div class="date"><paper-input label="Datum" value="{{shoppinglist.date}}"></div>
+            </div>
+
+            <iron-collapse>
+                <div class="content vertical layout">
+
+                    <template is="dom-repeat" items="{{_toArray(shoppinglistproducts)}}" as="product">
+
+                        <paper-material class="product horizontal layout center">
+                            <div class="name">{{_getObjectProperty(products,product.key,'name')}}</div>
+                            <div class="quantity">{{_round(product.val.quantity)}}</div>
+                            <div class="unit flex">{{_getObjectProperty(products,product.key,'unit')}}</div>
+                            <div class="checked"><paper-checkbox checked="{{product.val.checked}}" on-change="_handleShoppinglistProductCheckedChange" shoppinglist-key="[[shoppinglist.key]]"></paper-checkbox></div>
+                        </paper-material>
+
+                    </template>
+                </div>
+            </iron-collapse>
+
+        </paper-material>
+
+
+
+        <!--<h2>Shoppinglist</h2>
+
+        <h3>Products</h3>
+        <template is="dom-repeat" items="{{_toArray(shoppinglist.products)}}" as="product">
+            <div class="product horizontal layout center">
+                <div class="flex horizontal layout center wrap">
+                    <div class="name flex">{{_getObjectListProperty(products,product.key,'name')}}</div>
+                    <div class="quantity"><paper-input label="Quantity" value="{{product.val.quantity}}" no-label-float="true" on-change="_handleProductQuantityChange"></paper-input></div>
+                    <div class="unit">{{_getObjectListProperty(products,product.key,'unit')}}</div>
+                    <!--<div class="secondquantity">{{_getProductSecondQuantity(products,product.key,product.quantity)}}</div>
+                    <div class="unit">{{_getObjectListProperty(products,product.key,'secondunit')}}</div>-->
+                <!--</div>
+                <paper-icon-button icon="delete" raised on-tap="deleteProduct">Delete</paper-icon-button>
+            </div>
+        </template>
+
+        <h3>Product groups</h3>
+        <template is="dom-repeat" items="{{_toArray(shoppinglist.productgroups)}}" as="productgroup">
+            <div class="product horizontal layout center">
+                <div class="flex horizontal layout center wrap">
+                    <div class="name flex">{{_getObjectListProperty(productgroups,productgroup.key,'name')}}</div>
+                    <div class="quantity"><paper-input label="Quantity" value="{{productgroup.val.quantity}}" no-label-float="true" on-change="_handleProductgroupQuantityChange"></paper-input></div>
+                    <div class="unit">&nbsp;</div>
+                </div>
+                <paper-icon-button icon="delete" raised on-tap="deleteProductgroup">Delete</paper-icon-button>
+            </div>
+        </template>-->
+
+
+    </template>
+
+    <script>
+
+        Polymer({
+
+            is: 'period-shoppinglist',
+
+            behaviors: [
+                objectListBehavior,
+                searchFilterBehavior,
+                collapsibleBehavior,
+            ],
+
+            properties:{
+                user: {
+                    type: Object
+                },
+                period: {
+                    type: String,
+                },
+                key: {
+                    type: String,
+                },
+                dayproductgroups: {
+                    type: Object,
+                },
+                dayproductgroupproducts: {
+                    type: Object,
+                },
+                products: {
+                    type: Object,
+                    notify: true,
+                },
+                productgroups: {
+                    type: Object,
+                    notify: true,
+                },
+            },
+
+            observers: [
+                '_calculateShoppinglist(key,dayproductgroups,dayproductgroupproducts,productgroups,products)'
+            ],
+
+            _calculateShoppinglist: function(key,dayproductgroups,dayproductgroupproducts,productgroups,products){
+
+                var shoppinglistproducts = {};
+
+                for(day in dayproductgroups){
+                    for(productgroup in dayproductgroups[day]){
+                        var productgroupquantity = dayproductgroups[day][productgroup].quantity
+
+                        if(typeof dayproductgroupproducts[day] != 'undefined'){
+
+                            for(product in dayproductgroupproducts[day][productgroup]){
+                                if(dayproductgroupproducts[day][productgroup][product].shoppinglist == key){
+
+                                    if(typeof shoppinglistproducts[product] == 'undefined'){
+                                        shoppinglistproducts[product] = {'quantity':0}
+                                    }
+                                    shoppinglistproducts[product].quantity += productgroupquantity*productgroups[productgroup].products[product].quantity
+                                }
+
+                            }
+                        }
+
+                    }
+                }
+
+                this.set('shoppinglistproducts',shoppinglistproducts);
+            },
+
+
+            _round: function(val){
+                return val;
+            }
+        });
+
+    </script>
+
+</dom-module>

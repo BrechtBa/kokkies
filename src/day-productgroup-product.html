@@ -51,7 +51,7 @@
             }
         </style>
 
-        <firebase-document app-name="kokkies" path="/[[user.uid]]/dayproductgroupproducts/[[day]]/[[productgroup]]/[[key]]" data="{{dayproductgroupproduct}}"></firebase-document>
+        <firebase-document app-name="kokkies" path="/[[user.uid]]/dayproductgroupproducts/[[period]]/[[day]]/[[productgroup]]/[[key]]" data="{{dayproductgroupproduct}}"></firebase-document>
 
         <div class=" horizontal layout center">
             <div class="name">{{_getObjectProperty(products,key,'name')}}</div>
@@ -87,6 +87,9 @@
             properties:{
                 user: {
                     type: Object
+                },
+                period: {
+                    type: String,
                 },
                 day: {
                     type: String
