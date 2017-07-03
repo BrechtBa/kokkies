@@ -167,11 +167,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
                 this.$.auth.signInWithPopup();
                 //this.$.auth.signInWithEmailAndPassword(e.detail.email,e.detail.password);
             },
-            signOutDialog: function(e){
-                this.$.signOutDialog.open();
-            },
             signOut: function(){
-                this.$.signOutDialog.close();
                 this.$.auth.signOut();
             },
             back: function(e){
