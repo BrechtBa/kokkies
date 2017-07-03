@@ -10,6 +10,7 @@
 <link rel="import" href="../bower_components/paper-checkbox/paper-checkbox.html">
 
 <link rel="import" href="shared-styles.html">
+<link rel="import" href="shoppinglist-product.html">
 
 <dom-module id="period-shoppinglist">
 
@@ -20,21 +21,6 @@
         <style>
             :host {
                 display: block;
-            }
-            .product .name{
-                max-width: 200px;
-            }
-            .product .quantity{
-                width: 40px;
-                text-align: right;
-            }
-            .product .unit{
-                width: 40px;
-                margin-left: 3px;
-            }
-            .product .secondquantity{
-                width: 40px;
-                text-align: right;
             }
         </style>
         
@@ -55,12 +41,7 @@
 
                     <template is="dom-repeat" items="{{_toArray(shoppinglistproducts)}}" as="product">
 
-                        <paper-material class="product horizontal layout center">
-                            <div class="name">{{_getObjectProperty(products,product.key,'name')}}</div>
-                            <div class="quantity">{{_round(product.val.quantity)}}</div>
-                            <div class="unit flex">{{_getObjectProperty(products,product.key,'unit')}}</div>
-                            <div class="checked"><paper-checkbox checked="{{product.val.checked}}" on-change="_handleShoppinglistProductCheckedChange" shoppinglist-key="[[shoppinglist.key]]"></paper-checkbox></div>
-                        </paper-material>
+                        <shoppinglist-product user="[[user]]" period="[[period]]" shoppinglist="{{key}}" key="{{product.key}}" quantity="{{product.val.quantity}}" checked="{{product.val.checked}}" products="{{products}}"></shoppinglist-product>
 
                     </template>
                 </div>
@@ -145,6 +126,13 @@
 
             _calculateShoppinglist: function(key,dayproductgroups,dayproductgroupproducts,productgroups,products){
 
+                var oldshoppinglistproducts = {}
+                if(typeof shoppinglistproducts != 'undefined'){
+                    oldshoppinglistproducts = JSON.parse(JSON.stringify(this.shoppinglistproducts));
+                }
+
+
+                // calculate the newe quantities
                 var shoppinglistproducts = {};
 
                 for(day in dayproductgroups){
@@ -168,13 +156,25 @@
                     }
                 }
 
+                // set the checked attributes
+                for(product in shoppinglistproducts){
+                    if(product in oldshoppinglistproducts){
+                        if(shoppinglistproducts[product].quantity == oldshoppinglistproducts[product].quantity){
+                            shoppinglistproducts[product].checked = oldshoppinglistproducts[product].checked;
+                        }
+                        else{
+                            shoppinglistproducts[product].checked = false;
+                        }
+                    }
+                    else{
+                        shoppinglistproducts[product].checked = false;
+                    }
+                }
+
+                // bind and notify changes
                 this.set('shoppinglistproducts',shoppinglistproducts);
             },
 
-
-            _round: function(val){
-                return val;
-            }
         });
 
     </script>

@@ -24,12 +24,11 @@
 <link rel="import" href="../bower_components/polymerfire/firebase-query.html">
 
 <link rel="import" href="shared-styles.html">
-<link rel="import" href="object-list-behavior.html">
-<link rel="import" href="search-filter-behavior.html">
-<link rel="import" href="collapsible-behavior.html">
 
-<link rel="import" href="period-day.html">
-<link rel="import" href="period-shoppinglist.html">
+<link rel="import" href="view-period-detail-planning.html">
+<link rel="import" href="view-period-detail-productgroups.html">
+<link rel="import" href="view-period-detail-shoppinglists.html">
+
 
 <dom-module id="view-period-detail">
 
@@ -42,19 +41,27 @@
                 display: block;
                 padding: 10px;
             }
-            .day{
+            .period{
+                margin-left: 10px;
+                margin-right: 10px;
+                margin-top: 20px;
+                margin-bottom: 10px;
+            }
+
+            .detail{
                 background-color: #ffffff;
+                margin: 10px;
+                min-width: 200px;
             }
-            .day .edit-uncollapsed{
-                position: absolute;
-                bottom: 20px;
-                right: 20px;
+            .detail a{
+                text-decoration: none;
+                color: #222222;
             }
-            .day h3{
-                margin-top: 5px;
+            .icon{
+                height: 200px;
             }
-            .shoppinglist{
-                background-color: #ffffff;
+            .title{
+                font-size: 20px;
             }
             iron-icon{
                 color: #555555;
@@ -62,47 +69,73 @@
             paper-icon-button{
                 color: #555555;
             }
-            .productgroup .name{
-                min-width: 200px;
-            }
-            .productgroup .quantity{
-                width: 80px;
-            }
-            .productgroup .edit-uncollapsed{
-                position: absolute;
-                top: 10px;
-                right: 10px;
-            }
-            .product-list{
-                margin-left: 50px;
-            }
-            .product .name{
-                min-width: 150px;
-                margin-top: 20px;
-            }
-            .product .unit{
-                width: 50px;
-                margin-left: 5px;
-                margin-top: 20px;
-            }
-            .shoppinglist .name{
-                min-width: 300px;
-            }
-            paper-input{
-                /*margin-top: -8px;
-                margin-bottom: -8px;*/
-            }
         </style>
 
         <firebase-document app-name="kokkies" path="/[[user.uid]]/periods/[[periodKey]]" data="{{period}}"></firebase-document>
+        <firebase-document app-name="kokkies" path="/[[user.uid]]/productgroups/[[periodKey]]" data="{{productgroups}}"></firebase-document>
         <firebase-document app-name="kokkies" path="/[[user.uid]]/shoppinglists/[[periodKey]]" data="{{shoppinglists}}"></firebase-document>
-
-        <firebase-document app-name="kokkies" path="/[[user.uid]]/dayproductgroups/[[periodKey]]" data="{{dayproductgroups}}"></firebase-document>
-        <firebase-document app-name="kokkies" path="/[[user.uid]]/dayproductgroupproducts/[[periodKey]]" data="{{dayproductgroupproducts}}"></firebase-document>
 
 
         <app-route route="{{route}}" pattern="/:key" data="{{routeData}}" tail="{{subroute}}"></app-route>
         
+
+        <div class="period horizontal layout wrap">
+            <paper-input label="Periode" value="{{period.name}}"></paper-input>
+            <div class="flex">&nbsp;</div>
+            <paper-input label="Start Datum" value="{{period.startdate}}" pattern="[0-9][0-9]-[0-9][0-9]-[0-9][0-9][0-9][0-9]" auto-validate error-message="dd-mm-yyyy"></paper-input>
+        </div>
+
+
+        <iron-pages role="sub" selected="[[page]]" attr-for-selected="name">
+
+            <div name="base">
+                <div class="horizontal layout wrap">
+
+                    <paper-material class="detail flex vertical layout center">
+                        <a href="/periods/[[periodKey]]/planning">
+                            <div class="icon"></div>
+                            <div class="title">Planning</div>
+                        </a>
+                    </paper-material>
+
+                    <paper-material class="detail flex vertical layout center">
+                        <a href="/periods/[[periodKey]]/productgroups">
+                            <div class="icon"></div>
+                            <div class="title">Gerechten</div>
+                        </a>
+                    </paper-material>
+
+                    <paper-material class="detail flex vertical layout center">
+                        <a href="/periods/[[periodKey]]/shoppinglists">
+                            <div class="icon"></div>
+                            <div class="title">Winkellijstjes</div>
+                        </a>
+                    </paper-material>
+                </div>
+            </div>
+
+            <div name="planning">
+                <h1>Planning</h1>
+                <view-period-detail-planning user="[[user]]" period="[[periodKey]]" days="{{period.days}}" period-startdate="{{period.startdate}}" productgroups="{{productgroups}}" products="{{products}}" shoppinglists="{{shoppinglists}}"></view-period-detail-menu>
+            </div>
+            
+            <div name="productgroups">
+                <h1>Gerechten</h1>
+                <view-period-detail-productgroups user="[[user]]" period="[[periodKey]]" productgroups="{{period.productgroups}}" products="{{products}}"></view-period-detail-productgroups>
+            </div>
+
+            <div name="shoppinglists">
+                <h1>Winkellijstjes</h1>
+                <view-period-detail-shoppinglists user="[[user]]" period="[[periodKey]]" productgroups="{{productgroups}}" products="{{products}}" shoppinglists="{{period.shoppinglists}}"></view-period-detail-shoppinglists>
+            </div>
+
+        </iron-pages>
+
+
+
+
+
+<!--
         <div class="horizontal layout">
             <paper-input label="Periode" value="{{period.name}}"></paper-input>
             <div class="flex">&nbsp;</div>
@@ -129,7 +162,7 @@
         </template>
         
         <paper-button raised on-tap="newShoppinglist">Winkellijst toevoegen</paper-button>
-
+-->
         
         
         
@@ -156,10 +189,6 @@
                     type: 'Object',
                     notify: true
                 },
-                productgroups: {
-                    type: 'Object',
-                    notify: true
-                },
                 route: {
                     type: 'string'
                 }
@@ -167,285 +196,19 @@
 
             observers: [
                 '_routeKeyChanged(routeData.key)',
-                '_productgroupsChanged(productgroups.*)',
+                '_subroutePathChanged(subroute.path)'
             ],
 
-           
-            newDay: function(e){
-                var key = btoa(this.user.uid + Date.now());
-
-                if(typeof this.period.days == 'undefined'){
-                    this.set('period.days',{});
+            back: function(e){
+                if(typeof this.page == 'undefined' || this.page == '' || this.page == 'base'){
+                    this.set('route.path','');
                 }
-                this.set('period.days.'+key,Object.keys(this.period.days).length+1);
-            },
-            
-            deleteDay: function(e,d){
-                this.set('period.days.'+d,null);
-                
-                // reset numbers
-                var object = this.period.days;
-                var array = []
-                for( key in object){
-                    if( object[key] != null ){
-                        array.push([key,object[key]])
-                    }
-                }
-                array.sort(function(a, b) {
-                    return a[1] - b[1];
-                });
-
-                for(var i=0;i<array.length;i++){
-                    this.set('period.days.'+array[i][0],i+1)
-                }
-
-                //this.calculateProducts();
-            },
-
-            _computeDayDate: function(startdate,number){
-                var parts = startdate.split("-");
-                d = new Date(parts[2], parts[1] - 1, parts[0])
-                d.setDate(d.getDate() + number-1)
-                
-                var day = ['Zondag', 'Maandag', 'Dinsdag', 'Woensdag','Donderdag', 'Vrijdag', 'Zaterdag'];
-
-                var dayindex = d.getDay();
-                var date = d.getDate();
-                var month = d.getMonth()+1;
-                var year = d.getFullYear();
-
-                return day[dayindex] +' ' + date + '-' + month + '-' + year;
-            },
-
-            moveUpDay: function(e,d){
-                var object = this.period.days;
-                var val = object[d];
-
-                if(val!=1){
-                    for(key in object){
-                        if(object[key] == val-1){
-                            this.set('period.days.'+key,val);
-                        }
-                    }
-                    this.set('period.days.'+d,val-1);
+                else{
+                    this.set('route.path','/'+this.periodKey);
                 }
             },
 
-            moveDownDay: function(e,d){
-                var object = this.period.days;
-                var val = object[d];
-
-                if(val!=Object.keys(object).length){
-                    for( key in object){
-                        if(object[key] == val+1){
-                            this.set('period.days.'+key,val);
-                        }
-                    }
-                    this.set('period.days.'+d,val+1);
-                }
-            },
-
-
-            newShoppinglist: function(e){
-                var key = btoa(this.user.uid + Date.now());
-
-                if(typeof this.period.shoppinglists == 'undefined'){
-                    this.set('period.shoppinglists',{});
-                }
-
-                this.set('period.shoppinglists.'+key,Object.keys(this.period.shoppinglists).length+1);  //{'name':'newlist','date':0,'products':{}}
-                console.log(this.period.shoppinglists)
-            },
-            
-
-            calculateProducts: function(dayKeys){
-            
-                if(typeof dayKeys == 'undefined'){
-                    var dayKeys = {}
-                    for (var key in this.days) {
-                        if(this.days.hasOwnProperty(key)){
-                            dayKeys[key] = true;                            
-                        }
-                    }
-                }
-                
-                for(var dayKey in dayKeys){
-                    var day = this.days[ dayKey ];
-                    
-                    if(day != null){
-                        if(typeof day.productgroups != 'undefined'){
-                            for(var productgroupKey in day.productgroups){
-                            
-                                var productgroup = day.productgroups[productgroupKey]
-                                
-                                if(productgroup!=null){
-                                    if(typeof productgroup.products == 'undefined'){
-                                        this.set('days.'+dayKey+'.productgroups.'+productgroupKey+'.products',{});
-                                    }
-                                    
-                                    for(var productKey in this.productgroups[productgroupKey].products){
-                                        
-                                        if(typeof productgroup.products[productKey] == 'undefined'){
-                                            this.set('days.'+dayKey+'.productgroups.'+productgroupKey+'.products.'+productKey,{});
-                                        }
-                                        
-                                        var quantity = parseFloat(productgroup.quantity)*parseFloat(this.productgroups[productgroupKey].products[productKey].quantity);
-                                        this.set('days.'+dayKey+'.productgroups.'+productgroupKey+'.products.'+productKey+'.quantity',quantity);
-                                        
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
-                this.calculateShoppinglists();
-            },
-
-            calculateShoppinglists: function(){
-                for(var shoppinglistKey in this.shoppinglists){
-                    var shoppinglist = this.shoppinglists[shoppinglistKey];
-
-                    var oldproducts = {};
-                    if(typeof shoppinglist.products != 'undefined'){
-                        oldproducts = JSON.parse(JSON.stringify(shoppinglist.products));
-                    }
-                    var products = {};
-
-                    for(var dayKey in this.days){
-                        var day = this.days[dayKey];
-                        
-                        if(day != null){
-                            for(var productgroupKey in day.productgroups){
-                                var productgroup = day.productgroups[productgroupKey];
-                                
-                                if(productgroup != null){
-                                    for(var productKey in productgroup.products){
-                                        var product = productgroup.products[productKey];
-                                        
-                                        if(product.shoppinglist == shoppinglistKey){
-                                            if(typeof products[productKey] == 'undefined'){
-                                                products[productKey] = {'quantity': 0,'checked': false};
-                                            }
-                                            products[productKey].quantity += product.quantity;
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                    }
-
-                    this.set('shoppinglists.'+shoppinglistKey+'.products',{});
-                    for(productKey in products){
-                        this.set('shoppinglists.'+shoppinglistKey+'.products.'+productKey,{});
-                        this.set('shoppinglists.'+shoppinglistKey+'.products.'+productKey+'.quantity',products[productKey].quantity);
-
-                        // check checked
-                        if(typeof oldproducts[productKey] != 'undefined'){
-                            if(oldproducts[productKey].quantity == products[productKey].quantity){
-                                products[productKey].checked = oldproducts[productKey].checked;
-                            }
-                        }
-                        this.set('shoppinglists.'+shoppinglistKey+'.products.'+productKey+'.checked',products[productKey].checked);
-                    }
-                }
-                
-            },
-            
-            _productgroupsChanged: function(change){
-                this.calculateProducts();
-            },
-            
-            _round: function(val){
-                var decimals = 0;
-                if(val < 20){
-                    decimals = 1;
-                }
-                if(val < 1){
-                    decimals = 2;
-                }
-                return val.toFixed(decimals);
-            },
-            
-            _getObjectListProperty: function(list,key,property){
-                if(typeof list != 'undefined'){
-                    return list[key][property];
-                }
-            },
-
-            _getProducts: function(change){
-                return this._toArray(change.base.products);
-            },
-            
-            _handleProductgroupQuantityChange: function(e){
-                var dayKey = e.model.day.key;
-                var localobj='productgroup';
-                var obj='days.'+dayKey+'.productgroups';
-                var prop='quantity';
-                
-                var key = e.model.__data__[localobj].key;
-                var val = e.model.__data__[localobj].val[prop];
-                
-                this.set(obj+'.'+key+'.'+prop,JSON.parse(JSON.stringify(val)));
-                
-                var dayKeys = {};
-                dayKeys[dayKey] = true;
-                this.calculateProducts(dayKeys);
-            },
-            
-            _handleProductShoppinglistChange: function(e){
-                var dayKey = e.model.day.key;
-                var productgroupKey = e.model.productgroup.key;
-                
-                var localobj='product';
-                var obj='days.'+dayKey+'.productgroups.'+productgroupKey+'.products';
-                var prop='shoppinglist';
-                
-                var key = e.model.__data__[localobj].key;
-                var val = e.model.__data__[localobj].val[prop];
-
-                this.set(obj+'.'+key+'.'+prop,JSON.parse(JSON.stringify(val)));
-
-                this.calculateShoppinglists();
-            },
-            
-            _handleProductUsedChange: function(e){
-                var dayKey = e.model.day.key;
-                var productgroupKey = e.model.productgroup.key;
-                
-                var localobj='product';
-                var obj='days.'+dayKey+'.productgroups.'+productgroupKey+'.products';
-                var prop='used';
-                
-                var key = e.model.__data__[localobj].key;
-                var val = e.model.__data__[localobj].val[prop];
-                
-                this.set(obj+'.'+key+'.'+prop,JSON.parse(JSON.stringify(val)));
-            },
-            
-            _handleShoppinlgistNameChange: function(e){
-                var localobj='shoppinglist';
-                var obj='shoppinglists';
-                var prop='name';
-                
-                var key = e.model.__data__[localobj].key;
-                var val = e.model.__data__[localobj].val[prop];
-                this.set(obj+'.'+key+'.'+prop,JSON.parse(JSON.stringify(val)));
- 
-            },
-
-            _handleShoppinglistProductCheckedChange: function(e){
-                var shoppinglistKey = e.model.shoppinglist.key;
-                
-                var localobj='product';
-                var obj='shoppinglists.'+shoppinglistKey+'.products';
-                var prop='checked';
-                
-                var key = e.model.__data__[localobj].key;
-                var val = e.model.__data__[localobj].val[prop];
-                this.set(obj+'.'+key+'.'+prop,JSON.parse(JSON.stringify(val)));
-            },
-
-            _routeKeyChanged(key){
+            _routeKeyChanged: function(key){
                 if(typeof key!='undefined' && key!=''){ 
                     if(key=='new'){
                         var key = btoa(this.user.uid + Date.now());
@@ -461,8 +224,28 @@
                         this.set('periodKey',key);
                     }
                 }
-            }
-                        
+            },
+
+            _subroutePathChanged: function(path){
+                if(typeof path!='undefined' && path!=''){ 
+                    if(path=='/planning'){
+                        this.set('page', 'planning');
+                    }
+                    else if(path=='/productgroups'){
+                        this.set('page', 'productgroups');
+                    }
+                    else if(path=='/shoppinglists'){
+                        this.set('page', 'shoppinglists');
+                    }
+                    else{
+                        this.set('page', 'base');
+                    }
+                }
+                else{
+                    this.set('page', 'base');
+                }
+            },
+
         });
 
     </script>

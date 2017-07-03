@@ -1,0 +1,218 @@
+
+<link rel="import" href="../bower_components/polymer/polymer.html">
+<link rel="import" href="../bower_components/iron-localstorage/iron-localstorage.html">
+
+<link rel="import" href="../bower_components/app-route/app-route.html">
+
+<link rel="import" href="../bower_components/iron-pages/iron-pages.html">
+<link rel="import" href="../bower_components/iron-flex-layout/iron-flex-layout-classes.html">
+<link rel="import" href="../bower_components/iron-icons/iron-icons.html">
+<link rel="import" href="../bower_components/iron-collapse/iron-collapse.html">
+
+<link rel="import" href="../bower_components/paper-button/paper-button.html">
+<link rel="import" href="../bower_components/paper-icon-button/paper-icon-button.html">
+<link rel="import" href="../bower_components/paper-material/paper-material.html">
+<link rel="import" href="../bower_components/paper-dialog/paper-dialog.html">
+<link rel="import" href="../bower_components/paper-dialog-scrollable/paper-dialog-scrollable.html">
+<link rel="import" href="../bower_components/paper-input/paper-input.html">
+<link rel="import" href="../bower_components/paper-dropdown-menu/paper-dropdown-menu.html">
+<link rel="import" href="../bower_components/paper-listbox/paper-listbox.html">
+<link rel="import" href="../bower_components/paper-item/paper-item.html">
+
+<link rel="import" href="shared-styles.html">
+<link rel="import" href="object-list-behavior.html">
+<link rel="import" href="search-filter-behavior.html">
+<link rel="import" href="collapsible-behavior.html">
+
+<link rel="import" href="day-productgroup.html">
+
+<dom-module id="period-productgroup">
+
+    <template>
+
+        <style include="iron-flex iron-flex-alignment"></style>
+        <style include="shared-styles"></style>
+        <style>
+            :host {
+                display: block;
+                background-color: #ffffff;
+            }
+            paper-input{
+                margin-top: -8px;
+                margin-bottom: -8px;
+            }
+            .day{
+                margin-top: 5px;
+                margin-bottom: 5px;
+                font-size: 1.17em;
+                font-weight: bold;
+            }
+            .product{
+                background-color: #ffffff;
+            }
+            .product .name{
+                min-width: 200px;
+            }
+            .product .quantity{
+                width: 60px;
+            }
+            .collapse{
+                width: 40px;
+                margin-right: 4px;
+                margin-top: 8px;
+            }
+            .edit-uncollapsed{
+                position: absolute;
+                top: 10px;
+                right: 10px;
+            }
+        </style>
+
+        <firebase-document app-name="kokkies" path="/[[user.uid]]/productgroups/[[period]]/[[key]]" data="{{productgroup}}"></firebase-document>
+
+
+        <paper-material class="vertical layout">
+
+            <div class="horizontal layout">
+                <div class="collapse btn" on-tap="_toggleCollapse"><iron-icon icon="expand-more"></iron-icon></div>
+                <paper-input label="Name" value="{{productgroup.name}}"></paper-input>
+            </div>
+
+            <iron-collapse>
+                <div class="content">
+
+                    <template is="dom-repeat" items="{{_toArray(productgroup.products)}}" as="product">
+
+
+                        <paper-material class="product horizontal layout center">
+                            <div class="name">{{_getObjectProperty(products,product.key,'name')}}</div>
+                            <div class="quantity"><paper-input label="Quantity" value="{{product.val.quantity}}" no-label-float="true" on-change="_handleProductQuantityChange"></paper-input></div>
+                            <div class="unit flex">{{_getObjectProperty(products,product.key,'unit')}}</div>
+                           
+                            <paper-icon-button icon="delete" raised on-tap="deleteProduct">Delete</paper-icon-button>
+                        </paper-material>
+
+                    </template>
+
+                    <paper-button raised on-tap="addProductDialog">Add product</paper-button>
+
+                    <div class="edit-uncollapsed">
+                        <paper-icon-button icon="delete" on-tap="deleteProductgroupDialog"></paper-icon-button>
+                    </div>
+
+                </div>
+            </iron-collapse>
+
+        </paper-material>
+
+        <paper-dialog id="addProductDialog">
+            <paper-button class="close" dialog-dismiss>close</paper-button>
+            <paper-dialog-scrollable>
+                <h3>Product toevoegen</h3>
+                <paper-input label="search" no-label-float value="{{productSearch}}"><iron-icon icon="search" suffix></iron-icon></paper-input>
+                <template is="dom-repeat" items="{{_toArray(products)}}" as="product" filter="{{_searchFilter(productSearch)}}" observe="name">
+                    <paper-material class="product btn horizontal layout wrap" on-tap="addProduct">
+                        <div class="name">{{product.val.name}}</div>
+                    </paper-material>
+                </template>
+            </paper-dialog-scrollable>
+        </paper-dialog>
+
+
+        <paper-dialog id="deleteProductgroupDialog">
+            <h2>Are you sure?</h2>
+            <div class="buttons">
+                <paper-button dialog-dismiss>Cancel</paper-button>
+                <paper-button dialog-confirm on-tap="deleteProductgroup">Delete</paper-button>
+            </div>
+        </paper-dialog>
+
+
+    </template>
+
+    <script>
+
+        Polymer({
+            is: 'period-productgroup',
+
+            behaviors: [
+                objectListBehavior,
+                searchFilterBehavior,
+                collapsibleBehavior,
+            ],
+
+            properties:{
+                user: {
+                    type: Object
+                },
+                period: {
+                    type: String,
+                },
+                key: {
+                    type: String,
+                },
+                number: {
+                    type: Number,
+                },
+                date: {
+                    type: String,
+                },
+                products: {
+                    type: Object,
+                    notify: true,
+                },
+                productgroups: {
+                    type: Object,
+                    notify: true,
+                },
+                shoppinglists: {
+                    type: Object,
+                },
+            },
+
+            addProductDialog: function(e){
+                this.$.addProductDialog.open();
+            },
+            
+            addProduct: function(e){
+                this.$.addProductDialog.close();
+
+                var key = e.model.__data__.product.key;
+                if(typeof this.productgroup.products == 'undefined'){
+                    this.set('productgroup.products',{})
+                }
+                if(typeof this.productgroup.products[key] == 'undefined'){
+                    // add the key
+                    var order = 0;
+                    for(k in this.productgroup.products){
+                        order = Math.max(this.productgroup.products[k]['order']+1,order)
+                    }
+                    this.set('productgroup.products.'+key,{'quantity':0,'order':order});
+                }
+            },
+
+            _handleProductQuantityChange :function(e){
+                console.log(e)
+                console.log(this.productgroup.products)
+
+                var key = e.model.__data__.product.key;
+                this.set('productgroup.products.'+key,JSON.parse(JSON.stringify(this.productgroup.products[key] )));
+            },
+
+            deleteProductgroupDialog: function(e){
+                e.stopPropagation();
+                this.$.deleteProductgroupDialog.open();
+            },
+
+            deleteProductgroup: function(e,d){
+                this.set('productgroups.'+d,null);
+            },
+
+        });
+
+    </script>
+
+</dom-module>
+
+
+

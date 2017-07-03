@@ -1,0 +1,230 @@
+
+<link rel="import" href="../bower_components/polymer/polymer.html">
+<link rel="import" href="../bower_components/iron-localstorage/iron-localstorage.html">
+
+<link rel="import" href="../bower_components/app-route/app-route.html">
+
+<link rel="import" href="../bower_components/iron-pages/iron-pages.html">
+<link rel="import" href="../bower_components/iron-flex-layout/iron-flex-layout-classes.html">
+<link rel="import" href="../bower_components/iron-icons/iron-icons.html">
+<link rel="import" href="../bower_components/iron-collapse/iron-collapse.html">
+
+<link rel="import" href="../bower_components/paper-button/paper-button.html">
+<link rel="import" href="../bower_components/paper-icon-button/paper-icon-button.html">
+<link rel="import" href="../bower_components/paper-material/paper-material.html">
+<link rel="import" href="../bower_components/paper-dialog/paper-dialog.html">
+<link rel="import" href="../bower_components/paper-dialog-scrollable/paper-dialog-scrollable.html">
+<link rel="import" href="../bower_components/paper-input/paper-input.html">
+<link rel="import" href="../bower_components/paper-dropdown-menu/paper-dropdown-menu.html">
+<link rel="import" href="../bower_components/paper-listbox/paper-listbox.html">
+<link rel="import" href="../bower_components/paper-item/paper-item.html">
+<link rel="import" href="../bower_components/paper-checkbox/paper-checkbox.html">
+
+<link rel="import" href="../bower_components/polymerfire/firebase-document.html">
+<link rel="import" href="../bower_components/polymerfire/firebase-query.html">
+
+<link rel="import" href="shared-styles.html">
+<link rel="import" href="object-list-behavior.html">
+<link rel="import" href="search-filter-behavior.html">
+<link rel="import" href="collapsible-behavior.html">
+
+<link rel="import" href="period-day.html">
+
+<dom-module id="view-period-detail-planning">
+
+    <template>
+
+        <style include="iron-flex iron-flex-alignment"></style>
+        <style include="shared-styles"></style>
+        <style>
+            :host {
+                display: block;
+                padding: 10px;
+            }
+            .day{
+                background-color: #ffffff;
+            }
+            .day .edit-uncollapsed{
+                position: absolute;
+                bottom: 20px;
+                right: 20px;
+            }
+            .day h3{
+                margin-top: 5px;
+            }
+            .shoppinglist{
+                background-color: #ffffff;
+            }
+            iron-icon{
+                color: #555555;
+            }
+            paper-icon-button{
+                color: #555555;
+            }
+            .productgroup .name{
+                min-width: 200px;
+            }
+            .productgroup .quantity{
+                width: 80px;
+            }
+            .productgroup .edit-uncollapsed{
+                position: absolute;
+                top: 10px;
+                right: 10px;
+            }
+            .product-list{
+                margin-left: 50px;
+            }
+            .product .name{
+                min-width: 150px;
+                margin-top: 20px;
+            }
+            .product .unit{
+                width: 50px;
+                margin-left: 5px;
+                margin-top: 20px;
+            }
+            .shoppinglist .name{
+                min-width: 300px;
+            }
+            paper-input{
+                /*margin-top: -8px;
+                margin-bottom: -8px;*/
+            }
+        </style>
+
+        <template is="dom-repeat" items="{{_toArray(days)}}" as="day" sort=_sortByVal>
+
+            <period-day user="[[user]]" period="[[period]]" key="[[day.key]]" number="[[day.val]]" date="[[_computeDayDate(periodStartdate,day.val)]]" products="{{products}}" productgroups="{{productgroups}}" shoppinglists="{{shoppinglists}}" on-delete="deleteDay" on-move-up="moveUpDay" on-move-down="moveDownDay"></period-day>
+
+        </template>
+        
+        <paper-button raised on-tap="newDay">Dag toevoegen</paper-button>
+        
+        
+    </template>
+
+    <script>
+
+        Polymer({
+            is: 'view-period-detail-planning',
+
+            behaviors: [
+                objectListBehavior,
+                searchFilterBehavior,
+            ],
+
+            properties:{
+                user: {
+                    type: Object,
+                },
+                period: {
+                    type: String
+                },
+                periodStartdate: {
+                    type: String
+                },
+                days: {
+                    type: Object,
+                    notify: true,
+                },
+                products: {
+                    type: Object,
+                },
+                productgroups: {
+                    type: Object,
+                },
+                shoppinglists: {
+                    type: Object,
+                },
+            },
+
+           
+            newDay: function(e){
+                var key = btoa(this.user.uid + Date.now());
+
+                if(typeof this.days == 'undefined'){
+                    this.set('days',{});
+                }
+                this.set('days.'+key,Object.keys(this.days).length+1);
+            },
+            
+            deleteDay: function(e,d){
+                this.set('days.'+d,null);
+                
+                // reset numbers
+                var object = this.period.days;
+                var array = []
+                for( key in object){
+                    if( object[key] != null ){
+                        array.push([key,object[key]])
+                    }
+                }
+                array.sort(function(a, b) {
+                    return a[1] - b[1];
+                });
+
+                for(var i=0;i<array.length;i++){
+                    this.set('days.'+array[i][0],i+1)
+                }
+            },
+
+            _computeDayDate: function(startdate,number){
+                var parts = startdate.split("-");
+                d = new Date(parts[2], parts[1] - 1, parts[0])
+                d.setDate(d.getDate() + number-1)
+                
+                var day = ['Zondag', 'Maandag', 'Dinsdag', 'Woensdag','Donderdag', 'Vrijdag', 'Zaterdag'];
+
+                var dayindex = d.getDay();
+                var date = d.getDate();
+                var month = d.getMonth()+1;
+                var year = d.getFullYear();
+
+                return {'weekday':day[dayindex], 'date': date + '-' + month + '-' + year};
+            },
+
+            moveUpDay: function(e,d){
+                var object = this.period.days;
+                var val = object[d];
+
+                if(val!=1){
+                    for(key in object){
+                        if(object[key] == val-1){
+                            this.set('period.days.'+key,val);
+                        }
+                    }
+                    this.set('period.days.'+d,val-1);
+                }
+            },
+
+            moveDownDay: function(e,d){
+                var object = this.period.days;
+                var val = object[d];
+
+                if(val!=Object.keys(object).length){
+                    for( key in object){
+                        if(object[key] == val+1){
+                            this.set('period.days.'+key,val);
+                        }
+                    }
+                    this.set('period.days.'+d,val+1);
+                }
+            },
+
+            _round: function(val){
+                var decimals = 0;
+                if(val < 20){
+                    decimals = 1;
+                }
+                if(val < 1){
+                    decimals = 2;
+                }
+                return val.toFixed(decimals);
+            },
+            
+        });
+
+    </script>
+
+</dom-module>

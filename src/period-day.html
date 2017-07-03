@@ -47,6 +47,9 @@
                 font-size: 1.17em;
                 font-weight: bold;
             }
+            .weekday{
+                width: 100px;
+            }
             .collapse{
                 width: 40px;
                 margin-right: 4px;
@@ -67,7 +70,8 @@
             <div class="horizontal layout">
                 <div class="collapse btn" on-tap="_toggleCollapse"><iron-icon icon="expand-more"></iron-icon></div>
                 <div class="day flex">Dag [[number]]</div>
-                <div class="date flex">[[date]]</div>
+                <div class="weekday">[[date.weekday]]</div>
+                <div class="date flex">[[date.date]]</div>
             </div>
 
             <iron-collapse>
@@ -90,7 +94,7 @@
             </iron-collapse>
 
         </paper-material>
-        
+
         <paper-dialog id="addProductgroupDialog">
             <paper-button class="close" dialog-dismiss>close</paper-button>
             <paper-dialog-scrollable>
@@ -221,7 +225,7 @@
 
 
             _updateSortableArray: function(val){
-                console.log(val)
+                //console.log(val)
                 if(typeof val != 'undefined'){
                     
                     if(typeof this.sortableArray == 'undefined'){

@@ -1,0 +1,141 @@
+
+<link rel="import" href="../bower_components/polymer/polymer.html">
+<link rel="import" href="../bower_components/iron-localstorage/iron-localstorage.html">
+
+<link rel="import" href="../bower_components/app-route/app-route.html">
+
+<link rel="import" href="../bower_components/iron-flex-layout/iron-flex-layout-classes.html">
+<link rel="import" href="../bower_components/iron-icons/iron-icons.html">
+
+<link rel="import" href="../bower_components/paper-button/paper-button.html">
+<link rel="import" href="../bower_components/paper-icon-button/paper-icon-button.html">
+<link rel="import" href="../bower_components/paper-material/paper-material.html">
+<link rel="import" href="../bower_components/paper-dialog/paper-dialog.html">
+<link rel="import" href="../bower_components/paper-dialog-scrollable/paper-dialog-scrollable.html">
+<link rel="import" href="../bower_components/paper-input/paper-input.html">
+
+
+<link rel="import" href="shared-styles.html">
+<link rel="import" href="object-list-behavior.html">
+
+<link rel="import" href="period-productgroup.html">
+
+<dom-module id="view-period-detail-productgroups">
+
+    <template>
+
+        <style include="iron-flex iron-flex-alignment"></style>
+        <style include="shared-styles"></style>
+        <style>
+            :host {
+                display: block;
+                padding: 10px;
+            }
+            .productgroup{
+                background-color: #ffffff;
+            }
+            .buttons{
+                margin-bottom: 8px;
+            }
+            paper-input.search{
+                margin-bottom: 8px;
+            }
+        </style>
+
+
+        <template is="dom-repeat" items="{{_toArray(productgroups)}}" as="productgroup">
+
+            <period-productgroup user="[[user]]" period="[[period]]" key="[[productgroup.key]]" products="{{products}}"></period-productgroup>
+
+        </template>
+
+        <paper-button raised on-tap="newProductgroup">Gerecht toevoegen</paper-button>
+
+
+
+
+
+
+<!--
+        <app-route route="{{route}}" pattern="/:key" data="{{routeData}}" tail="{{subroute}}"></app-route>
+
+
+
+        <div class="buttons horizontal layout">
+            <paper-button raised on-tap="newItem">New product group</paper-button>
+        </div>
+
+        <paper-input class="search" label="search" no-label-float value="{{productgroupSearch}}"><iron-icon icon="search" suffix></iron-icon></paper-input>
+
+        <template is="dom-repeat" items="{{_toArray(productgroups)}}" as="productgroup" filter="{{_computeFilter(productgroupSearch)}}" sort="_sortByName" observe="val.name">
+            <paper-material class="productgroup horizontal layout center wrap" on-tap="addItemToShoppinglist">
+                <div class="name flex">{{productgroup.val.name}}</div>
+                <paper-icon-button raised icon="create" on-tap="editItem">Edit</paper-icon-button>
+            </paper-material>
+        </template>
+-->
+    </template>
+
+    <script>
+        Polymer({
+            is: 'view-period-detail-productgroups',
+
+            behaviors: [
+                objectListBehavior,
+                searchFilterBehavior,
+            ],
+
+            properties:{
+                user: {
+                    type: Object,
+                },
+                period: {
+                    type: String,
+                },
+                productgroups: {
+                    type: Object,
+                    notify: true,
+                },
+                products: {
+                    type: Object,
+                    notify: true,
+                },
+
+            },
+
+            newProductgroup: function(e){
+                var key = btoa(this.user.uid + Date.now());
+
+                if(typeof this.productgroups == 'undefined'){
+                    this.set('productgroups',{});
+                }
+                this.set('productgroups.'+key,true);
+            },
+           
+
+            _computeFilter: function(string){
+                string = string.toLowerCase();
+                return function(productgroup) {
+                    var name = productgroup.val.name.toLowerCase();
+                    return (name.indexOf(string) != -1 );
+                  };
+            },
+            
+            _sortByName: function(a,b){
+                var a_order = this._getObjectProperty(this.productgroups,a.key,'name');
+                var b_order = this._getObjectProperty(this.productgroups,b.key,'name');
+                if(a_order>b_order){
+                    return 1;
+                }
+                else if(a_order<b_order){
+                    return -1;
+                }
+                else{
+                    return 0;
+                }
+            },
+            
+        });
+    </script>
+
+</dom-module>

@@ -81,7 +81,9 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
             .signedout app-drawer {
                 display: none;
             }
-
+            .hidden{
+                display: none;
+            }
         </style>
 
         <app-location route="{{route}}"></app-location>
@@ -113,7 +115,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
                 <iron-selector selected="[[mainpage]]" attr-for-selected="name" class="drawer-list" role="navigation">
                     <a name="periods" href="/periods">Periodes</a>
                     <a name="products" href="/products">Producten</a>
-                    <a name="productgroups" href="/productgroups">Product groepen</a>
+                    <!--<a name="productgroups" href="/productgroups">Product groepen</a>-->
                     <a name="signout" href="" on-tap="signOut">Sign out</a>
                 </iron-selector>
             </app-drawer>
@@ -123,7 +125,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
                 <app-header condenses reveals effects="waterfall">
                     <app-toolbar hidden="[[!signedIn]]">
-                        <paper-icon-button icon="arrow-back" on-tap="back" hidden="[[hideBackButton]]"></paper-icon-button>
+                        <paper-icon-button icon="arrow-back" on-tap="back" class$="[[hideBackButton]]"></paper-icon-button>
                         <paper-icon-button icon="menu" drawer-toggle></paper-icon-button>
                         <div title>{{pageTitle}}</div>
                     </app-toolbar>
@@ -132,11 +134,11 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
                 <iron-pages role="main" selected="[[page]]" attr-for-selected="name">
                     <view-login                 id="login"                  name="login" on-sign-in="signIn" signed-in="[[signedIn]]" disables=[[!online]]></view-login>
                     <view-periods               id="periods"                name="periods"              user="[[user]]"  periods="{{periods}}" route="{{periodsSubroute}}"></view-periods>
-                    <view-period-detail         id="period-detail"          name="period-detail"        user="[[user]]"  products="{{products}}" productgroups="{{productgroups}}" route="{{periodsSubroute}}" on-delete-product="handleDeletePeriod"></view-period-detail>
+                    <view-period-detail         id="periodDetail"           name="period-detail"        user="[[user]]"  products="{{products}}" route="{{periodsSubroute}}" on-delete-product="handleDeletePeriod"></view-period-detail>
                     <view-products              id="products"               name="products"             user="[[user]]"  products="{{products}}" route="{{productsSubroute}}"></view-products>
-                    <view-product-detail        id="product-detail"         name="product-detail"       user="[[user]]"  products="{{products}}" route="{{productsSubroute}}" on-delete-product="handleDeleteProduct"></view-product-detail>
-                    <view-productgroups         id="productgroups"          name="productgroups"        user="[[user]]"  productgroups="{{productgroups}}" route="{{productgroupsSubroute}}"></view-productgroups>
-                    <view-productgroup-detail   id="productgroup-detail"    name="productgroup-detail"  user="[[user]]"  productgroups="{{productgroups}}" products="{{products}}" route="{{productgroupsSubroute}}" on-delete-product="handleDeleteProduct"></view-productgroup-detail>
+                    <view-product-detail        id="productDetail"          name="product-detail"       user="[[user]]"  products="{{products}}" route="{{productsSubroute}}" on-delete-product="handleDeleteProduct"></view-product-detail>
+                    <!--<view-productgroups         id="productgroups"          name="productgroups"        user="[[user]]"  productgroups="{{productgroups}}" route="{{productgroupsSubroute}}"></view-productgroups>-->
+                    <view-productgroup-detail   id="productgroupDetail"    name="productgroup-detail"  user="[[user]]"  productgroups="{{productgroups}}" products="{{products}}" route="{{productgroupsSubroute}}" on-delete-product="handleDeleteProduct"></view-productgroup-detail>
                 </iron-pages>
 
             </app-header-layout>
@@ -174,13 +176,13 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
             },
             back: function(e){
                 if(this.page=='period-detail'){
-                    this.set('route.path','/periods');
-                }
-                if(this.page=='product-detail'){
-                    this.set('route.path','/products');
+                    this.$.periodDetail.back()
                 }
                 else if(this.page=='productgroup-detail'){
                     this.set('route.path','/productgroups');
+                }
+                else if(this.page=='product-detail'){
+                    this.set('route.path','/products');
                 }
             },
             handleDeleteProduct: function(e,key){
@@ -225,12 +227,12 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
                     if(typeof this.subroute == 'undefined' || this.subroute.path==null || this.subroute.path==''){
                         this.page = 'products';
                         this.pageTitle = 'Producten';
-                        this.hideBackButton = true;
+                        this.hideBackButton = 'hidden';
                     }
                     else{
                         this.page = 'product-detail';
                         this.pageTitle = 'Product detail';
-                        this.hideBackButton = false;
+                        this.hideBackButton = '';
                     }
                 }
                 else if(this.routeData.page=='productgroups'){
@@ -238,12 +240,12 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
                     if(typeof this.subroute == 'undefined' || this.subroute.path==null || this.subroute.path==''){
                         this.page = 'productgroups';
                         this.pageTitle = 'Productgroepen';
-                        this.hideBackButton = true;
+                        this.hideBackButton = 'hidden';
                     }
                     else{
                         this.page = 'productgroup-detail';
                         this.pageTitle = 'Productgroep detail';
-                        this.hideBackButton = false;
+                        this.hideBackButton = '';
                     }
                 }
                 else if(this.routeData.page=='periods'){
@@ -251,12 +253,12 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
                     if(typeof this.subroute == 'undefined' || this.subroute.path==null || this.subroute.path==''){
                         this.page = 'periods';
                         this.pageTitle = 'Periodes';
-                        this.hideBackButton = true;
+                        this.hideBackButton = 'hidden';
                     }
                     else{
                         this.page = 'period-detail';
                         this.pageTitle = 'Periode detail';
-                        this.hideBackButton = false;
+                        this.hideBackButton = '';
                     }
                 }
                 else{
