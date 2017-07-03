@@ -1,10 +1,6 @@
 
 <link rel="import" href="../bower_components/polymer/polymer.html">
-<link rel="import" href="../bower_components/iron-localstorage/iron-localstorage.html">
 
-<link rel="import" href="../bower_components/app-route/app-route.html">
-
-<link rel="import" href="../bower_components/iron-pages/iron-pages.html">
 <link rel="import" href="../bower_components/iron-flex-layout/iron-flex-layout-classes.html">
 <link rel="import" href="../bower_components/iron-icons/iron-icons.html">
 <link rel="import" href="../bower_components/iron-collapse/iron-collapse.html">
@@ -15,9 +11,6 @@
 <link rel="import" href="../bower_components/paper-dialog/paper-dialog.html">
 <link rel="import" href="../bower_components/paper-dialog-scrollable/paper-dialog-scrollable.html">
 <link rel="import" href="../bower_components/paper-input/paper-input.html">
-<link rel="import" href="../bower_components/paper-dropdown-menu/paper-dropdown-menu.html">
-<link rel="import" href="../bower_components/paper-listbox/paper-listbox.html">
-<link rel="import" href="../bower_components/paper-item/paper-item.html">
 
 <link rel="import" href="shared-styles.html">
 <link rel="import" href="object-list-behavior.html">
@@ -55,6 +48,8 @@
                 margin-right: 4px;
                 margin-top: 8px;
             }
+            .remark{
+            }
             .edit-uncollapsed{
                 position: absolute;
                 top: 10px;
@@ -76,6 +71,11 @@
 
             <iron-collapse>
                 <div class="content">
+
+                    <div class="remark horizontal layout">
+                        <!--<div class="flex"></div>-->
+                        <paper-input class="flex" label="Opmerkingen" value="{{day.remark}}"></paper-input>
+                    </div>
 
                     <sortable-js id="sortable" group="dayProductgroups" handle=".drag-handle" on-update="_handleSortable" on-add="_handleSortable" on-remove="_handleSortable">
                         <template is="dom-repeat" items="{{sortableArray}}" as="productgroup">
