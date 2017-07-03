@@ -19,6 +19,7 @@
 <link rel="import" href="../bower_components/paper-listbox/paper-listbox.html">
 <link rel="import" href="../bower_components/paper-item/paper-item.html">
 <link rel="import" href="../bower_components/paper-checkbox/paper-checkbox.html">
+<link rel="import" href="../bower_components/paper-card/paper-card.html">
 
 <link rel="import" href="../bower_components/polymerfire/firebase-document.html">
 <link rel="import" href="../bower_components/polymerfire/firebase-query.html">
@@ -51,18 +52,27 @@
             .detail{
                 background-color: #ffffff;
                 margin: 10px;
-                min-width: 200px;
+                padding: 0px;
+                height: 400px;
             }
-            .detail a{
-                text-decoration: none;
+            .detail .icon{
+                width: 100%;
+            }
+            .detail .content{
                 color: #222222;
+                margin: 5px;
             }
-            .icon{
-                height: 200px;
-            }
-            .title{
+            .detail .content h1{
                 font-size: 20px;
+                font-weight: 700;
+                color: #222222;
+                margin-left: 5px;
             }
+            .detail .content a{
+                text-decoration: none;
+                color: #039be5;
+            }
+
             iron-icon{
                 color: #555555;
             }
@@ -91,26 +101,42 @@
             <div name="base">
                 <div class="horizontal layout wrap">
 
-                    <paper-material class="detail flex vertical layout center">
-                        <a href="/periods/[[periodKey]]/planning">
-                            <div class="icon"></div>
-                            <div class="title">Planning</div>
-                        </a>
+                    <paper-material class="detail flex vertical layout">
+                        <img class="icon" src="../images/planning.png">
+                        <div class="content flex vertical layout">
+                            <h1>Planning</h1>
+                            <div class="flex">Maak de planning, bepaal hoeveel van elk gerecht wanneer wordt gemaakt en bepaal wanneer er voor producten gewinkeld wordt.</div>
+                            <div class="actions horizontal layout">
+                                <div class="flex"></div>
+                                <a href="/periods/[[periodKey]]/planning">AAN DE SLAG</a>
+                            </div>
+                        </div>
                     </paper-material>
 
-                    <paper-material class="detail flex vertical layout center">
-                        <a href="/periods/[[periodKey]]/productgroups">
-                            <div class="icon"></div>
-                            <div class="title">Gerechten</div>
-                        </a>
+                    <paper-material class="detail flex vertical layout">
+                        <img class="icon" src="../images/productgroups.png">
+                        <div class="content flex vertical layout">
+                            <h1>Gerechten</h1>
+                            <div class="flex">Stel nieuwe gerechten samen uit beschikbare producten of pas bestaande gerechten aan.</div>
+                            <div class="actions horizontal layout">
+                                <div class="flex"></div>
+                                <a href="/periods/[[periodKey]]/productgroups">AAN DE SLAG</a>
+                            </div>
+                        </div>
                     </paper-material>
 
-                    <paper-material class="detail flex vertical layout center">
-                        <a href="/periods/[[periodKey]]/shoppinglists">
-                            <div class="icon"></div>
-                            <div class="title">Winkellijstjes</div>
-                        </a>
+                    <paper-material class="detail flex vertical layout">
+                        <img class="icon" src="../images/shoppinglists.png">
+                        <div class="content flex vertical layout">
+                            <h1>Winkellijstjes</h1>
+                            <div class="flex">Maak nieuwe winkellijstjes en bekijk de verchillende gegenereerde lijstjes.</div>
+                            <div class="actions horizontal layout">
+                                <div class="flex"></div>
+                                <a href="/periods/[[periodKey]]/shoppinglists">AAN DE SLAG</a>
+                            </div>
+                        </div>
                     </paper-material>
+
                 </div>
             </div>
 

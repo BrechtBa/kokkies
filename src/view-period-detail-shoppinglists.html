@@ -98,8 +98,6 @@
         <firebase-document app-name="kokkies" path="/[[user.uid]]/dayproductgroupproducts/[[period]]" data="{{dayproductgroupproducts}}"></firebase-document>
 
 
-        <h2>Winkellijstjes</h2>
-        
         <template is="dom-repeat" items="{{_toArray(shoppinglists)}}" as="shoppinglist">
 
             <period-shoppinglist user="[[user]]" period="[[period]]" key="{{shoppinglist.key}}" dayproductgroups="{{dayproductgroups}}" dayproductgroupproducts="{{dayproductgroupproducts}}" products="{{products}}" productgroups="{{productgroups}}" ></period-shoppinglist>
