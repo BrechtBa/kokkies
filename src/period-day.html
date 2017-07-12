@@ -120,6 +120,9 @@
                 period: {
                     type: String,
                 },
+                meals: {
+                    type: Array,
+                },
                 key: {
                     type: String,
                 },
@@ -145,10 +148,6 @@
             observers: [
                 '_updateSortableArray(day.productgroups)'
             ],
-
-            ready: function(){
-                this.meals = ['Ontbijt', 'Middag', '4-uurtje', 'Avond', '11-uurtje']
-            },
 
             deleteDayDialog: function(e){
                 e.stopPropagation();

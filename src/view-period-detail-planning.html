@@ -95,13 +95,12 @@
 
         <template is="dom-repeat" items="{{_toArray(days)}}" as="day" sort=_sortByVal>
 
-            <period-day user="[[user]]" period="[[period]]" key="[[day.key]]" number="[[day.val]]" date="[[_computeDayDate(periodStartdate,day.val)]]" products="{{products}}" productgroups="{{productgroups}}" shoppinglists="{{shoppinglists}}" on-delete="deleteDay" on-move-up="moveUpDay" on-move-down="moveDownDay"></period-day>
+            <period-day user="[[user]]" meals="[[meals]]" period="[[period]]" key="[[day.key]]" number="[[day.val]]" date="[[_computeDayDate(periodStartdate,day.val)]]" products="{{products}}" productgroups="{{productgroups}}" shoppinglists="{{shoppinglists}}" on-delete="deleteDay" on-move-up="moveUpDay" on-move-down="moveDownDay"></period-day>
 
         </template>
         
         <paper-button raised on-tap="newDay">Dag toevoegen</paper-button>
-        
-        
+
     </template>
 
     <script>
@@ -128,18 +127,33 @@
                     type: Object,
                     notify: true,
                 },
+                perioddays: {
+                    type: Object,
+                    notify: true,
+                },
                 products: {
                     type: Object,
                 },
                 productgroups: {
                     type: Object,
                 },
+                dayproductgroups: {
+                    type: Object,
+                    notify: true
+                },
+                dayproductgroupproducts: {
+                    type: Object,
+                    notify: true
+                },
                 shoppinglists: {
                     type: Object,
                 },
             },
 
-           
+            ready: function(){
+                this.meals = ['Ontbijt', 'Middag', '4-uurtje', 'Avond', '11-uurtje']
+            },
+
             newDay: function(e){
                 var key = btoa(this.user.uid + Date.now());
 
@@ -222,7 +236,141 @@
                 }
                 return val.toFixed(decimals);
             },
-            
+
+            print: function(){
+
+                var html = '';
+                html += '<html>';
+                html += '   <header>';
+                html += '       <style type="text/css">';
+                html += '           body {';
+                html += '               font-family: sans-serif;';
+                html += '           }';
+                html += '           table {';
+                html += '               margin-bottom: 10px;';
+                html += '               page-break-after: always;';
+                html += '               page-break-inside: avoid;';
+                html += '           }';
+                html += '           table, th, td {';
+                html += '               position: relative;';
+                html += '               border: 1px solid black;';
+                html += '               border-collapse: collapse;';
+                html += '               vertical-align: top;';
+                html += '           }';
+                html += '           th,td {';
+                html += '               width: 200px;';
+                html += '               padding: 5px;';
+                html += '           }';
+                html += '           tr {';
+                html += '               height: 50px;';
+                html += '           }';
+                html += '           tr.comment {';
+                html += '               height: 30px;';
+                html += '           }';
+                html += '           tr.meal {';
+                html += '               font-size: 0.9em;';
+                html += '               height: 100px';
+                html += '           }';
+                html += '           span.weekday {';
+                html += '               margin-right: 3px';
+                html += '           }';
+                html += '           span.date {';
+                html += '               margin-left: 3px';
+                html += '           }';
+                html += '           div.productgroup {';
+                html += '               text-align: left';
+                html += '           }';
+                html += '           div.comment {';
+                html += '               position: absolute;';
+                html += '               right: 1px;';
+                html += '               bottom: 1px;';
+                html += '               color: #555555;';
+                html += '               font-size: 0.8em;';
+                html += '           }';
+                html += '       </style>';
+                html += '       <style type="text/css" media="print">';
+                html += '           @page {';
+                html += '               size: landscape;';
+                html += '           }';
+                html += '       </style>';
+                html += '   </header>';
+
+                html += '   <body>';
+
+                var days = this._toArray(this.days).sort(this._sortByVal);
+                if( days.length > 5 ){
+                    
+                    var daygroups = [days.slice(0,5),days.slice(5)]
+                }
+                else{
+                    var daygroups = [days]
+                }
+
+                for(var k=0; k<daygroups.length; k++){
+
+                    html += '       <h1>Planning</h1>';
+                    html += '       <table>';
+                    html += '           <tr>';
+                    html += '               <th></th>';
+
+                    for(var j=0; j<daygroups[k].length; j++){
+                        var day = daygroups[k][j].key
+                        var date = this._computeDayDate(this.periodStartdate,this.days[day]);
+                        html += '               <th><div>Dag ' + this.days[day] +'</div><div><span class="weekday">'+ date.weekday + '</span><span class="date">' + date.date + '</span></div></th>'
+                    }
+
+                    html += '           </tr>';
+
+                    html += '           <tr class="comment">';
+                    html += '               <td></td>';
+
+                    for(var j=0; j<daygroups[k].length; j++){
+                        var day = daygroups[k][j].key
+                        html += '               <td>';
+                        if(typeof this.perioddays[day] != 'undefined' && typeof this.perioddays[day].comment != 'undefined'){
+                            html += '                   <div class="comment">' + this.perioddays[day].comment + '</div>';
+                        }
+                        html += '               </td>';
+                    }
+
+                    html += '           </tr>';
+        
+                    for(var i=0; i<this.meals.length; i++){
+                        var meal = this.meals[i];
+
+                        html += '           <tr class="meal">';
+                        html += '               <td>'+this.meals[i]+'</td>';
+                        for(var j=0; j<daygroups[k].length; j++){
+                            var day = daygroups[k][j].key
+                            html += '               <td>';
+
+                            if(typeof this.dayproductgroups[day] != 'undefined' && typeof this.dayproductgroups[day][meal] != 'undefined'){
+                                for( productgroup in this.dayproductgroups[day][meal]){
+                                    html += '           <div class="productgroup">'+this.productgroups[productgroup].name+'</div>';
+                                }
+                            }
+                            if(typeof this.perioddays[day] != 'undefined' && typeof this.perioddays[day][meal] != 'undefined' && typeof this.perioddays[day][meal].comment != 'undefined'){
+                                html += '           <div class="comment">'+this.perioddays[day][meal].comment+'</div>';
+                            }
+                            html += '           </td>';
+                        }
+                        html += '           </tr>';
+                    }
+                    html += '       </table>'
+                }
+
+                html += '   </body>'
+                html += '</html>'
+
+
+
+                // put the html in a new window and print
+                var newWindow = window.open("about:blank", "", "_blank");
+                newWindow.document.write(html);
+                //newWindow.print()
+
+            },
+
         });
 
     </script>

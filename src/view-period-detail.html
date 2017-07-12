@@ -48,7 +48,6 @@
                 margin-top: 20px;
                 margin-bottom: 10px;
             }
-
             .detail{
                 background-color: #ffffff;
                 margin: 10px;
@@ -84,6 +83,10 @@
         <firebase-document app-name="kokkies" path="/[[user.uid]]/periods/[[periodKey]]" data="{{period}}"></firebase-document>
         <firebase-document app-name="kokkies" path="/[[user.uid]]/productgroups/[[periodKey]]" data="{{productgroups}}"></firebase-document>
         <firebase-document app-name="kokkies" path="/[[user.uid]]/shoppinglists/[[periodKey]]" data="{{shoppinglists}}"></firebase-document>
+
+        <firebase-document app-name="kokkies" path="/[[user.uid]]/days/[[periodKey]]" data="{{perioddays}}"></firebase-document>
+        <firebase-document app-name="kokkies" path="/[[user.uid]]/dayproductgroups/[[periodKey]]" data="{{dayproductgroups}}"></firebase-document>
+        <firebase-document app-name="kokkies" path="/[[user.uid]]/dayproductgroupproducts/[[periodKey]]" data="{{dayproductgroupproducts}}"></firebase-document>
 
 
         <app-route route="{{route}}" pattern="/:key" data="{{routeData}}" tail="{{subroute}}"></app-route>
@@ -141,18 +144,27 @@
             </div>
 
             <div name="planning">
-                <h1>Planning</h1>
-                <view-period-detail-planning user="[[user]]" period="[[periodKey]]" days="{{period.days}}" period-startdate="{{period.startdate}}" productgroups="{{productgroups}}" products="{{products}}" shoppinglists="{{shoppinglists}}"></view-period-detail-menu>
+                <div class="horizontal layout">
+                    <h1 class="flex">Planning</h1>
+                    <paper-button class="print" raised on-tap="print">Print</paper-button>
+                </div>
+                <view-period-detail-planning id="planning" user="[[user]]" period="[[periodKey]]" days="{{period.days}}" perioddays="{{perioddays}}" period-startdate="{{period.startdate}}" productgroups="{{productgroups}}" products="{{products}}" shoppinglists="{{shoppinglists}}" dayproductgroups="{{dayproductgroups}}" dayproductgroupproducts="{{dayproductgroupproducts}}"></view-period-detail-menu>
             </div>
             
             <div name="productgroups">
-                <h1>Gerechten</h1>
-                <view-period-detail-productgroups user="[[user]]" period="[[periodKey]]" productgroups="{{period.productgroups}}" products="{{products}}"></view-period-detail-productgroups>
+                <div class="horizontal layout">
+                    <h1 class="flex">Gerechten</h1>
+                    <paper-button class="print" raised on-tap="print">Print</paper-button>
+                </div>
+                <view-period-detail-productgroups id="productgroups" user="[[user]]" period="[[periodKey]]" productgroups="{{period.productgroups}}" products="{{products}}"></view-period-detail-productgroups>
             </div>
 
             <div name="shoppinglists">
-                <h1>Winkellijstjes</h1>
-                <view-period-detail-shoppinglists user="[[user]]" period="[[periodKey]]" productgroups="{{productgroups}}" products="{{products}}" shoppinglists="{{period.shoppinglists}}"></view-period-detail-shoppinglists>
+                <div class="horizontal layout">
+                    <h1 class="flex">Winkellijstjes</h1>
+                    <paper-button class="print" raised on-tap="print">Print</paper-button>
+                </div>
+                <view-period-detail-shoppinglists id="shoppinglists" user="[[user]]" period="[[periodKey]]" productgroups="{{productgroups}}" products="{{products}}" shoppinglists="{{period.shoppinglists}}" dayproductgroups="{{dayproductgroups}}" dayproductgroupproducts="{{dayproductgroupproducts}}"></view-period-detail-shoppinglists>
             </div>
 
         </iron-pages>
@@ -269,6 +281,19 @@
                 }
                 else{
                     this.set('page', 'base');
+                }
+            },
+
+            print: function(){
+
+                if(this.page == 'planning'){
+                    this.$.planning.print()
+                }
+                else if(this.page == 'productgroups'){
+                    this.$.productgroups.print()
+                }
+                else if(this.page == 'shoppinglists'){
+                    this.$.shoppinglists.print()
                 }
             },
 

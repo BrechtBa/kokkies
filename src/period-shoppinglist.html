@@ -124,8 +124,8 @@
                 '_calculateShoppinglist(key,dayproductgroups,dayproductgroupproducts,productgroups,products)'
             ],
 
-            _calculateShoppinglist: function(key,dayproductgroups,dayproductgroupproducts,productgroups,products){
-
+            _calculateShoppinglist: function(commpute,key,dayproductgroups,dayproductgroupproducts,productgroups,products){
+                
                 var oldshoppinglistproducts = {}
                 if(typeof shoppinglistproducts != 'undefined'){
                     oldshoppinglistproducts = JSON.parse(JSON.stringify(this.shoppinglistproducts));
@@ -141,7 +141,7 @@
                         for(productgroup in dayproductgroups[day][meal]){
                             var productgroupquantity = dayproductgroups[day][meal][productgroup].quantity
 
-                            if(typeof dayproductgroupproducts[day] != 'undefined'){
+                            if(typeof dayproductgroupproducts[day] != 'undefined' && typeof dayproductgroupproducts[day][meal] != 'undefined'){
 
                                 for(product in dayproductgroupproducts[day][meal][productgroup]){
                                     if(dayproductgroupproducts[day][meal][productgroup][product].shoppinglist == key){
@@ -175,6 +175,7 @@
 
                 // bind and notify changes
                 this.set('shoppinglistproducts',shoppinglistproducts);
+
             },
 
         });
