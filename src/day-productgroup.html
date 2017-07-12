@@ -65,7 +65,7 @@
             }
         </style>
 
-        <firebase-document app-name="kokkies" path="/[[user.uid]]/dayproductgroups/[[period]]/[[day]]/[[key]]" data="{{productgroup}}"></firebase-document>
+        <firebase-document app-name="kokkies" path="/[[user.uid]]/dayproductgroups/[[period]]/[[day]]/[[meal]]/[[key]]" data="{{productgroup}}"></firebase-document>
 
         <paper-material class="vertical layout">
             
@@ -81,7 +81,7 @@
 
                     <template is="dom-repeat" items="{{_getProducts(key,productgroups)}}" as="product">
 
-                        <day-productgroup-product user="[[user]]" period="[[period]]" day="[[day]]" productgroup="[[key]]" key="[[product.key]]" products="{{products}}" productgroups="{{productgroups}}" quantity="{{productgroup.quantity}}" shoppinglists="{{shoppinglists}}"></day-productgroup-product>
+                        <day-productgroup-product user="[[user]]" period="[[period]]" day="[[day]]" meal="[[meal]]" productgroup="[[key]]" key="[[product.key]]" products="{{products}}" productgroups="{{productgroups}}" quantity="{{productgroup.quantity}}" shoppinglists="{{shoppinglists}}"></day-productgroup-product>
 
                     </template>
 
@@ -123,6 +123,9 @@
                     type: String,
                 },
                 day: {
+                    type: String
+                },
+                meal: {
                     type: String
                 },
                 key: {

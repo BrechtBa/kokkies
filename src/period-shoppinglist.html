@@ -136,23 +136,25 @@
                 var shoppinglistproducts = {};
 
                 for(day in dayproductgroups){
-                    for(productgroup in dayproductgroups[day]){
-                        var productgroupquantity = dayproductgroups[day][productgroup].quantity
+                    for(meal in dayproductgroups[day]){
 
-                        if(typeof dayproductgroupproducts[day] != 'undefined'){
+                        for(productgroup in dayproductgroups[day][meal]){
+                            var productgroupquantity = dayproductgroups[day][meal][productgroup].quantity
 
-                            for(product in dayproductgroupproducts[day][productgroup]){
-                                if(dayproductgroupproducts[day][productgroup][product].shoppinglist == key){
+                            if(typeof dayproductgroupproducts[day] != 'undefined'){
 
-                                    if(typeof shoppinglistproducts[product] == 'undefined'){
-                                        shoppinglistproducts[product] = {'quantity':0}
+                                for(product in dayproductgroupproducts[day][meal][productgroup]){
+                                    if(dayproductgroupproducts[day][meal][productgroup][product].shoppinglist == key){
+
+                                        if(typeof shoppinglistproducts[product] == 'undefined'){
+                                            shoppinglistproducts[product] = {'quantity':0}
+                                        }
+                                        shoppinglistproducts[product].quantity += productgroupquantity*productgroups[productgroup].products[product].quantity
                                     }
-                                    shoppinglistproducts[product].quantity += productgroupquantity*productgroups[productgroup].products[product].quantity
-                                }
 
+                                }
                             }
                         }
-
                     }
                 }
 

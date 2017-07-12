@@ -17,9 +17,9 @@
 <link rel="import" href="search-filter-behavior.html">
 <link rel="import" href="collapsible-behavior.html">
 
-<link rel="import" href="day-meal.html">
+<link rel="import" href="day-productgroup.html">
 
-<dom-module id="period-day">
+<dom-module id="day-meal">
 
     <template>
 
@@ -34,14 +34,10 @@
                 margin-top: -8px;
                 margin-bottom: -8px;
             }
-            .day{
-                margin-top: 5px;
-                margin-bottom: 5px;
-                font-size: 1.17em;
-                font-weight: bold;
-            }
-            .weekday{
-                width: 100px;
+            h1{
+                font-size: 1em;
+                margin-top: 20px;
+                margin-bottom: 0;
             }
             .collapse{
                 width: 40px;
@@ -49,6 +45,8 @@
                 margin-top: 8px;
             }
             .comment{
+                width: 50%;
+                min-width: 200px;
             }
             .edit-uncollapsed{
                 position: absolute;
@@ -57,55 +55,43 @@
             }
         </style>
 
-        <firebase-document app-name="kokkies" path="/[[user.uid]]/days/[[period]]/[[key]]" data="{{day}}"></firebase-document>
+        <firebase-document app-name="kokkies" path="/[[user.uid]]/days/[[period]]/[[day]]/[[key]]" data="{{meal}}"></firebase-document>
 
+        <h1>[[key]]</h1>
 
+        <sortable-js id="sortable" group="dayProductgroups" handle=".drag-handle" on-update="_handleSortable" on-add="_handleSortable" on-remove="_handleSortable">
+            <template is="dom-repeat" items="{{sortableArray}}" as="productgroup">
+                <day-productgroup user="[[user]]" period="[[period]]" day="[[day]]" meal="[[key]]" key="[[productgroup.key]]" products="{{products}}" productgroups="{{productgroups}}" shoppinglists="{{shoppinglists}}" on-delete="deleteProductgroup" on-move-up="moveUpProductgroup" on-move-down="moveDownProductgroup"></day-productgroup>
+            </template>
+        </sortable-js>
 
-        <paper-material class="vertical layout">
-            <div class="horizontal layout">
-                <div class="collapse btn" on-tap="_toggleCollapse"><iron-icon icon="expand-more"></iron-icon></div>
-                <div class="day flex">Dag [[number]]</div>
-                <div class="weekday">[[date.weekday]]</div>
-                <div class="date flex">[[date.date]]</div>
-            </div>
+        
 
-            <iron-collapse>
-                <div class="content">
+        <div class="horizontal layout wrap">
+            <paper-button raised on-tap="addProductgroupDialog">Gerecht toevoegen</paper-button>
+            <div class="flex"></div>
+            <paper-input class="comment" label="Opmerkingen" value="{{meal.comment}}"></paper-input>
+        </div>
 
-                    <div class="comment horizontal layout">
-                        <!--<div class="flex"></div>-->
-                        <paper-input class="flex" label="Opmerkingen" value="{{day.comment}}"></paper-input>
-                    </div>
-
-                    <template is="dom-repeat" items="{{meals}}" as="meal">
-                        <day-meal user="[[user]]" period="[[period]]" day="[[key]]" key="[[meal]]" products="{{products}}" productgroups="{{productgroups}}" shoppinglists="{{shoppinglists}}"></day-meal>
-                    </template>
-
-                    <div class="edit-uncollapsed">
-                        <paper-icon-button icon="arrow-upward" on-tap="_moveUp"></paper-icon-button>
-                        <paper-icon-button icon="arrow-downward" on-tap="_moveDown"></paper-icon-button>
-                        <paper-icon-button icon="delete" on-tap="deleteDayDialog"></paper-icon-button>
-                    </div>
-                </div>
-            </iron-collapse>
-
-        </paper-material>
-
-        <paper-dialog id="deleteDayDialog">
-            <h2>Are you sure?</h2>
-            <div class="buttons">
-                <paper-button dialog-dismiss>Cancel</paper-button>
-                <paper-button dialog-confirm on-tap="deleteDay">Delete</paper-button>
-            </div>
+        <paper-dialog id="addProductgroupDialog">
+            <paper-button class="close" dialog-dismiss>close</paper-button>
+            <paper-dialog-scrollable>
+                <h3>Gerecht toevoegen</h3>
+                <paper-input label="search" no-label-float value="{{productgroupSearch}}"><iron-icon icon="search" suffix></iron-icon></paper-input>
+                <template is="dom-repeat" items="{{_toArray(productgroups)}}" as="productgroup" filter="{{_searchFilter(productgroupSearch)}}" observe="name">
+                    <paper-material class="productgroup btn horizontal layout wrap" on-tap="addProductgroup">
+                        <div class="name">{{productgroup.val.name}}</div>
+                    </paper-material>
+                </template>
+            </paper-dialog-scrollable>
         </paper-dialog>
-
 
     </template>
 
     <script>
 
         Polymer({
-            is: 'period-day',
+            is: 'day-meal',
 
             behaviors: [
                 objectListBehavior,
@@ -118,6 +104,9 @@
                     type: Object
                 },
                 period: {
+                    type: String,
+                },
+                day: {
                     type: String,
                 },
                 key: {
@@ -143,37 +132,35 @@
             },
 
             observers: [
-                '_updateSortableArray(day.productgroups)'
+                '_updateSortableArray(meal.productgroups)'
             ],
 
             ready: function(){
                 this.meals = ['Ontbijt', 'Middag', '4-uurtje', 'Avond', '11-uurtje']
             },
 
-            deleteDayDialog: function(e){
-                e.stopPropagation();
-                this.$.deleteDayDialog.open();
+            addProductgroupDialog: function(e){
+                this.$.addProductgroupDialog.open();
             },
+            
+            addProductgroup: function(e){
+                this.$.addProductgroupDialog.close();
 
-            deleteDay: function(e){
-
-                // propagate down
-                var elements = Polymer.dom(this.root).querySelectorAll('day-productgroup');
-                for(var i=0;i<elements.length;i++){
-                    elements[i].deleteProductgroup()
+                var key = e.model.__data__.productgroup.key;
+                if(typeof this.meal.productgroups == 'undefined'){
+                    this.set('meal.productgroups',{})
                 }
-
-                this.set('day',null);
-
-                // propagate up
-                this.fire('delete',this.key)
+                if(typeof this.meal.productgroups[key] == 'undefined'){
+                    // add the key
+                    this.set('meal.productgroups.'+key,Object.keys(this.meal.productgroups).length+1);
+                }
             },
 
             deleteProductgroup: function(e,d){
-                this.set('day.productgroups.'+d,null);
+                this.set('meal.productgroups.'+d,null);
                 
                 // reset numbers
-                var object = this.day.productgroups;
+                var object = this.meal.productgroups;
                 var array = []
                 for( key in object){
                     if( object[key] != null ){
@@ -185,7 +172,7 @@
                 });
 
                 for(var i=0;i<array.length;i++){
-                    this.set('day.productgroups.'+array[i][0],i+1)
+                    this.set('meal.productgroups.'+array[i][0],i+1)
                 }
 
                 //this.calculateProducts();
@@ -230,23 +217,23 @@
                         order[this.sortableArray[i].key] = i+1;
                     }
                     for(key in order){
-                        //this.day.productgroups[key] = order[key];
-                        this.set( 'day.productgroups.'+key, order[key] )
+                        //this.meal.productgroups[key] = order[key];
+                        this.set( 'meal.productgroups.'+key, order[key] )
                     }
 
-                    this.notifyPath('day.productgroups')
+                    this.notifyPath('meal.productgroups')
                 }
                 else if(e.type == 'add'){
                     for(var i=0;i<this.sortableArray.length;i++){
-                        if(!(this.sortableArray[i].key in this.day.productgroups)){
+                        if(!(this.sortableArray[i].key in this.meal.productgroups)){
                             //console.log(this.sortableArray[i])
-                            //this.set( 'day.productgroups.'+this.sortableArray[i].key, this.sortableArray[i].val );
+                            //this.set( 'meal.productgroups.'+this.sortableArray[i].key, this.sortableArray[i].val );
                             break;
                         }
                     }
                 }
                 else if(e.type == 'remove'){
-                    for(key in this.day.productgroups){
+                    for(key in this.meal.productgroups){
                         var remove = true;
                         for(var i=0;i<this.sortableArray.length;i++){
                             if( this.sortableArray[i].key == key ){
@@ -255,8 +242,8 @@
                             }
                         }
                         if(remove){
-                            console.log('day.productgroups.'+key)
-                            //this.set( 'day.productgroups.'+key, null );
+                            console.log('meal.productgroups.'+key)
+                            //this.set( 'meal.productgroups.'+key, null );
                             break;
                         }
                     }
@@ -264,40 +251,33 @@
             },
 
             moveUpProductgroup: function(e,d){
-                var object = this.day.productgroups;
+                var object = this.meal.productgroups;
                 var val = object[d];
 
                 if(val!=1){
                     for(key in object){
                         if(object[key] == val-1){
-                            this.set('day.productgroups.'+key,val);
+                            this.set('meal.productgroups.'+key,val);
                         }
                     }
-                    this.set('day.productgroups.'+d,val-1);
+                    this.set('meal.productgroups.'+d,val-1);
                 }
             },
 
             moveDownProductgroup: function(e,d){
-                var object = this.day.productgroups;
+                var object = this.meal.productgroups;
                 var val = object[d];
 
                 if(val!=Object.keys(object).length){
                     for( key in object){
                         if(object[key] == val+1){
-                            this.set('day.productgroups.'+key,val);
+                            this.set('meal.productgroups.'+key,val);
                         }
                     }
-                    this.set('day.productgroups.'+d,val+1);
+                    this.set('meal.productgroups.'+d,val+1);
                 }
             },
 
-            _moveUp: function(){
-                this.fire('move-up',this.key)
-            },
-
-            _moveDown: function(){
-                this.fire('move-down',this.key)
-            },
         });
 
     </script>
