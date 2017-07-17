@@ -311,6 +311,23 @@
                 }
             },
 
+            planningHtml: function(){
+
+                var html = '';
+
+                if(typeof this.meal != 'undefined' && typeof this.meal.productgroups != 'undefined'){
+                    for( productgroup in this.meal.productgroups){
+                        html += '<div class="productgroup">'+this.productgroups[productgroup].name+'</div>';
+                    }
+                }
+
+                if(typeof this.meal != 'undefined' && typeof this.meal.comment != 'undefined'){
+                    html += '<div class="comment">'+this.meal.comment+'</div>';
+                }
+
+                return html;
+            },
+
         });
 
     </script>

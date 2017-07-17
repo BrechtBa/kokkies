@@ -70,7 +70,6 @@
 
         <firebase-document app-name="kokkies" path="/[[user.uid]]/productgroups/[[period]]/[[key]]" data="{{productgroup}}"></firebase-document>
 
-
         <paper-material class="vertical layout">
 
             <div class="horizontal layout">
@@ -115,6 +114,8 @@
                         <div class="name">{{product.val.name}}</div>
                     </paper-material>
                 </template>
+
+            <paper-button raised on-tap="newProductDialog">Nieuw</paper-button>
             </paper-dialog-scrollable>
         </paper-dialog>
 
@@ -126,6 +127,17 @@
                 <paper-button dialog-confirm on-tap="deleteProductgroup">Delete</paper-button>
             </div>
         </paper-dialog>
+
+        <paper-dialog id="newProductDialog">
+            <h3>Nieuw product</h3>
+            <paper-input label="Naam" value="{{productSearch}}"></paper-input>
+            <paper-input label="Unit" value="{{newProductUnit}}"></paper-input>
+            <div class="buttons">
+                <paper-button dialog-dismiss>Cancel</paper-button>
+                <paper-button dialog-confirm on-tap="newProduct">Save</paper-button>
+            </div>
+        </paper-dialog>
+
 
 
     </template>
@@ -170,6 +182,10 @@
                 },
             },
 
+            ready: function(){
+                this.newItemKey = 'temp';
+            },
+
             addProductDialog: function(e){
                 this.$.addProductDialog.open();
             },
@@ -189,6 +205,38 @@
                     }
                     this.set('productgroup.products.'+key,{'quantity':0,'order':order});
                 }
+            },
+
+            newProductDialog: function(e){
+                this.$.newProductDialog.open()
+            },
+
+            newProduct: function(e){
+                var newItemKey = btoa(this.user.uid + Date.now());
+                var newItem = {
+                    'name':this.productSearch,
+                    'unit':this.newProductUnit,
+                    'secondunit':'',
+                    'unitconversion':1,
+                    'packagequantity':1,
+                    'price':0,
+                    'store':'',
+                };
+                this.set('products.'+newItemKey,newItem);
+                this.set('newProductUnit','');
+
+
+                // add the product
+                var e = {
+                    'model':{
+                        '__data__':{
+                            'product':{
+                                'key': newItemKey
+                            }
+                        }
+                    }
+                }
+                this.addProduct(e)
             },
 
             _handleProductQuantityChange :function(e){

@@ -297,6 +297,26 @@
             _moveDown: function(){
                 this.fire('move-down',this.key)
             },
+
+            planningHtml: function(){
+
+                var html = '';
+
+                html += '<div class="cell header"><div>Dag ' +this.number +'</div><div><span class="weekday">'+ this.date.weekday + '</span><span class="date">' + this.date.date + '</span></div></div>';
+                html += '<div class="cell subheader">' + this.day.comment + '</div>';
+
+
+                var meals = Polymer.dom(this.root).querySelectorAll('day-meal');
+
+                for(var i=0; i<meals.length; i++){
+
+                    html += '<div class="cell">'+meals[i].planningHtml()+'</div>';
+
+                }
+
+
+                return html;
+            },
         });
 
     </script>
