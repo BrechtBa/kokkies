@@ -39,6 +39,19 @@
                 margin-top: 20px;
                 margin-bottom: 0;
             }
+
+            .add{
+                float: right;
+                top: -20px;
+                right: 20px;
+                background-color: #cccccc;
+            }
+            .cicle-button{
+                width: 50px;
+                min-width: 0;
+                height: 50px;
+                border-radius: 25px;
+            }
             .collapse{
                 width: 40px;
                 margin-right: 4px;
@@ -65,13 +78,15 @@
             </template>
         </sortable-js>
 
-        
+        <template is="dom-if" if="{{!_isEmpty(meal.productgroups)}}">
+            <paper-button raised class="add cicle-button" on-tap="addProductgroupDialog"><iron-icon icon="add"></iron-icon></paper-button>
+        </template>
 
-        <div class="horizontal layout wrap">
-            <paper-button raised on-tap="addProductgroupDialog">Gerecht toevoegen</paper-button>
-            <div class="flex"></div>
-            <paper-input class="comment" label="Opmerkingen" value="{{meal.comment}}"></paper-input>
-        </div>
+        <template is="dom-if" if="{{_isEmpty(meal.productgroups)}}">
+            <paper-button raised class="add" on-tap="addProductgroupDialog">Gerecht toevoegen</iron-icon></paper-button>
+        </template>
+
+        <paper-input class="comment" label="Opmerkingen" value="{{meal.comment}}"></paper-input>
 
         <paper-dialog id="addProductgroupDialog">
             <paper-button class="close" dialog-dismiss>close</paper-button>
@@ -247,6 +262,24 @@
                             break;
                         }
                     }
+                }
+            },
+
+            _isEmpty: function(obj){
+                if(typeof obj == 'object'){
+                    return Object.keys(obj).length == 0;
+                }
+                else{
+                    return true;
+                }
+            },
+
+            _isNotEmpty: function(obj){
+                if(typeof obj == 'object'){
+                    return Object.keys(obj).length == 0;
+                }
+                else{
+                    return false;
                 }
             },
 
