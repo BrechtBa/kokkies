@@ -55,6 +55,12 @@
             }
             .product .quantity{
                 width: 60px;
+                text-align: right;
+                margin-right: 5px;
+            }
+            .product .unit{
+                min-width: 40px;
+                margin-right: 10px;
             }
             .collapse{
                 width: 40px;
@@ -68,7 +74,7 @@
             }
         </style>
 
-        <firebase-document app-name="kokkies" path="/[[user.uid]]/productgroups/[[period]]/[[key]]" data="{{productgroup}}"></firebase-document>
+        <firebase-document app-name="kokkies" path="/[[user.uid]]/productgroups/[[period]]/[[key]]" data="{{productgroup}}" disabled="{{!opened}}"></firebase-document>
 
         <paper-material class="vertical layout">
 
@@ -77,7 +83,7 @@
                 <paper-input label="Name" value="{{productgroup.name}}"></paper-input>
             </div>
 
-            <iron-collapse>
+            <iron-collapse opened="{{opened}}">
                 <div class="content">
 
                     <template is="dom-repeat" items="{{_toArray(productgroup.products)}}" as="product">
@@ -86,14 +92,20 @@
                         <paper-material class="product horizontal layout center">
                             <div class="name">{{_getObjectProperty(products,product.key,'name')}}</div>
                             <div class="quantity"><paper-input label="Quantity" value="{{product.val.quantity}}" no-label-float="true" on-change="_handleProductQuantityChange"></paper-input></div>
-                            <div class="unit flex">{{_getObjectProperty(products,product.key,'unit')}}</div>
-                           
+                            <div class="unit">{{_getObjectProperty(products,product.key,'unit')}}</div>
+                            <template is="dom-if" if="{{_hasSecondunit(products,product.key)}}">
+                                <div class="quantity">~ [[_getSecondQuantity(products,product.key,product.val.quantity)]]</div>
+                                <div class="unit">{{_getObjectProperty(products,product.key,'secondunit')}}</div>
+                            </template>
+                            <div class="flex">&nbsp;</div>
                             <paper-icon-button icon="delete" raised on-tap="deleteProduct">Delete</paper-icon-button>
                         </paper-material>
 
                     </template>
 
                     <paper-button raised on-tap="addProductDialog">Add product</paper-button>
+
+                    <paper-input label="Opmerking" value="{{productgroup.comment}}"></paper-input>
 
                     <div class="edit-uncollapsed">
                         <paper-icon-button icon="delete" on-tap="deleteProductgroupDialog"></paper-icon-button>
@@ -132,6 +144,8 @@
             <h3>Nieuw product</h3>
             <paper-input label="Naam" value="{{productSearch}}"></paper-input>
             <paper-input label="Unit" value="{{newProductUnit}}"></paper-input>
+                <paper-input label="Second unit" value="{{newProductSecondunit}}"></paper-input>
+                <paper-input label="Unit conversion, ( 1 [[newProductUnit]] = [[newProductUnitconversion]] [[newProductSecondunit]] )" value="{{newProductUnitconversion}}"></paper-input>
             <div class="buttons">
                 <paper-button dialog-dismiss>Cancel</paper-button>
                 <paper-button dialog-confirm on-tap="newProduct">Save</paper-button>
@@ -216,15 +230,16 @@
                 var newItem = {
                     'name':this.productSearch,
                     'unit':this.newProductUnit,
-                    'secondunit':'',
-                    'unitconversion':1,
+                    'secondunit':this.newProductSecondunit,
+                    'unitconversion':this.newProductUnitconversion,
                     'packagequantity':1,
                     'price':0,
                     'store':'',
                 };
                 this.set('products.'+newItemKey,newItem);
                 this.set('newProductUnit','');
-
+                this.set('newProductSecondunit','');
+                this.set('newProductUnitconversion',1);
 
                 // add the product
                 var e = {
@@ -244,7 +259,26 @@
                 console.log(this.productgroup.products)
 
                 var key = e.model.__data__.product.key;
-                this.set('productgroup.products.'+key,JSON.parse(JSON.stringify(this.productgroup.products[key] )));
+                this.set('productgroup.products.'+key,JSON.parse(JSON.stringify(this.productgroup.products[key])));
+            },
+
+            _hasSecondunit: function(products,key){
+                return this._getObjectProperty(products,key,'secondunit') != '';
+            },
+
+            _getSecondQuantity: function(products,key,quantity){
+                return this._round( quantity*this._getObjectProperty(products,key,'unitconversion') );
+            },
+
+            _round: function(val){
+                var decimals = 0;
+                if(val < 20){
+                    decimals = 1;
+                }
+                if(val < 1){
+                    decimals = 2;
+                }
+                return val.toFixed(decimals);
             },
 
             deleteProductgroupDialog: function(e){

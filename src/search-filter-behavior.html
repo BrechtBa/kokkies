@@ -4,8 +4,8 @@
     searchFilterBehavior = {
         _searchFilter: function(string){
             string = string.toLowerCase();
-            return function(product) {
-                var name = product.val.name.toLowerCase();
+            return function(object) {
+                var name = object.val.name.toLowerCase();
                 return (name.indexOf(string) != -1 );
             };
         },

@@ -42,8 +42,9 @@
             }
         </style>
 
+        <paper-input class="search" label="search" no-label-float value="{{productgroupSearch}}"><iron-icon icon="search" suffix></iron-icon></paper-input>
 
-        <template is="dom-repeat" items="{{_toArray(productgroups)}}" as="productgroup">
+        <template is="dom-repeat" items="{{_toArray(productgroups)}}" as="productgroup" filter="{{_searchFilter(productgroupSearch)}}" sort="_sortByName">
 
             <period-productgroup user="[[user]]" period="[[period]]" key="[[productgroup.key]]" products="{{products}}"></period-productgroup>
 
@@ -52,28 +53,6 @@
         <paper-button raised on-tap="newProductgroup">Gerecht toevoegen</paper-button>
 
 
-
-
-
-
-<!--
-        <app-route route="{{route}}" pattern="/:key" data="{{routeData}}" tail="{{subroute}}"></app-route>
-
-
-
-        <div class="buttons horizontal layout">
-            <paper-button raised on-tap="newItem">New product group</paper-button>
-        </div>
-
-        <paper-input class="search" label="search" no-label-float value="{{productgroupSearch}}"><iron-icon icon="search" suffix></iron-icon></paper-input>
-
-        <template is="dom-repeat" items="{{_toArray(productgroups)}}" as="productgroup" filter="{{_computeFilter(productgroupSearch)}}" sort="_sortByName" observe="val.name">
-            <paper-material class="productgroup horizontal layout center wrap" on-tap="addItemToShoppinglist">
-                <div class="name flex">{{productgroup.val.name}}</div>
-                <paper-icon-button raised icon="create" on-tap="editItem">Edit</paper-icon-button>
-            </paper-material>
-        </template>
--->
     </template>
 
     <script>
@@ -109,16 +88,7 @@
                 if(typeof this.productgroups == 'undefined'){
                     this.set('productgroups',{});
                 }
-                this.set('productgroups.'+key,true);
-            },
-           
-
-            _computeFilter: function(string){
-                string = string.toLowerCase();
-                return function(productgroup) {
-                    var name = productgroup.val.name.toLowerCase();
-                    return (name.indexOf(string) != -1 );
-                  };
+                this.set('productgroups.'+key,{'name':'','products':{}});
             },
             
             _sortByName: function(a,b){
