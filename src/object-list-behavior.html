@@ -62,7 +62,16 @@
             if(typeof array != 'undefined'){
                 return array.sort(this._sortByVal);
             }
-        }
+        },
+
+        _isEmpty: function(obj){
+            if(typeof obj == 'object'){
+                return Object.keys(obj).length == 0;
+            }
+            else{
+                return true;
+            }
+        },
     };
 
 </script>

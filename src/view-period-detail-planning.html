@@ -29,6 +29,7 @@
 <link rel="import" href="collapsible-behavior.html">
 
 <link rel="import" href="period-day.html">
+<link rel="import" href="day-meal.html">
 
 <dom-module id="view-period-detail-planning">
 
@@ -41,56 +42,36 @@
                 display: block;
                 padding: 10px;
             }
-            .day{
-                background-color: #ffffff;
-            }
-            .day .edit-uncollapsed{
-                position: absolute;
-                bottom: 20px;
+            .add{
+                float: right;
+                top: -20px;
                 right: 20px;
+                background-color: #cccccc;
             }
-            .day h3{
+            .cicle-button{
+                width: 50px;
+                min-width: 0;
+                height: 50px;
+                border-radius: 25px;
+            }
+            .spacer{
+                margin-top: 50px;
+            }
+            .day{
                 margin-top: 5px;
+                margin-bottom: 5px;
+                font-size: 1.17em;
+                font-weight: bold;
             }
-            .shoppinglist{
+            .collapse{
+                width: 40px;
+                margin-right: 4px;
+                margin-top: 8px;
+            }
+            paper-material{
                 background-color: #ffffff;
             }
-            iron-icon{
-                color: #555555;
-            }
-            paper-icon-button{
-                color: #555555;
-            }
-            .productgroup .name{
-                min-width: 200px;
-            }
-            .productgroup .quantity{
-                width: 80px;
-            }
-            .productgroup .edit-uncollapsed{
-                position: absolute;
-                top: 10px;
-                right: 10px;
-            }
-            .product-list{
-                margin-left: 50px;
-            }
-            .product .name{
-                min-width: 150px;
-                margin-top: 20px;
-            }
-            .product .unit{
-                width: 50px;
-                margin-left: 5px;
-                margin-top: 20px;
-            }
-            .shoppinglist .name{
-                min-width: 300px;
-            }
-            paper-input{
-                /*margin-top: -8px;
-                margin-bottom: -8px;*/
-            }
+
         </style>
 
         <template is="dom-repeat" items="{{_toArray(days)}}" as="day" sort=_sortByVal>
@@ -99,7 +80,30 @@
 
         </template>
         
-        <paper-button raised on-tap="newDay">Dag toevoegen</paper-button>
+        <template is="dom-if" if="{{!_isEmpty(days)}}">
+            <paper-button raised class="add cicle-button" on-tap="addDay"><iron-icon icon="add"></iron-icon></paper-button>
+        </template>
+
+        <template is="dom-if" if="{{_isEmpty(days)}}">
+            <paper-button raised class="add" on-tap="addDay">Dag toevoegen</paper-button>
+        </template>
+
+        <div class="spacer"></div>
+
+        <paper-material class="vertical layout">
+            <div class="horizontal layout">
+                <div class="collapse btn" on-tap="_toggleCollapse"><iron-icon icon="expand-more"></iron-icon></div>
+                <div class="day flex">Algemeen</div>
+            </div>
+
+            <iron-collapse>
+                <div class="content">
+                    <day-meal user="[[user]]" period="[[period]]" day="other" key="Algemeen" products="{{products}}" productgroups="{{productgroups}}" shoppinglists="{{shoppinglists}}"></day-meal>
+                </div>
+            </iron-collapse>
+
+        </paper-material>
+
 
     </template>
 
@@ -111,6 +115,7 @@
             behaviors: [
                 objectListBehavior,
                 searchFilterBehavior,
+                collapsibleBehavior,
             ],
 
             properties:{
@@ -137,14 +142,6 @@
                 productgroups: {
                     type: Object,
                 },
-                dayproductgroups: {
-                    type: Object,
-                    notify: true
-                },
-                dayproductgroupproducts: {
-                    type: Object,
-                    notify: true
-                },
                 shoppinglists: {
                     type: Object,
                 },
@@ -154,7 +151,7 @@
                 this.meals = ['Ontbijt', 'Middag', '4-uurtje', 'Avond', '11-uurtje']
             },
 
-            newDay: function(e){
+            addDay: function(e){
                 var key = btoa(this.user.uid + Date.now());
 
                 if(typeof this.days == 'undefined'){

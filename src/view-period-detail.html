@@ -148,7 +148,7 @@
                     <h1 class="flex">Planning</h1>
                     <paper-button class="print" raised on-tap="print">Print</paper-button>
                 </div>
-                <view-period-detail-planning id="planning" user="[[user]]" period="[[periodKey]]" days="{{period.days}}" perioddays="{{perioddays}}" period-startdate="{{period.startdate}}" productgroups="{{productgroups}}" products="{{products}}" shoppinglists="{{shoppinglists}}" dayproductgroups="{{dayproductgroups}}" dayproductgroupproducts="{{dayproductgroupproducts}}"></view-period-detail-menu>
+                <view-period-detail-planning id="planning" user="[[user]]" period="[[periodKey]]" days="{{period.days}}" perioddays="{{perioddays}}" period-startdate="{{period.startdate}}" productgroups="{{productgroups}}" products="{{products}}" shoppinglists="{{shoppinglists}}"></view-period-detail-menu>
             </div>
             
             <div name="productgroups">
@@ -168,41 +168,6 @@
             </div>
 
         </iron-pages>
-
-
-
-
-
-<!--
-        <div class="horizontal layout">
-            <paper-input label="Periode" value="{{period.name}}"></paper-input>
-            <div class="flex">&nbsp;</div>
-            <paper-input label="Start Datum" value="{{period.startdate}}" pattern="[0-9][0-9]-[0-9][0-9]-[0-9][0-9][0-9][0-9]" auto-validate error-message="dd-mm-yyyy"></paper-input>
-        </div>
-
-        <template is="dom-repeat" items="{{_toArray(period.days)}}" as="day" sort=_sortByVal>
-
-            <period-day user="[[user]]" period="[[periodKey]]" key="[[day.key]]" number="[[day.val]]" date="[[_computeDayDate(period.startdate,day.val)]]" products="{{products}}" productgroups="{{productgroups}}" shoppinglists="{{shoppinglists}}" on-delete="deleteDay" on-move-up="moveUpDay" on-move-down="moveDownDay"></period-day>
-
-        </template>
-        
-        <paper-button raised on-tap="newDay">Dag toevoegen</paper-button>
-        
-        
-        
-        
-        <h2>Winkellijstjes</h2>
-        
-        <template is="dom-repeat" items="{{_toArray(period.shoppinglists)}}" as="shoppinglist">
-
-            <period-shoppinglist user="[[user]]" period="[[periodKey]]" key="{{shoppinglist.key}}" dayproductgroups="{{dayproductgroups}}" dayproductgroupproducts="{{dayproductgroupproducts}}" products="{{products}}" productgroups="{{productgroups}}" ></period-shoppinglist>
-
-        </template>
-        
-        <paper-button raised on-tap="newShoppinglist">Winkellijst toevoegen</paper-button>
--->
-        
-        
         
         
         

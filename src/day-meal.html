@@ -83,7 +83,7 @@
         </template>
 
         <template is="dom-if" if="{{_isEmpty(meal.productgroups)}}">
-            <paper-button raised class="add" on-tap="addProductgroupDialog">Gerecht toevoegen</iron-icon></paper-button>
+            <paper-button raised class="add" on-tap="addProductgroupDialog">Gerecht toevoegen</paper-button>
         </template>
 
         <paper-input class="comment" label="Opmerkingen" value="{{meal.comment}}"></paper-input>
@@ -262,24 +262,6 @@
                             break;
                         }
                     }
-                }
-            },
-
-            _isEmpty: function(obj){
-                if(typeof obj == 'object'){
-                    return Object.keys(obj).length == 0;
-                }
-                else{
-                    return true;
-                }
-            },
-
-            _isNotEmpty: function(obj){
-                if(typeof obj == 'object'){
-                    return Object.keys(obj).length == 0;
-                }
-                else{
-                    return false;
                 }
             },
 
