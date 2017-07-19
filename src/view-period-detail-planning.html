@@ -234,71 +234,14 @@
                 return val.toFixed(decimals);
             },
 
-            print: function(){
+            planningHtml: function(){
 
                 var html = '';
-                html += '<html>';
-                html += '   <head>';
-                html += '       <style type="text/css">';
-                html += '           body {';
-                html += '               font-family: sans-serif;';
-                html += '           }';
-                html += '           div.table {';
-                html += '               width: 1200px;';
-                html += '               page-break-after: always;';
-                html += '               page-break-inside: avoid;';
-                html += '           }';
-                html += '           div.table div.column {';
-                html += '               float: left;';
-                html += '               width: 200px;';
-                html += '           }';
-                html += '           div.table div.column div.cell {';
-                html += '               position: relative;';
-                html += '               border: 1px solid;';
-                html += '               height: 110px;';
-                html += '           }';
-                html += '           div.table div.column.header {';
-                html += '               width: 100px;';
-                html += '           }';
-                html += '           div.table div.column div.cell.header {';
-                html += '               height: 60px;';
-                html += '           }';
-                html += '           div.table div.column div.cell.subheader {';
-                html += '               height: 40px;';
-                html += '           }';
-                html += '           span.weekday {';
-                html += '               margin-right: 3px';
-                html += '           }';
-                html += '           span.date {';
-                html += '               margin-left: 3px';
-                html += '           }';
-                html += '           div.productgroup {';
-                html += '               text-align: left';
-                html += '           }';
-                html += '           div.comment {';
-                html += '               position: absolute;';
-                html += '               right: 1px;';
-                html += '               bottom: 1px;';
-                html += '               color: #555555;';
-                html += '               font-size: 0.8em;';
-                html += '           }';
-                html += '       </style>';
-                html += '       <style type="text/css" media="print">';
-                html += '           @page {';
-                html += '               size: landscape;';
-                html += '           }';
-                html += '       </style>';
-                html += '   </head>';
 
-                html += '   <body>';
-
-
-                var days = this._toArray(this.days).sort(this._sortByVal);
                 var days = Polymer.dom(this.root).querySelectorAll('period-day');
 
-
+                // split in two groups of 5 days
                 if( days.length > 5 ){
-                    
                     var daygroups = [days.slice(0,5),days.slice(5)]
                 }
                 else{
@@ -306,41 +249,121 @@
                 }
 
                 for(var k=0; k<daygroups.length; k++){
-                    html += '       <div>';
-                    html += '           <h1>Planning</h1>';
-                    html += '           <div class="table">';
-                    html += '               <div class="column header">';
-                    html += '                   <div class="cell header"></div>';
-                    html += '                   <div class="cell subheader"></div>';
+                    html += '        <div class="page">\n';
+                    html += '            <h1>Planning</h1>\n';
+                    html += '            <div class="table">\n';
+                    html += '                <div class="column header">\n';
+                    html += '                    <div class="cell header"></div>\n';
+                    html += '                    <div class="cell subheader"></div>\n';
 
                     for(var i=0; i<this.meals.length; i++){
                         var meal = this.meals[i];
-                        html += '                   <div class="cell">'+this.meals[i]+'</div>';
+                        html += '                    <div class="cell">'+this.meals[i]+'</div>\n';
                     }
 
-                    html += '               </div>';
+                    html += '                </div>\n';
 
                     for(var j=0; j<daygroups[k].length; j++){
                         var day = daygroups[k][j]
 
-                        html += '               <div class="column">'+day.planningHtml()+'</div>';
+                        html += '                <div class="column">\n';
+                        html += day.planningHtml();
+                        html += '                </div>\n';
 
                     }
-                    html += '           </div>';
-                    html += '       </div>';
+                    html += '            </div>\n';
+                    html += '        </div>\n';
                 }
 
+                return html
+            },
 
-                html += '   </body>'
-                html += '</html>'
+            print: function(){
 
+                var html = '';
+                html += '<html>\n';
+                html += '    <head>\n';
+                html += '        <style type="text/css">\n';
+                html += '            body {\n';
+                html += '                font-family: sans-serif;\n';
+                html += '            }\n';
+                html += '            div.page {\n';
+                html += '                width: 1100px;\n';
+                html += '                height: 730px;\n';
+                html += '                page-break-after: always;\n';
+                html += '                page-break-inside: avoid;\n';
+                html += '            }\n';
+                html += '            div.table {\n';
+                html += '                width: 1100px;\n';
+                html += '                height: 650px;\n';
+                html += '            }\n';
+                html += '            div.table div.column {\n';
+                html += '                float: left;\n';
+                html += '                width: 200px;\n';
+                html += '            }\n';
+                html += '            div.table div.column div.cell {\n';
+                html += '                position: relative;\n';
+                html += '                border: 1px solid;\n';
+                html += '                height: 105px;\n';
+                html += '                padding: 2px;\n';
+                html += '            }\n';
+                html += '            div.table div.column.header {\n';
+                html += '                width: 100px;\n';
+                html += '                background-color: #dddddd;\n';
+                html += '            }\n';
+                html += '            div.table div.column div.cell.header {\n';
+                html += '                height: 60px;\n';
+                html += '                background-color: #dddddd;\n';
+                html += '            }\n';
+                html += '            div.table div.column div.cell.subheader {\n';
+                html += '                height: 40px;\n';
+                html += '            }\n';
+                html += '            span.weekday {\n';
+                html += '                margin-right: 3px;\n';
+                html += '            }\n';
+                html += '            span.date {\n';
+                html += '                margin-left: 3px;\n';
+                html += '            }\n';
+                html += '            div.productgroup {\n';
+                html += '                text-align: left;\n';
+                html += '            }\n';
+                html += '            div.comment {\n';
+                html += '                position: absolute;\n';
+                html += '                right: 1px;\n';
+                html += '                bottom: 1px;\n';
+                html += '                color: #555555;\n';
+                html += '                font-size: 0.8em;\n';
+                html += '            }\n';
+                html += '            div.productgroup {\n';
+                html += '                margin-right: 10px;\n';
+                html += '            }\n';
+                html += '            div.quantity {\n';
+                html += '                position: relative;\n';
+                html += '                text-align: right;\n';
+                html += '                top: -10px;\n';
+                html += '                color: #222222;\n';
+                html += '                font-size: 0.9em;\n';
+                html += '            }\n';
+                html += '        </style>\n';
+                html += '        <style type="text/css" media="print">\n';
+                html += '            @page {\n';
+                html += '                size: landscape;\n';
+                html += '            }\n';
+                html += '        </style>\n';
+                html += '    </head>\n';
+
+                html += '    <body>\n';
+
+                html += this.planningHtml();
+
+                html += '    </body>\n'
+                html += '</html>\n'
 
 
                 // put the html in a new window and print
                 var newWindow = window.open("about:blank", "", "_blank");
                 newWindow.document.write(html);
-                //newWindow.print()
-
+                newWindow.print()
             },
 
         });

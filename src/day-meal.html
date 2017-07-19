@@ -297,14 +297,17 @@
 
                 var html = '';
 
-                if(typeof this.meal != 'undefined' && typeof this.meal.productgroups != 'undefined'){
-                    for( productgroup in this.meal.productgroups){
-                        html += '<div class="productgroup">'+this.productgroups[productgroup].name+'</div>';
-                    }
+                var productgroups = Polymer.dom(this.root).querySelectorAll('day-productgroup');
+
+                for(var i=0; i<productgroups.length; i++){
+                    productgroups[i]
+                    html += '                        <div class="productgroup">\n';
+                    html += productgroups[i].planningHtml();
+                    html +='                         </div>\n';
                 }
 
                 if(typeof this.meal != 'undefined' && typeof this.meal.comment != 'undefined'){
-                    html += '<div class="comment">'+this.meal.comment+'</div>';
+                    html += '                        <div class="comment">'+this.meal.comment+'</div>\n';
                 }
 
                 return html;
