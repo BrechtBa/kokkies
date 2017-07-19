@@ -145,26 +145,17 @@
             </div>
 
             <div name="planning">
-                <div class="horizontal layout">
-                    <h1 class="flex">Planning</h1>
-                    <paper-button class="print" raised on-tap="print">Print</paper-button>
-                </div>
+                <h1 class="flex">Planning</h1>
                 <view-period-detail-planning id="planning" user="[[user]]" period="[[periodKey]]" days="{{period.days}}" perioddays="{{perioddays}}" period-startdate="{{period.startdate}}" productgroups="{{productgroups}}" products="{{products}}" shoppinglists="{{shoppinglists}}"></view-period-detail-menu>
             </div>
             
             <div name="productgroups">
-                <div class="horizontal layout">
-                    <h1 class="flex">Gerechten</h1>
-                    <paper-button class="print" raised on-tap="print">Print</paper-button>
-                </div>
+                <h1 class="flex">Gerechten</h1>
                 <view-period-detail-productgroups id="productgroups" user="[[user]]" period="[[periodKey]]" productgroups="{{productgroups}}" products="{{products}}" route="{{productgroupsSubroute}}"></view-period-detail-productgroups>
             </div>
 
             <div name="shoppinglists">
-                <div class="horizontal layout">
-                    <h1 class="flex">Winkellijstjes</h1>
-                    <paper-button class="print" raised on-tap="print">Print</paper-button>
-                </div>
+                <h1 class="flex">Winkellijstjes</h1>
                 <view-period-detail-shoppinglists id="shoppinglists" user="[[user]]" period="[[periodKey]]" productgroups="{{productgroups}}" products="{{products}}" shoppinglists="{{period.shoppinglists}}" dayproductgroups="{{dayproductgroups}}" dayproductgroupproducts="{{dayproductgroupproducts}}"></view-period-detail-shoppinglists>
             </div>
 
@@ -254,19 +245,6 @@
                 }
                 else{
                     this.set('page', 'base');
-                }
-            },
-
-            print: function(){
-
-                if(this.page == 'planning'){
-                    this.$.planning.print()
-                }
-                else if(this.page == 'productgroups'){
-                    this.$.productgroups.print()
-                }
-                else if(this.page == 'shoppinglists'){
-                    this.$.shoppinglists.print()
                 }
             },
 

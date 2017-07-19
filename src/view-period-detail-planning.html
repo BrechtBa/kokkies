@@ -40,6 +40,7 @@
         <style>
             :host {
                 display: block;
+                position: relative;
                 padding: 10px;
             }
             .add{
@@ -57,6 +58,12 @@
             .spacer{
                 margin-top: 50px;
             }
+            .print{
+                position: absolute;
+                top: -50px;
+                right: 10px;
+                background-color: #cccccc;
+            }
             .day{
                 margin-top: 5px;
                 margin-bottom: 5px;
@@ -73,6 +80,8 @@
             }
 
         </style>
+
+        <paper-button class="print" raised on-tap="print">Print</paper-button>
 
         <template is="dom-repeat" items="{{_toArray(days)}}" as="day" sort=_sortByVal>
 
@@ -325,7 +334,11 @@
                 html += '                margin-left: 3px;\n';
                 html += '            }\n';
                 html += '            div.productgroup {\n';
+                html += '                position: relative;\n';
                 html += '                text-align: left;\n';
+                html += '            }\n';
+                html += '            div.productgroup div.name {\n';
+                html += '                margin-right: 10px;\n';
                 html += '            }\n';
                 html += '            div.comment {\n';
                 html += '                position: absolute;\n';
@@ -334,15 +347,13 @@
                 html += '                color: #555555;\n';
                 html += '                font-size: 0.8em;\n';
                 html += '            }\n';
-                html += '            div.productgroup {\n';
-                html += '                margin-right: 10px;\n';
-                html += '            }\n';
                 html += '            div.quantity {\n';
-                html += '                position: relative;\n';
-                html += '                text-align: right;\n';
-                html += '                top: -10px;\n';
+                html += '                position: absolute;\n';
+                html += '                top: 5px;\n';
+                html += '                right: 0px;\n';
                 html += '                color: #222222;\n';
                 html += '                font-size: 0.9em;\n';
+                html += '                text-align: right;\n';
                 html += '            }\n';
                 html += '        </style>\n';
                 html += '        <style type="text/css" media="print">\n';
