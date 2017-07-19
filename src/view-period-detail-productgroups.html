@@ -6,6 +6,7 @@
 
 <link rel="import" href="../bower_components/iron-flex-layout/iron-flex-layout-classes.html">
 <link rel="import" href="../bower_components/iron-icons/iron-icons.html">
+<link rel="import" href="../bower_components/iron-pages/iron-pages.html">
 
 <link rel="import" href="../bower_components/paper-button/paper-button.html">
 <link rel="import" href="../bower_components/paper-icon-button/paper-icon-button.html">
@@ -42,16 +43,48 @@
             }
         </style>
 
-        <paper-input class="search" label="search" no-label-float value="{{productgroupSearch}}"><iron-icon icon="search" suffix></iron-icon></paper-input>
 
-        <template is="dom-repeat" items="{{_toArray(productgroups)}}" as="productgroup" filter="{{_searchFilter(productgroupSearch)}}" sort="_sortByName">
+        <app-route route="{{route}}" pattern="/:key" data="{{routeData}}" tail="{{subroute}}"></app-route>
 
-            <period-productgroup user="[[user]]" period="[[period]]" key="[[productgroup.key]]" products="{{products}}"></period-productgroup>
 
-        </template>
+        <iron-pages role="sub" selected="[[page]]" attr-for-selected="name">
 
-        <paper-button raised on-tap="newProductgroup">Gerecht toevoegen</paper-button>
+            <div name="list">
+                <div class="buttons horizontal layout">
+                    <paper-button raised on-tap="newItem">New productgroup</paper-button>
+                </div>
 
+                <paper-input class="search" label="search" no-label-float value="{{productgroupSearch}}"><iron-icon icon="search" suffix></iron-icon></paper-input>
+
+                <template is="dom-repeat" items="{{_toArray(productgroups)}}" as="productgroup" filter="{{_searchFilter(productgroupSearch)}}" sort="_sortByName" observe="val.name">
+                    <paper-material class="productgroup horizontal layout center wrap">
+                        <div class="name flex">{{productgroup.val.name}}</div>
+                        <paper-icon-button icon="create" raised on-tap="editItem">Edit</paper-icon-button>
+                    </paper-material>
+                </template>
+            </div>
+
+            <div name="detail">
+
+                <period-productgroup user="{{user}}" productgroup="{{tempItem}}" products="{{products}}"></period-productgroup>
+
+                <div class="buttons">
+                    <paper-button raised on-tap="saveItem">Save</paper-button>
+                    <paper-button raised on-tap="deleteItemDialog">Delete</paper-button>
+                </div>
+
+            </div>
+
+        </iron-pages>
+
+
+        <paper-dialog id="deleteItemDialog">
+            <h2>Are you sure?</h2>
+            <div class="buttons">
+                <paper-button dialog-dismiss>Cancel</paper-button>
+                <paper-button dialog-confirm on-tap="deleteItem">Delete</paper-button>
+            </div>
+        </paper-dialog>
 
     </template>
 
@@ -79,18 +112,81 @@
                     type: Object,
                     notify: true,
                 },
-
+                route: {
+                    type: 'string',
+                    notify: true,
+                }
             },
 
-            newProductgroup: function(e){
-                var key = btoa(this.user.uid + Date.now());
+            observers: [
+                '_routeDataChanged(routeData.*,productgroups)',
+            ],
 
-                if(typeof this.productgroups == 'undefined'){
-                    this.set('productgroups',{});
-                }
-                this.set('productgroups.'+key,{'name':'','products':{}});
+            newItem: function(){
+                this.set('route.path','/new');
             },
             
+            editItem: function(e){
+                e.stopPropagation();
+                var key = e.model.__data__.productgroup.key;
+                this.set('route.path','/'+key);
+            },
+
+            saveItem: function(e){
+                e.stopPropagation();
+
+                this.set('productgroups.'+this.routeData.key,JSON.parse(JSON.stringify(this.tempItem)));
+                this.back();
+            },
+
+            deleteItemDialog: function(e){
+                e.stopPropagation();
+                this.$.deleteItemDialog.open();
+            },
+
+            deleteItem: function(e){
+                e.stopPropagation();
+
+                this.set('productgroups.'+this.routeData.key,null);
+                this.back();
+            },
+
+            back: function(e){
+                if(typeof this.page == 'undefined' || this.page == '' || this.page == 'list'){
+                    return false;
+                }
+                else{
+
+                    var route = JSON.parse(JSON.stringify(this.route));
+
+                    route.path = ''
+                    this.set('route.path','');
+                    this.set('routeData',{});
+                    return true;
+
+                }
+            },
+
+            _routeDataChanged: function(change,productgroups){
+
+                var key = this.routeData.key
+
+                if(typeof key!='undefined' && key!=''){
+                    if(key=='new' ){
+                        var key = btoa(this.user.uid + Date.now());
+                        this.set('tempItem',{'name':'','products':{}})
+                    }
+                    else if(typeof productgroups[key]!='undefined'){
+                        this.set('tempItem',JSON.parse(JSON.stringify(productgroups[key])));
+                    }
+                    this.set('route.path','/'+key);
+                    this.set('page', 'detail');
+                }
+                else{
+                    this.set('page', 'list');
+                }
+            },
+
             _sortByName: function(a,b){
                 var a_order = this._getObjectProperty(this.productgroups,a.key,'name');
                 var b_order = this._getObjectProperty(this.productgroups,b.key,'name');
@@ -104,7 +200,6 @@
                     return 0;
                 }
             },
-            
         });
     </script>
 

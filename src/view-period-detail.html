@@ -90,7 +90,8 @@
 
 
         <app-route route="{{route}}" pattern="/:key" data="{{routeData}}" tail="{{subroute}}"></app-route>
-        
+        <app-route route="{{route}}" pattern="/:key/productgroups" tail="{{productgroupsSubroute}}"></app-route>
+
 
         <div class="period horizontal layout wrap">
             <paper-input label="Periode" value="{{period.name}}"></paper-input>
@@ -156,7 +157,7 @@
                     <h1 class="flex">Gerechten</h1>
                     <paper-button class="print" raised on-tap="print">Print</paper-button>
                 </div>
-                <view-period-detail-productgroups id="productgroups" user="[[user]]" period="[[periodKey]]" productgroups="{{productgroups}}" products="{{products}}"></view-period-detail-productgroups>
+                <view-period-detail-productgroups id="productgroups" user="[[user]]" period="[[periodKey]]" productgroups="{{productgroups}}" products="{{products}}" route="{{productgroupsSubroute}}"></view-period-detail-productgroups>
             </div>
 
             <div name="shoppinglists">
@@ -193,7 +194,8 @@
                     notify: true
                 },
                 route: {
-                    type: 'string'
+                    type: 'string',
+                    notify: true,
                 }
             },
 
@@ -205,6 +207,12 @@
             back: function(e){
                 if(typeof this.page == 'undefined' || this.page == '' || this.page == 'base'){
                     this.set('route.path','');
+                }
+                else if(this.page == 'productgroups'){
+                    var done = this.$.productgroups.back()
+                    if(!done){
+                        this.set('route.path','/'+this.periodKey);
+                    }
                 }
                 else{
                     this.set('route.path','/'+this.periodKey);
@@ -230,14 +238,14 @@
             },
 
             _subroutePathChanged: function(path){
-                if(typeof path!='undefined' && path!=''){ 
-                    if(path=='/planning'){
+                if(path != null && typeof path!='undefined' && path!=''){ 
+                    if(path.startsWith('/planning')){
                         this.set('page', 'planning');
                     }
-                    else if(path=='/productgroups'){
+                    else if(path.startsWith('/productgroups')){
                         this.set('page', 'productgroups');
                     }
-                    else if(path=='/shoppinglists'){
+                    else if(path.startsWith('/shoppinglists')){
                         this.set('page', 'shoppinglists');
                     }
                     else{

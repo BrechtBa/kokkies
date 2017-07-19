@@ -74,45 +74,34 @@
             }
         </style>
 
-        <firebase-document app-name="kokkies" path="/[[user.uid]]/productgroups/[[period]]/[[key]]" data="{{productgroup}}" disabled="{{!opened}}"></firebase-document>
+        <!--<firebase-document app-name="kokkies" path="/[[user.uid]]/productgroups/[[period]]/[[key]]" data="{{productgroup}}" disabled="{{!opened}}"></firebase-document>-->
 
         <paper-material class="vertical layout">
 
             <div class="horizontal layout">
-                <div class="collapse btn" on-tap="_toggleCollapse"><iron-icon icon="expand-more"></iron-icon></div>
                 <paper-input label="Name" value="{{productgroup.name}}"></paper-input>
             </div>
 
-            <iron-collapse opened="{{opened}}">
-                <div class="content">
-
-                    <template is="dom-repeat" items="{{_toArray(productgroup.products)}}" as="product">
+            <template is="dom-repeat" items="{{_toArray(productgroup.products)}}" as="product">
 
 
-                        <paper-material class="product horizontal layout center">
-                            <div class="name">{{_getObjectProperty(products,product.key,'name')}}</div>
-                            <div class="quantity"><paper-input label="Quantity" value="{{product.val.quantity}}" no-label-float="true" on-change="_handleProductQuantityChange"></paper-input></div>
-                            <div class="unit">{{_getObjectProperty(products,product.key,'unit')}}</div>
-                            <template is="dom-if" if="{{_hasSecondunit(products,product.key)}}">
-                                <div class="quantity">~ [[_getSecondQuantity(products,product.key,product.val.quantity)]]</div>
-                                <div class="unit">{{_getObjectProperty(products,product.key,'secondunit')}}</div>
-                            </template>
-                            <div class="flex">&nbsp;</div>
-                            <paper-icon-button icon="delete" raised on-tap="deleteProduct">Delete</paper-icon-button>
-                        </paper-material>
-
+                <paper-material class="product horizontal layout center">
+                    <div class="name">{{_getObjectProperty(products,product.key,'name')}}</div>
+                    <div class="quantity"><paper-input label="Quantity" value="{{product.val.quantity}}" no-label-float="true" on-change="_handleProductQuantityChange"></paper-input></div>
+                    <div class="unit">{{_getObjectProperty(products,product.key,'unit')}}</div>
+                    <template is="dom-if" if="{{_hasSecondunit(products,product.key)}}">
+                        <div class="quantity">~ [[_getSecondQuantity(products,product.key,product.val.quantity)]]</div>
+                        <div class="unit">{{_getObjectProperty(products,product.key,'secondunit')}}</div>
                     </template>
+                    <div class="flex">&nbsp;</div>
+                    <paper-icon-button icon="delete" raised on-tap="deleteProduct">Delete</paper-icon-button>
+                </paper-material>
 
-                    <paper-button raised on-tap="addProductDialog">Add product</paper-button>
+            </template>
 
-                    <paper-input label="Opmerking" value="{{productgroup.comment}}"></paper-input>
+            <paper-button raised on-tap="addProductDialog">Add product</paper-button>
 
-                    <div class="edit-uncollapsed">
-                        <paper-icon-button icon="delete" on-tap="deleteProductgroupDialog"></paper-icon-button>
-                    </div>
-
-                </div>
-            </iron-collapse>
+            <paper-input label="Opmerking" value="{{productgroup.comment}}"></paper-input>
 
         </paper-material>
 
@@ -129,15 +118,6 @@
 
             <paper-button raised on-tap="newProductDialog">Nieuw</paper-button>
             </paper-dialog-scrollable>
-        </paper-dialog>
-
-
-        <paper-dialog id="deleteProductgroupDialog">
-            <h2>Are you sure?</h2>
-            <div class="buttons">
-                <paper-button dialog-dismiss>Cancel</paper-button>
-                <paper-button dialog-confirm on-tap="deleteProductgroup">Delete</paper-button>
-            </div>
         </paper-dialog>
 
         <paper-dialog id="newProductDialog">
@@ -164,35 +144,20 @@
             behaviors: [
                 objectListBehavior,
                 searchFilterBehavior,
-                collapsibleBehavior,
             ],
 
             properties:{
                 user: {
-                    type: Object
+                    type: Object,
                 },
-                period: {
-                    type: String,
-                },
-                key: {
-                    type: String,
-                },
-                number: {
-                    type: Number,
-                },
-                date: {
-                    type: String,
+                productgroup: {
+                    type: Object,
+                    value: {},
+                    notify: true,
                 },
                 products: {
                     type: Object,
                     notify: true,
-                },
-                productgroups: {
-                    type: Object,
-                    notify: true,
-                },
-                shoppinglists: {
-                    type: Object,
                 },
             },
 
@@ -209,7 +174,7 @@
 
                 var key = e.model.__data__.product.key;
                 if(typeof this.productgroup.products == 'undefined'){
-                    this.set('productgroup.products',{})
+                    this.productgroup.products = {}
                 }
                 if(typeof this.productgroup.products[key] == 'undefined'){
                     // add the key
@@ -217,8 +182,30 @@
                     for(k in this.productgroup.products){
                         order = Math.max(this.productgroup.products[k]['order']+1,order)
                     }
-                    this.set('productgroup.products.'+key,{'quantity':0,'order':order});
+                    this.productgroup.products[key] = {'quantity':0,'order':order};
                 }
+                this.set('productgroup', JSON.parse(JSON.stringify(this.productgroup)));
+            },
+
+            deleteProduct: function(e){
+
+                var key = e.model.__data__.product.key;
+
+                this.productgroup.products[key] = null;
+
+                // check if there are products left
+                var empty = true;
+                for(key in this.productgroup.products){
+                    if(this.productgroup.products[key] != null){
+                        empty = false;
+                        break;
+                    }
+                }
+                if(empty){
+                    this.productgroup.products = {};
+                }
+
+                this.set('productgroup', JSON.parse(JSON.stringify(this.productgroup)));
             },
 
             newProductDialog: function(e){
@@ -255,9 +242,6 @@
             },
 
             _handleProductQuantityChange :function(e){
-                console.log(e)
-                console.log(this.productgroup.products)
-
                 var key = e.model.__data__.product.key;
                 this.set('productgroup.products.'+key,JSON.parse(JSON.stringify(this.productgroup.products[key])));
             },
@@ -279,15 +263,6 @@
                     decimals = 2;
                 }
                 return val.toFixed(decimals);
-            },
-
-            deleteProductgroupDialog: function(e){
-                e.stopPropagation();
-                this.$.deleteProductgroupDialog.open();
-            },
-
-            deleteProductgroup: function(e,d){
-                this.set('productgroups.'+d,null);
             },
 
         });
