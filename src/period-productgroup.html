@@ -41,11 +41,17 @@
                 margin-top: -8px;
                 margin-bottom: -8px;
             }
-            .day{
-                margin-top: 5px;
-                margin-bottom: 5px;
-                font-size: 1.17em;
-                font-weight: bold;
+            .add{
+                float: right;
+                top: -20px;
+                right: 20px;
+                background-color: #cccccc;
+            }
+            .cicle-button{
+                width: 50px;
+                min-width: 0;
+                height: 50px;
+                border-radius: 25px;
             }
             .product{
                 background-color: #ffffff;
@@ -62,21 +68,15 @@
                 min-width: 40px;
                 margin-right: 10px;
             }
-            .collapse{
-                width: 40px;
-                margin-right: 4px;
-                margin-top: 8px;
-            }
-            .edit-uncollapsed{
-                position: absolute;
-                top: 10px;
-                right: 10px;
+            .comment{
+                width: 50%;
+                min-width: 200px;
             }
         </style>
 
         <!--<firebase-document app-name="kokkies" path="/[[user.uid]]/productgroups/[[period]]/[[key]]" data="{{productgroup}}" disabled="{{!opened}}"></firebase-document>-->
 
-        <paper-material class="vertical layout">
+        <paper-material>
 
             <div class="horizontal layout">
                 <paper-input label="Name" value="{{productgroup.name}}"></paper-input>
@@ -99,9 +99,15 @@
 
             </template>
 
-            <paper-button raised on-tap="addProductDialog">Add product</paper-button>
+            <template is="dom-if" if="{{!_isEmpty(productgroup.products)}}">
+                <paper-button raised class="add cicle-button" on-tap="addProductDialog"><iron-icon icon="add"></iron-icon></paper-button>
+            </template>
 
-            <paper-input label="Opmerking" value="{{productgroup.comment}}"></paper-input>
+            <template is="dom-if" if="{{_isEmpty(productgroup.products)}}">
+                <paper-button raised class="add" on-tap="addProductDialog">Add product</paper-button>
+            </template>
+
+            <paper-input class="comment" label="Opmerking" value="{{productgroup.comment}}"></paper-input>
 
         </paper-material>
 
