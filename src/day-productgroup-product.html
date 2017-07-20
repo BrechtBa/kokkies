@@ -128,6 +128,14 @@
                 }
             },
 
+            _hasSecondunit: function(products,key){
+                return this._getObjectProperty(products,key,'secondunit') != '';
+            },
+
+            _getSecondQuantity: function(products,key,quantity){
+                return this._round( quantity*this._getObjectProperty(products,key,'unitconversion') );
+            },
+
             _round: function(val){
                 if(typeof val != 'undefined'){
                     var decimals = 0;
@@ -143,6 +151,59 @@
     
             deleteProductgroupProduct: function(){
                 this.set('dayproductgroupproduct',null)
+            },
+
+            detailHtml: function(){
+                html = '';
+                html+= '                            <span class="name">'+ this._getObjectProperty(this.products,this.key,'name') + '</span>\n';
+
+                var quantity = this._computeQuantity(this.quantity,this.productgroup,this.key,this.productgroups)
+                html+= '                            <span class="quantity">';
+                if(typeof quantity != 'undefined'){
+                    html+= quantity;
+                }
+                html+= '</span>\n';
+
+                var unit = this._getObjectProperty(this.products,this.key,'unit')
+                html+= '                            <span class="unit">';
+                if(typeof unit != 'undefined'){
+                    html+= unit;
+                }
+                html+= '</span>\n';
+
+
+                var secondquantity = this._getSecondQuantity(this.products,this.key,quantity)
+                var secondunit = this._getObjectProperty(this.products,this.key,'secondunit')
+                html+= '                            <span class="quantity">';
+                if(typeof secondquantity != 'undefined' && typeof secondunit != 'undefined' && secondunit != ''){
+                    html+= '~ '+secondquantity;
+                }
+                html+= '</span>\n';
+
+                html+= '                            <span class="unit">';
+                if(typeof secondquantity != 'undefined' && typeof secondunit != 'undefined' && secondunit != ''){
+                    html+= secondunit;
+                }
+                html+= '</span>\n';
+
+
+                var shoppinglist = this.shoppinglists[this.dayproductgroupproduct.shoppinglist];
+                html+= '                            <span class="shoppinglist">';
+                if(typeof shoppinglist != 'undefined' && typeof shoppinglist.name != 'undefined'){
+                    html+= shoppinglist.name;
+                }
+                html+= '</span>\n';
+
+                
+                var used = this.dayproductgroupproduct.used
+                html+= '                            <span class="used">';
+                if(typeof used != 'undefined'){
+                    html+= used;
+                }
+                html+= '</span>\n';
+
+
+                return html;
             },
 
         });

@@ -85,8 +85,6 @@
         <firebase-document app-name="kokkies" path="/[[user.uid]]/shoppinglists/[[periodKey]]" data="{{shoppinglists}}"></firebase-document>
 
         <firebase-document app-name="kokkies" path="/[[user.uid]]/days/[[periodKey]]" data="{{perioddays}}"></firebase-document>
-        <firebase-document app-name="kokkies" path="/[[user.uid]]/dayproductgroups/[[periodKey]]" data="{{dayproductgroups}}"></firebase-document>
-        <firebase-document app-name="kokkies" path="/[[user.uid]]/dayproductgroupproducts/[[periodKey]]" data="{{dayproductgroupproducts}}"></firebase-document>
 
 
         <app-route route="{{route}}" pattern="/:key" data="{{routeData}}" tail="{{subroute}}"></app-route>
@@ -156,7 +154,7 @@
 
             <div name="shoppinglists">
                 <h1 class="flex">Winkellijstjes</h1>
-                <view-period-detail-shoppinglists id="shoppinglists" user="[[user]]" period="[[periodKey]]" productgroups="{{productgroups}}" products="{{products}}" shoppinglists="{{period.shoppinglists}}" dayproductgroups="{{dayproductgroups}}" dayproductgroupproducts="{{dayproductgroupproducts}}"></view-period-detail-shoppinglists>
+                <view-period-detail-shoppinglists id="shoppinglists" user="[[user]]" period="[[periodKey]]" productgroups="{{productgroups}}" products="{{products}}" shoppinglists="{{period.shoppinglists}}"></view-period-detail-shoppinglists>
             </div>
 
         </iron-pages>

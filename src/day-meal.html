@@ -313,6 +313,27 @@
                 return html;
             },
 
+            detailHtml: function(){
+                html = '';
+                html += '                    <h2>'+this.key+'</h2>\n';
+                if(typeof this.meal != 'undefined' && typeof this.meal.comment != 'undefined'){
+                    html += '                <div class="comment">'+this.meal.comment+'</div>\n';
+                }
+
+                html += '                    <div class="productgroups">\n'
+                var productgroups = Polymer.dom(this.root).querySelectorAll('day-productgroup');
+
+                for(var i=0; i<productgroups.length; i++){
+
+                    html += '                       <div class="productgroup">\n';
+                    html += productgroups[i].detailHtml();
+                    html += '                       </div>\n';
+                }
+                html += '                   </div>\n'
+
+                return html;
+            },
+
         });
 
     </script>

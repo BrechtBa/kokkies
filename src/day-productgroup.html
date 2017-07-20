@@ -184,6 +184,37 @@
 
                 return html;
             },
+
+            detailHtml: function(){
+
+                html = '';
+                html+= '                            <div class="name">'+ this._getObjectProperty(this.productgroups,this.key,'name') + '</div>\n';
+                if(typeof this.productgroup != 'undefined' && typeof this.productgroup.quantity != 'undefined'){
+                    html+= '                            <div class="quantity">'+ this.productgroup.quantity + '</div>\n';
+                }
+
+                html += '                           <div class="products">\n'
+                var products = Polymer.dom(this.root).querySelectorAll('day-productgroup-product');
+
+                for(var i=0; i<products.length; i++){
+
+                    html += '                           <div class="product">\n';
+                    html += products[i].detailHtml();
+                    html += '                           </div>\n';
+                }
+
+                var comment = this._getObjectProperty(this.productgroups,this.key,'comment');
+                html += '                           <div class="comment">';
+                if(typeof comment != 'undefined'){
+                    html += comment;
+                }
+                html += '</div>\n';
+
+
+                html += '                           </div>\n'
+
+                return html;
+            },
         });
 
     </script>

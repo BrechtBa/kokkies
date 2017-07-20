@@ -306,9 +306,7 @@
                 html += '                  <div class="cell subheader">\n';
                 
                 if(typeof this.day != 'undefined' && typeof this.day.comment != 'undefined'){
-                    html += '                        <div class="comment">'
-                    html += this.day.comment;
-                    html += '                         </div>\n';
+                    html += '                        <div class="comment">'+this.day.comment+'</div>\n';
                 }
 
                 html += '                    </div>\n';
@@ -326,6 +324,29 @@
 
                 return html;
             },
+
+
+            detailHtml: function(){
+                html = '';
+                html += '               <h1>Dag '+this.number+'</h1>\n';
+                html += '               <div class="subtitle"><span class="weekday">'+ this.date.weekday + '</span><span class="date">' + this.date.date + '</span></div>\n';
+                if(typeof this.day != 'undefined' && typeof this.day.comment != 'undefined'){
+                    html += '               <div class="comment">'+this.day.comment+'</div>\n';
+                }
+
+
+                var meals = Polymer.dom(this.root).querySelectorAll('day-meal');
+
+                for(var i=0; i<meals.length; i++){
+
+                    html += '                <div class="meal">\n';
+                    html += meals[i].detailHtml();
+                    html += '                </div>\n';
+                }
+
+                return html;
+            },
+
         });
 
     </script>

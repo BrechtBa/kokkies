@@ -258,7 +258,7 @@
                 }
 
                 for(var k=0; k<daygroups.length; k++){
-                    html += '        <div class="page">\n';
+                    html += '        <div class="page planning">\n';
                     html += '            <h1>Planning</h1>\n';
                     html += '            <div class="table">\n';
                     html += '                <div class="column header">\n';
@@ -287,6 +287,24 @@
                 return html
             },
 
+            detailHtml: function(){
+                var html = '';
+
+                var days = Polymer.dom(this.root).querySelectorAll('period-day');
+
+                for(var i=0; i<days.length; i++){
+                    html += '        <div class="page detail">\n';
+
+                    html += '            <div class="day">\n';
+                    html+= days[i].detailHtml();
+                    html += '            </div>\n';
+
+                    html += '        </div>\n';
+                }
+
+                return html;
+            },
+
             print: function(){
 
                 var html = '';
@@ -298,8 +316,7 @@
                 html += '            }\n';
                 html += '            div.page {\n';
                 html += '                width: 1100px;\n';
-                html += '                height: 730px;\n';
-                html += '                page-break-after: always;\n';
+                html += '                min-height: 730px;\n';
                 html += '                page-break-inside: avoid;\n';
                 html += '            }\n';
                 html += '            div.table {\n';
@@ -333,21 +350,21 @@
                 html += '            span.date {\n';
                 html += '                margin-left: 3px;\n';
                 html += '            }\n';
-                html += '            div.productgroup {\n';
+                html += '            .planning div.productgroup {\n';
                 html += '                position: relative;\n';
                 html += '                text-align: left;\n';
                 html += '            }\n';
-                html += '            div.productgroup div.name {\n';
+                html += '            .planning div.productgroup div.name {\n';
                 html += '                margin-right: 10px;\n';
                 html += '            }\n';
-                html += '            div.comment {\n';
+                html += '            .planning div.comment {\n';
                 html += '                position: absolute;\n';
                 html += '                right: 1px;\n';
                 html += '                bottom: 1px;\n';
                 html += '                color: #555555;\n';
                 html += '                font-size: 0.8em;\n';
                 html += '            }\n';
-                html += '            div.quantity {\n';
+                html += '            .planning div.quantity {\n';
                 html += '                position: absolute;\n';
                 html += '                top: 5px;\n';
                 html += '                right: 0px;\n';
@@ -355,6 +372,51 @@
                 html += '                font-size: 0.9em;\n';
                 html += '                text-align: right;\n';
                 html += '            }\n';
+
+                html += '            .detail .meal {\n';
+                html += '                page-break-inside: avoid;\n';
+                html += '            }\n';
+                html += '            .detail .productgroup {\n';
+                html += '                margin-top: 10px;\n';
+                html += '            }\n';
+                html += '            .detail .productgroup .product {\n';
+                html += '                border-bottom: 1px solid;\n';
+                html += '            }\n';
+                html += '            .detail .productgroup .name {\n';
+                html += '                display: inline-block;\n';
+                html += '                min-width: 400px;\n';
+                html += '                font-weight: 700;\n';
+                html += '            }\n';
+                html += '            .detail .productgroup .quantity {\n';
+                html += '                display: inline-block;\n';
+                html += '                font-weight: 700;\n';
+                html += '            }\n';
+                html += '            .detail .productgroup .product span {\n';
+                html += '                font-weight: 300;\n';
+                html += '            }\n';
+                html += '            .detail .productgroup .product span.name {\n';
+                html += '                display: inline-block;\n';
+                html += '                width: 300px;\n';
+                html += '                min-width: 300px;\n';
+                html += '            }\n';
+                html += '            .detail .productgroup .product span.quantity {\n';
+                html += '                display: inline-block;\n';
+                html += '                width: 50px;\n';
+                html += '                text-align: right;\n';
+                html += '            }\n';
+                html += '            .detail .productgroup .product span.unit {\n';
+                html += '                display: inline-block;\n';
+                html += '                width: 50px;\n';
+                html += '            }\n';
+                html += '            .detail .productgroup .product span.shoppinglist {\n';
+                html += '                display: inline-block;\n';
+                html += '                width: 300px;\n';
+                html += '            }\n';
+                html += '            .detail .productgroup .product span.used {\n';
+                html += '                display: inline-block;\n';
+                html += '                width: 300px;\n';
+                html += '            }\n';
+
                 html += '        </style>\n';
                 html += '        <style type="text/css" media="print">\n';
                 html += '            @page {\n';
@@ -367,9 +429,10 @@
 
                 html += this.planningHtml();
 
+                html += this.detailHtml();
+
                 html += '    </body>\n'
                 html += '</html>\n'
-
 
                 // put the html in a new window and print
                 var newWindow = window.open("about:blank", "", "_blank");
