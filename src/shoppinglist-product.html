@@ -36,8 +36,8 @@
                 width: 40px;
                 margin-left: 3px;
             }
-            .checked{
-
+            .ordered{
+                width: 80px;
             }
             .secondquantity{
                 width: 40px;
@@ -50,8 +50,14 @@
         <paper-material class="horizontal layout center">
             <div class="name flex">{{_getObjectProperty(products,key,'name')}}</div>
             <div class="quantity">{{_round(quantity)}}</div>
-            <div class="unit flex">{{_getObjectProperty(products,key,'unit')}}</div>
-            <div class="checked"><paper-checkbox checked="{{product.checked}}"></paper-checkbox></div>
+            <div class="unit">{{_getObjectProperty(products,key,'unit')}}</div>
+            <template is="dom-if" if="{{_hasSecondunit(products,key)}}">
+                <div class="quantity">~ [[_getSecondQuantity(products,key,quantity)]]</div>
+                <div class="unit">{{_getObjectProperty(products,key,'secondunit')}}</div>
+            </template>
+            <div class="flex">&nbsp;</div>
+            <div class="ordered"><paper-input label="besteld" value="{{product.ordered}}"></paper-input></div>
+            <div class="checked"><paper-checkbox checked="{{_isChecked(product.ordered,quantity)}}" disabled></paper-checkbox></div>
         </paper-material>
 
     </template>
@@ -84,14 +90,18 @@
                 quantity: {
                     type: Number,
                 },
-                checked: {
-                    type: Boolean,
-                    observer: '_checkedChanged',
-                },
             },
 
-            _checkedChanged: function(checked){
+            _hasSecondunit: function(products,key){
+                return this._getObjectProperty(products,key,'secondunit') != '';
+            },
 
+            _getSecondQuantity: function(products,key,quantity){
+                return this._round( quantity*this._getObjectProperty(products,key,'unitconversion') );
+            },
+
+            _isChecked: function(ordered,quantity){
+                return ordered>= quantity;
             },
 
             _round: function(val){
@@ -108,6 +118,57 @@
    
                     return val.toFixed(decimals);
                 }
+            },
+
+            shoppinglistHtml: function(){
+                var html = '';
+
+                html+= '                        <span class="name">'+this._getObjectProperty(this.products,this.key,'name')+'</span>';
+
+                var quantity = this.quantity
+                html+= '                        <span class="quantity">';
+                if(typeof quantity != 'undefined'){
+                    html+= this._round(quantity);
+                }
+                html+= '</span>\n';
+
+                var unit = this._getObjectProperty(this.products,this.key,'unit')
+                html+= '                        <span class="unit">';
+                if(typeof unit != 'undefined'){
+                    html+= unit;
+                }
+                html+= '</span>\n';
+
+
+                var secondquantity = this._getSecondQuantity(this.products,this.key,quantity)
+                var secondunit = this._getObjectProperty(this.products,this.key,'secondunit')
+                html+= '                        <span class="quantity">';
+                if(typeof secondquantity != 'undefined' && typeof secondunit != 'undefined' && secondunit != ''){
+                    html+= '~ '+secondquantity;
+                }
+                html+= '</span>\n';
+
+                html+= '                        <span class="unit">';
+                if(typeof secondquantity != 'undefined' && typeof secondunit != 'undefined' && secondunit != ''){
+                    html+= secondunit;
+                }
+                html+= '</span>\n';
+
+
+                var ordered = this.product.ordered
+                html+= '                        <span class="quantity ordered">';
+                if(typeof ordered != 'undefined'){
+                    html+= ordered;
+                }
+                html+= '</span>\n';
+
+                html+= '                        <span class="unit ordered">';
+                if(typeof unit != 'undefined' && typeof ordered != 'undefined'){
+                    html+= unit;
+                }
+                html+= '</span>\n';
+
+                return html;
             },
 
         });

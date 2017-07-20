@@ -40,63 +40,21 @@
         <style>
             :host {
                 display: block;
+                position: relative;
                 padding: 10px;
             }
-            .day{
-                background-color: #ffffff;
-            }
-            .day .edit-uncollapsed{
+            .print{
                 position: absolute;
-                bottom: 20px;
-                right: 20px;
-            }
-            .day h3{
-                margin-top: 5px;
-            }
-            .shoppinglist{
-                background-color: #ffffff;
-            }
-            iron-icon{
-                color: #555555;
-            }
-            paper-icon-button{
-                color: #555555;
-            }
-            .productgroup .name{
-                min-width: 200px;
-            }
-            .productgroup .quantity{
-                width: 80px;
-            }
-            .productgroup .edit-uncollapsed{
-                position: absolute;
-                top: 10px;
+                top: -50px;
                 right: 10px;
-            }
-            .product-list{
-                margin-left: 50px;
-            }
-            .product .name{
-                min-width: 150px;
-                margin-top: 20px;
-            }
-            .product .unit{
-                width: 50px;
-                margin-left: 5px;
-                margin-top: 20px;
-            }
-            .shoppinglist .name{
-                min-width: 300px;
-            }
-            paper-input{
-                /*margin-top: -8px;
-                margin-bottom: -8px;*/
+                background-color: #cccccc;
             }
         </style>
 
         <firebase-document app-name="kokkies" path="/[[user.uid]]/dayproductgroups/[[period]]" data="{{dayproductgroups}}"></firebase-document>
         <firebase-document app-name="kokkies" path="/[[user.uid]]/dayproductgroupproducts/[[period]]" data="{{dayproductgroupproducts}}"></firebase-document>
 
+        <paper-button class="print" raised on-tap="print">Print</paper-button>
 
         <template is="dom-repeat" items="{{_toArray(shoppinglists)}}" as="shoppinglist">
 
@@ -160,8 +118,100 @@
                 if(typeof key!='undefined' && key!=''){ 
                     this.set('periodKey',key);
                 }
-            }
-                        
+            },
+
+            shoppinglistHtml: function(){
+                var html = '';
+
+                var shoppinglists = Polymer.dom(this.root).querySelectorAll('period-shoppinglist');
+
+                for(var i=0; i<shoppinglists.length; i++){
+                    html += '        <div class="page">\n';
+
+                    html += '            <div class="shoppinglist">\n';
+                    html+= shoppinglists[i].shoppinglistHtml();
+                    html += '            </div>\n';
+
+                    html += '        </div>\n';
+                }
+
+                return html;
+            },
+
+            print: function(){
+
+                var html = '';
+                html += '<html>\n';
+                html += '    <head>\n';
+                html += '        <style type="text/css">\n';
+                html += '            body {\n';
+                html += '                font-family: sans-serif;\n';
+                html += '            }\n';
+                html += '            div.page {\n';
+                html += '                width: 1400px;\n';
+                html += '                page-break-inside: avoid;\n';
+                html += '            }\n';
+                html += '            div.shoppinglist {\n';
+                html += '                position: relative;\n';
+                html += '            }\n';
+                html += '            h1 {\n';
+                html += '                margin-top: 50px;\n';
+                html += '            }\n';
+                html += '            div.date {\n';
+                html += '                position: absolute;\n';
+                html += '                top: 20px;\n';
+                html += '                right: 70px;\n';
+                html += '            }\n';
+                html += '            div.product {\n';
+                html += '                border-bottom: 1px solid;\n';
+                html += '                display: inline-block;\n';
+                html += '                width: 640px;\n';
+                html += '                margin-right: 50px;\n';
+                html += '            }\n';
+                html += '            .product span {\n';
+                html += '                display: inline-block;\n';
+                html += '            }\n';
+                html += '            .product span.name {\n';
+                html += '                width: 250px;\n';
+                html += '            }\n';
+                html += '            .product span.quantity {\n';
+                html += '                min-width: 50px;\n';
+                html += '                text-align: right;\n';
+                html += '                color: #555555;\n';
+                html += '            }\n';
+                html += '            .product span.unit {\n';
+                html += '                min-width: 50px;\n';
+                html += '                color: #555555;\n';
+                html += '            }\n';
+                html += '            .product span.ordered {\n';
+                html += '                color: #000000;\n';
+                html += '            }\n';
+                html += '            .product span.quantity.ordered {\n';
+                html += '                min-width: 100px;\n';
+                html += '            }\n';
+
+                html += '        </style>\n';
+
+                html += '        <style type="text/css" media="print">\n';
+                html += '            @page {\n';
+                html += '                size: landscape;\n';
+                html += '            }\n';
+                html += '        </style>\n';
+                html += '    </head>\n';
+
+                html += '    <body>\n';
+
+                html += this.shoppinglistHtml();
+
+                html += '    </body>\n'
+                html += '</html>\n'
+
+                // put the html in a new window and print
+                var newWindow = window.open("about:blank", "", "_blank");
+                newWindow.document.write(html);
+                newWindow.print();
+            },
+
         });
 
     </script>
