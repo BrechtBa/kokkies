@@ -8,7 +8,7 @@
 <link rel="import" href="../bower_components/paper-button/paper-button.html">
 <link rel="import" href="../bower_components/paper-input/paper-input.html">
 <link rel="import" href="../bower_components/paper-material/paper-material.html">
-
+<link rel="import" href="../bower_components/paper-dialog/paper-dialog.html">
 
 <dom-module id="view-login">
 
@@ -39,14 +39,36 @@
         </style>
 
         <paper-material>
-            <!--<paper-input label="email" value="{{email}}"></paper-input>
-            <paper-input label="password" value="{{password}}" type="password"></paper-input>-->
+            <paper-input label="email" value="{{email}}"></paper-input>
+            <paper-input label="password" value="{{password}}" type="password"></paper-input>
 
             <paper-button on-tap="signIn" disabled="[[disabled]]">
                 <iron-icon icon="account-circle"></iron-icon>
-                <span>Google or Facebook Sign in</span>
+                <span>Sign in</span>
             </paper-button>
+            
+            <div>
+                <a href="#" on-tap='registerDialog'> register</a>
+            </div>
         </paper-material>
+
+
+
+
+        <paper-dialog id="registerDialog">
+            <paper-button class="close" dialog-dismiss>close</paper-button>
+
+            <paper-input label="email" value="{{email}}"></paper-input>
+            <paper-input label="password" value="{{password}}" type="password"></paper-input>
+            <paper-input label="repeat password" value="{{repeatPassword}}" type="password"></paper-input>
+
+            <paper-button on-tap="register" disabled="[[disabled]]">
+                <iron-icon icon="account-circle"></iron-icon>
+                <span>Register</span>
+            </paper-button>
+
+        </paper-dialog>
+
 
     </template>
 
@@ -70,9 +92,21 @@
             },
             signIn: function() {
                 this.fire('sign-in', {'email':this.email,'password':this.password}, { bubbles: false });
-                //this.email = '';
-                //this.password= '';
-            }
+                this.email = '';
+                this.password= '';
+            },
+
+            registerDialog: function(){
+                this.$.registerDialog.open();
+            },
+
+            register: function(){
+                if(this.password==this.repeatPassword){
+                    console.log('register')
+                    this.fire('register', {'email':this.email,'password':this.password}, { bubbles: false });
+                }
+            },
+
         });
 
     </script>

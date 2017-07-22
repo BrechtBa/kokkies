@@ -129,7 +129,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
                 </app-header>
 
                 <iron-pages role="main" selected="[[page]]" attr-for-selected="name">
-                    <view-login                 id="login"                  name="login" on-sign-in="signIn" signed-in="[[signedIn]]" disables=[[!online]]></view-login>
+                    <view-login                 id="login"                  name="login" on-sign-in="signIn" on-register="register" signed-in="[[signedIn]]" disables=[[!online]]></view-login>
                     <view-periods               id="periods"                name="periods"              user="[[user]]"  periods="{{periods}}" route="{{periodsSubroute}}"></view-periods>
                     <view-period-detail         id="periodDetail"           name="period-detail"        user="[[user]]"  products="{{products}}" route="{{periodsSubroute}}"></view-period-detail>
                     <view-products              id="products"               name="products"             user="[[user]]"  products="{{products}}" route="{{productsSubroute}}"></view-products>
@@ -159,8 +159,14 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
                 '_signedInChanged(signedIn)',
             ],
             signIn: function(e){
-                this.$.auth.signInWithPopup();
-                //this.$.auth.signInWithEmailAndPassword(e.detail.email,e.detail.password);
+                this.$.auth.signInWithEmailAndPassword(e.detail.email,e.detail.password).catch(function(error) {
+                    console.log(error)
+                });
+            },
+            register: function(e){
+                this.$.auth.createUserWithEmailAndPassword(e.detail.email,e.detail.password).catch(function(error) {
+                    console.log(error)
+                });
             },
             signOut: function(){
                 this.$.auth.signOut();
