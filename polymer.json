@@ -1,10 +1,22 @@
 {
   "entrypoint": "index.html",
-  "shell": "src/shoppinglist-app.html",
+  "shell": "src/kokkies-app.html",
   "fragments": [
     "src/view-login.html",
-    "src/view-shoppinglists.html",
     "src/view-products.html",
-    "src/view-productgroups.html"
+    "src/view-product-detail.html",
+    "src/view-periods.html",
+    "src/view-period-detail.html",
+    "src/view-period-detail-planning.html",
+    "src/view-period-detail-productgroups.html",
+    "src/view-period-detail-shoppinglists.html"
+  ],
+  "sources": [
+    "src/**/*",
+    "images/**/*",
+    "bower.json"
+  ],
+  "includeDependencies": [
+    "bower_components/webcomponentsjs/webcomponents-lite.min.js"
   ]
 }

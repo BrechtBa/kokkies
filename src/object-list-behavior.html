@@ -1,7 +1,7 @@
 
 <script>
     objectListBehavior = {
-        _getObjectProperty(object,key,property){
+        _getObjectProperty: function(object,key,property){
             if(typeof object[key] != 'undefined'){
                 return object[key][property];
             }
@@ -12,7 +12,7 @@
             return list[index][property];
         },
 
-        _getIndexFromId(list,id){
+        _getIndexFromId: function(list,id){
             var index = -1;
             list.forEach(function(object,ind){
                 if(object.id==id){
