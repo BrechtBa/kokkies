@@ -1,7 +1,7 @@
 {
-  "name": "app-drawer-template",
+  "name": "kokkies",
   "authors": [
-    "The Polymer Authors"
+    "Brecht Baeten"
   ],
   "private": true,
   "dependencies": {
