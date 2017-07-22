@@ -10,63 +10,86 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
 <!doctype html>
 <html lang="en">
-<head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1.0, user-scalable=yes">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1.0">
 
-  <title>Kokkies</title>
+        <!-- Icons -->
+        <link rel="shortcut icon" sizes="32x32" href="/images/app-icon-32.png">
+        <link rel="icon" sizes="144x144" href="images/app-icon-144.png">
+        <link rel="apple-touch-icon" href="images/app-icon-144.png">
 
-  <link rel="shortcut icon" sizes="32x32" href="/images/app-icon-32.png">
+        <!-- Web Application Manifest -->
+        <link rel="manifest" href="manifest.json">
 
-  <meta name="theme-color" content="#fff">
-  <link rel="manifest" href="/manifest.json">
+        <!-- Chrome for Android theme color -->
+        <meta name="theme-color" content="#4285f4">
 
-  <script>
+        <!-- Tile color for Win8 -->
+        <meta name="msapplication-TileColor" content="#4285f4">
 
-    // setup Polymer options
-    window.Polymer = {lazyRegister: true, dom: 'shadow'};
+        <!-- Add to homescreen for Chrome on Android -->
+        <meta name="mobile-web-app-capable" content="yes">
+        <meta name="application-name" content="Kokkies">
 
-    // load webcomponents polyfills
-    (function() {
-      if ('registerElement' in document
-          && 'import' in document.createElement('link')
-          && 'content' in document.createElement('template')) {
-        // browser has web components
-      } else {
-        // polyfill web components
-        var e = document.createElement('script');
-        e.src = '/bower_components/webcomponentsjs/webcomponents-lite.min.js';
-        document.head.appendChild(e);
-      }
-    })();
+        <!-- Add to homescreen for Safari on iOS -->
+        <meta name="apple-mobile-web-app-capable" content="yes">
+        <meta name="apple-mobile-web-app-status-bar-style" content="black">
+        <meta name="apple-mobile-web-app-title" content="Polymer App">
 
-    // load pre-caching service worker
-    if ('serviceWorker' in navigator) {
-      window.addEventListener('load', function() {
-        navigator.serviceWorker.register('/service-worker.js');
-      });
-    }
+        <!-- Tile icon for Win8 (144x144) -->
+        <meta name="msapplication-TileImage" content="images/app-icon-144.png">
 
-  </script>
 
-  <link rel="import" href="/src/kokkies-app.html">
+        <title>Kokkies</title>
 
-  <style>
 
-    body {
-      margin: 0;
-      font-family: 'Roboto', 'Noto', sans-serif;
-      line-height: 1.5;
-      min-height: 100vh;
-      background-color: #eee;
-    }
+        <script>
 
-  </style>
+            // setup Polymer options
+            window.Polymer = {lazyRegister: true, dom: 'shadow'};
 
-</head>
-<body>
+            // load webcomponents polyfills
+            (function() {
+                if ('registerElement' in document
+                    && 'import' in document.createElement('link')
+                    && 'content' in document.createElement('template')) {
+                    // browser has web components
+                } else {
+                    // polyfill web components
+                    var e = document.createElement('script');
+                    e.src = '/bower_components/webcomponentsjs/webcomponents-lite.min.js';
+                    document.head.appendChild(e);
+                }
+            })();
 
-  <kokkies-app></kokkies-app>
+            // load pre-caching service worker
+            if ('serviceWorker' in navigator) {
+                window.addEventListener('load', function() {
+                    navigator.serviceWorker.register('/service-worker.js');
+                });
+            }
 
-</body>
+        </script>
+
+        <link rel="import" href="/src/kokkies-app.html">
+
+        <style>
+
+        body {
+            margin: 0;
+            font-family: 'Roboto', 'Noto', sans-serif;
+            line-height: 1.5;
+            min-height: 100vh;
+            background-color: #eee;
+        }
+
+        </style>
+
+    </head>
+    <body>
+
+        <kokkies-app></kokkies-app>
+
+    </body>
 </html>

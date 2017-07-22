@@ -1,175 +1,88 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!-- Generator: Adobe Illustrator 16.0.0, SVG Export Plug-In . SVG Version: 6.00 Build 0)  -->
-<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
-<svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
-	 width="416px" height="286px" viewBox="0 0 416 286" enable-background="new 0 0 416 286" xml:space="preserve">
-<g>
-	<g>
-		<polygon fill="#303F9F" points="84.157,143 42.878,214.5 84.157,286 125.436,214.5 		"/>
-		<polygon fill="#3F51B5" points="331.842,0 290.561,71.5 331.842,143 373.121,71.5 		"/>
-		<polygon fill="#7986CB" points="373.121,71.5 249.278,286 331.842,286 414.4,143 		"/>
-		<polygon fill="#FF4081" points="249.278,0 84.157,286 166.721,286 331.842,0 		"/>
-		<polygon fill="#536DFE" points="84.157,0 1.596,143 42.878,214.5 166.721,0 		"/>
-		<polygon fill="#FFFFFF" fill-opacity="0.2" points="249.278,0 290.561,71.5 331.842,0 		"/>
-		<polygon fill="#FFFFFF" fill-opacity="0.1" points="208,71.5 249.278,0 290.561,71.5 		"/>
-		<polygon fill="#FFFFFF" fill-opacity="0" points="208,71.5 249.278,143 290.561,71.5 		"/>
-		<polygon fill-opacity="0.1" points="166.721,143 208,71.5 249.278,143 		"/>
-		<polygon fill-opacity="0.2" points="166.721,143 208,214.5 249.278,143 		"/>
-		<polygon fill-opacity="0.3" points="125.438,214.5 166.721,143 208,214.5 		"/>
-		<polygon fill-opacity="0.4" points="125.438,214.5 166.721,286 208,214.5 		"/>
-		<polygon fill-opacity="0.5" points="84.157,286 125.438,214.5 166.721,286 		"/>
-		<polygon fill="#FFFFFF" fill-opacity="0.2" points="84.157,0 125.438,71.5 166.721,0 		"/>
-		<polygon fill="#FFFFFF" fill-opacity="0.1" points="42.878,71.5 84.157,0 125.438,71.5 		"/>
-		<polygon fill="#FFFFFF" fill-opacity="0" points="42.878,71.5 84.157,143 125.438,71.5 		"/>
-		<polygon fill-opacity="0.1" points="1.598,143 42.878,71.5 84.157,143 		"/>
-		<polygon fill-opacity="0.2" points="1.598,143 42.878,214.5 84.157,143 		"/>
-		<polygon fill="#FFFFFF" fill-opacity="0" points="125.438,214.5 84.157,143 42.878,214.5 		"/>
-		<polygon fill-opacity="0.2" points="125.438,214.5 84.157,286 42.878,214.5 		"/>
-		<polygon fill-opacity="0.2" points="373.121,71.5 331.842,0 290.561,71.5 		"/>
-		<polygon fill="#FFFFFF" fill-opacity="0" points="373.121,71.5 331.842,143 290.561,71.5 		"/>
-		<g>
-			<polygon fill="#FFFFFF" fill-opacity="0.2" points="331.842,143 373.121,71.5 414.4,143 			"/>
-			<polygon fill="#FFFFFF" fill-opacity="0.1" points="331.842,143 373.121,214.5 414.4,143 			"/>
-			<polygon fill="#FFFFFF" fill-opacity="0" points="290.561,214.5 331.842,143 373.121,214.5 			"/>
-			<polygon fill-opacity="0.1" points="290.561,214.5 331.842,286 373.121,214.5 			"/>
-			<polygon fill-opacity="0.2" points="249.278,286 290.561,214.5 331.842,286 			"/>
-		</g>
-	</g>
-	<rect y="-65" fill="none" width="416" height="416"/>
-</g>
-<g display="none">
-	<g display="inline">
-		<polygon fill="#303F9F" points="84.157,143 42.878,214.5 84.157,286 166.721,286 		"/>
-		<polygon fill="#3F51B5" points="331.842,0 249.278,0 331.842,143 373.121,71.5 		"/>
-		<polygon fill="#7986CB" points="373.121,71.5 249.278,286 331.842,286 414.4,143 		"/>
-		<polygon fill="#536DFE" points="84.157,0 1.596,143 42.878,214.5 166.721,0 		"/>
-		<polygon fill-opacity="0.5" points="249.278,0 290.561,71.5 331.842,0 		"/>
-		<polygon fill-opacity="0.5" points="84.157,286 125.438,214.5 166.721,286 		"/>
-		<polygon fill="#FFFFFF" fill-opacity="0.2" points="84.157,0 125.438,71.5 166.721,0 		"/>
-		<polygon fill="#FFFFFF" fill-opacity="0.1" points="42.878,71.5 84.157,0 125.438,71.5 		"/>
-		<polygon fill="#FFFFFF" fill-opacity="0" points="42.878,71.5 84.157,143 125.438,71.5 		"/>
-		<polygon fill-opacity="0.1" points="1.598,143 42.878,71.5 84.157,143 		"/>
-		<polygon fill-opacity="0.2" points="1.598,143 42.878,214.5 84.157,143 		"/>
-		<polygon fill="#FFFFFF" fill-opacity="0" points="125.438,214.5 84.157,143 42.878,214.5 		"/>
-		<polygon fill="#FFFFFF" fill-opacity="0" points="373.121,71.5 331.842,143 290.561,71.5 		"/>
-		<g>
-			<polygon fill="#FFFFFF" fill-opacity="0.2" points="331.842,143 373.121,71.5 414.4,143 			"/>
-			<polygon fill="#FFFFFF" fill-opacity="0.1" points="331.842,143 373.121,214.5 414.4,143 			"/>
-			<polygon fill="#FFFFFF" fill-opacity="0" points="290.561,214.5 331.842,143 373.121,214.5 			"/>
-			<polygon fill-opacity="0.1" points="290.561,214.5 331.842,286 373.121,214.5 			"/>
-			<polygon fill-opacity="0.2" points="249.278,286 290.561,214.5 331.842,286 			"/>
-		</g>
-		<polygon fill-opacity="0.2" points="125.438,214.5 84.157,286 42.878,214.5 		"/>
-		<polygon fill-opacity="0.2" points="373.121,71.5 331.842,0 290.561,71.5 		"/>
-	</g>
-	<rect y="-65" display="inline" fill="none" width="416" height="416"/>
-</g>
-<g display="none">
-	<g display="inline">
-		<polygon fill="#FF4081" points="249.279,0 84.157,286 166.721,286 331.843,0 		"/>
-		<polygon fill="#FFFFFF" fill-opacity="0.2" points="249.279,0 290.558,71.5 331.843,0 		"/>
-		<polygon fill="#FFFFFF" fill-opacity="0.1" points="208,71.5 249.279,0 290.558,71.5 		"/>
-		<polygon fill="#FFFFFF" fill-opacity="0" points="208,71.5 249.279,143 290.558,71.5 		"/>
-		<polygon fill-opacity="0.2" points="166.721,143 208,214.5 249.279,143 		"/>
-		<polygon fill-opacity="0.3" points="125.439,214.5 166.721,143 208,214.5 		"/>
-		<polygon fill-opacity="0.4" points="125.439,214.5 166.721,286 208,214.5 		"/>
-		<polygon fill-opacity="0.5" points="84.157,286 125.439,214.5 166.721,286 		"/>
-		<polygon fill-opacity="0.1" points="166.721,143 208,71.5 249.279,143 		"/>
-	</g>
-	<g display="inline">
-		<polygon fill="#FF4081" points="331.84,0 166.718,286 249.279,286 373.121,71.5 		"/>
-		<polygon fill="#FFFFFF" fill-opacity="0.1" points="290.558,71.5 331.84,0 373.121,71.5 		"/>
-		<polygon fill="#FFFFFF" fill-opacity="0" points="290.558,71.5 331.84,143 373.121,71.5 		"/>
-		<polygon fill-opacity="0.2" points="249.279,143 290.558,214.5 331.84,143 		"/>
-		<polygon fill-opacity="0.3" points="208,214.5 249.279,143 290.558,214.5 		"/>
-		<polygon fill-opacity="0.4" points="208,214.5 249.279,286 290.558,214.5 		"/>
-		<polygon fill-opacity="0.5" points="166.718,286 208,214.5 249.279,286 		"/>
-		<polygon fill-opacity="0.1" points="249.279,143 290.558,71.5 331.84,143 		"/>
-	</g>
-	<g display="inline">
-		<polygon fill="#FF4081" points="166.718,0 42.878,214.5 84.16,286 249.279,0 		"/>
-		<polygon fill="#FFFFFF" fill-opacity="0.2" points="166.718,0 208,71.5 249.279,0 		"/>
-		<polygon fill="#FFFFFF" fill-opacity="0.1" points="125.439,71.5 166.718,0 208,71.5 		"/>
-		<polygon fill="#FFFFFF" fill-opacity="0" points="125.439,71.5 166.718,143 208,71.5 		"/>
-		<polygon fill-opacity="0.2" points="84.16,143 125.439,214.5 166.718,143 		"/>
-		<polygon fill-opacity="0.3" points="42.878,214.5 84.16,143 125.439,214.5 		"/>
-		<polygon fill-opacity="0.4" points="42.878,214.5 84.16,286 125.439,214.5 		"/>
-		<polygon fill-opacity="0.1" points="84.16,143 125.439,71.5 166.718,143 		"/>
-	</g>
-	<rect y="-65" display="inline" fill="none" width="416" height="416"/>
-	<g display="inline">
-		<polygon fill="#303F9F" points="84.157,143 42.878,214.5 84.157,286 166.721,286 		"/>
-		<polygon fill="#3F51B5" points="331.843,0 249.279,0 331.843,143 373.121,71.5 		"/>
-		<polygon fill="#7986CB" points="373.121,71.5 249.279,286 331.843,286 414.4,143 		"/>
-		<polygon fill="#536DFE" points="84.157,0 1.597,143 42.878,214.5 166.721,0 		"/>
-		<polygon fill-opacity="0.5" points="249.279,0 290.558,71.5 331.843,0 		"/>
-		<polygon fill-opacity="0.5" points="84.157,286 125.439,214.5 166.721,286 		"/>
-		<polygon fill="#FFFFFF" fill-opacity="0.2" points="84.157,0 125.439,71.5 166.721,0 		"/>
-		<polygon fill="#FFFFFF" fill-opacity="0.1" points="42.878,71.5 84.157,0 125.439,71.5 		"/>
-		<polygon fill="#FFFFFF" fill-opacity="0" points="42.878,71.5 84.157,143 125.439,71.5 		"/>
-		<polygon fill-opacity="0.1" points="1.6,143 42.878,71.5 84.157,143 		"/>
-		<polygon fill-opacity="0.2" points="1.6,143 42.878,214.5 84.157,143 		"/>
-		<polygon fill="#FFFFFF" fill-opacity="0" points="125.439,214.5 84.157,143 42.878,214.5 		"/>
-		<polygon fill="#FFFFFF" fill-opacity="0" points="373.121,71.5 331.843,143 290.558,71.5 		"/>
-		<g>
-			<polygon fill="#FFFFFF" fill-opacity="0.2" points="331.843,143 373.121,71.5 414.4,143 			"/>
-			<polygon fill="#FFFFFF" fill-opacity="0.1" points="331.843,143 373.121,214.5 414.4,143 			"/>
-			<polygon fill="#FFFFFF" fill-opacity="0" points="290.558,214.5 331.843,143 373.121,214.5 			"/>
-			<polygon fill-opacity="0.1" points="290.558,214.5 331.843,286 373.121,214.5 			"/>
-			<polygon fill-opacity="0.2" points="249.279,286 290.558,214.5 331.843,286 			"/>
-		</g>
-		<polygon fill-opacity="0.2" points="125.439,214.5 84.157,286 42.878,214.5 		"/>
-		<polygon fill-opacity="0.2" points="373.121,71.5 331.843,0 290.558,71.5 		"/>
-	</g>
-</g>
-<g display="none">
-	<g display="inline">
-		<polygon fill="#9F499B" points="249.279,0 84.157,286 166.721,286 331.843,0 		"/>
-		<polygon fill="#FFFFFF" fill-opacity="0.2" points="249.279,0 290.558,71.5 331.843,0 		"/>
-		<polygon fill="#FFFFFF" fill-opacity="0.1" points="208,71.5 249.279,0 290.558,71.5 		"/>
-		<polygon fill="#FFFFFF" fill-opacity="0" points="208,71.5 249.279,143 290.558,71.5 		"/>
-		<polygon fill-opacity="0.2" points="166.721,143 208,214.5 249.279,143 		"/>
-		<polygon fill-opacity="0.3" points="125.439,214.5 166.721,143 208,214.5 		"/>
-		<polygon fill-opacity="0.4" points="125.439,214.5 166.721,286 208,214.5 		"/>
-		<polygon fill-opacity="0.5" points="84.157,286 125.439,214.5 166.721,286 		"/>
-		<polygon fill-opacity="0.1" points="166.721,143 208,71.5 249.279,143 		"/>
-	</g>
-	<g display="inline">
-		<polygon fill="#9F499B" points="331.84,0 166.718,286 249.279,286 373.121,71.5 		"/>
-		<polygon fill="#FFFFFF" fill-opacity="0.1" points="290.558,71.5 331.84,0 373.121,71.5 		"/>
-		<polygon fill="#FFFFFF" fill-opacity="0" points="290.558,71.5 331.84,143 373.121,71.5 		"/>
-		<polygon fill-opacity="0.2" points="249.279,143 290.558,214.5 331.84,143 		"/>
-		<polygon fill-opacity="0.3" points="208,214.5 249.279,143 290.558,214.5 		"/>
-		<polygon fill-opacity="0.4" points="208,214.5 249.279,286 290.558,214.5 		"/>
-		<polygon fill-opacity="0.5" points="166.718,286 208,214.5 249.279,286 		"/>
-		<polygon fill-opacity="0.1" points="249.279,143 290.558,71.5 331.84,143 		"/>
-	</g>
-	<g display="inline">
-		<polygon fill="#9F499B" points="373.121,71.5 249.279,286 331.843,286 414.4,143 		"/>
-		<polygon fill-opacity="0.2" points="331.843,143 373.121,214.5 414.4,143 		"/>
-		<polygon fill-opacity="0.3" points="290.558,214.5 331.843,143 373.121,214.5 		"/>
-		<polygon fill-opacity="0.4" points="290.558,214.5 331.843,286 373.121,214.5 		"/>
-		<polygon fill-opacity="0.5" points="249.279,286 290.558,214.5 331.843,286 		"/>
-		<polygon fill-opacity="0.1" points="331.843,143 373.121,71.5 414.4,143 		"/>
-	</g>
-	<g display="inline">
-		<polygon fill="#9F499B" points="166.718,0 42.878,214.5 84.16,286 249.279,0 		"/>
-		<polygon fill="#FFFFFF" fill-opacity="0.2" points="166.718,0 208,71.5 249.279,0 		"/>
-		<polygon fill="#FFFFFF" fill-opacity="0.1" points="125.439,71.5 166.718,0 208,71.5 		"/>
-		<polygon fill="#FFFFFF" fill-opacity="0" points="125.439,71.5 166.718,143 208,71.5 		"/>
-		<polygon fill-opacity="0.2" points="84.16,143 125.439,214.5 166.718,143 		"/>
-		<polygon fill-opacity="0.3" points="42.878,214.5 84.16,143 125.439,214.5 		"/>
-		<polygon fill-opacity="0.4" points="42.878,214.5 84.16,286 125.439,214.5 		"/>
-		<polygon fill-opacity="0.1" points="84.16,143 125.439,71.5 166.718,143 		"/>
-	</g>
-	<g display="inline">
-		<polygon fill="#9F499B" points="84.157,0 1.6,143 42.878,214.5 166.721,0 		"/>
-		<polygon fill="#FFFFFF" fill-opacity="0.2" points="84.157,0 125.439,71.5 166.721,0 		"/>
-		<polygon fill="#FFFFFF" fill-opacity="0.1" points="42.878,71.5 84.157,0 125.439,71.5 		"/>
-		<polygon fill="#FFFFFF" fill-opacity="0" points="42.878,71.5 84.157,143 125.439,71.5 		"/>
-		<polygon fill-opacity="0.2" points="1.6,143 42.878,214.5 84.157,143 		"/>
-		<polygon fill-opacity="0.1" points="1.6,143 42.878,71.5 84.157,143 		"/>
-	</g>
-	<rect y="-65" display="inline" fill="none" width="416" height="416"/>
-</g>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   width="100"
+   height="100"
+   viewBox="0 0 100 100"
+   id="svg2"
+   version="1.1"
+   inkscape:version="0.91 r13725"
+   sodipodi:docname="app-icon.svg"
+   inkscape:export-filename="/home/brecht/Documents/WebApps/Kokkies/images/app-icon-144.png"
+   inkscape:export-xdpi="129.60001"
+   inkscape:export-ydpi="129.60001">
+  <defs
+     id="defs4" />
+  <sodipodi:namedview
+     id="base"
+     pagecolor="#ffffff"
+     bordercolor="#666666"
+     borderopacity="1.0"
+     inkscape:pageopacity="0.0"
+     inkscape:pageshadow="2"
+     inkscape:zoom="5.6"
+     inkscape:cx="51.664554"
+     inkscape:cy="33.134743"
+     inkscape:document-units="px"
+     inkscape:current-layer="layer2"
+     showgrid="true"
+     inkscape:window-width="1861"
+     inkscape:window-height="1056"
+     inkscape:window-x="59"
+     inkscape:window-y="24"
+     inkscape:window-maximized="1"
+     units="px">
+    <inkscape:grid
+       type="xygrid"
+       id="grid4136"
+       units="px"
+       spacingx="1"
+       spacingy="1"
+       empspacing="10" />
+  </sodipodi:namedview>
+  <metadata
+     id="metadata7">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+        <dc:title />
+      </cc:Work>
+    </rdf:RDF>
+  </metadata>
+  <g
+     inkscape:groupmode="layer"
+     id="layer2"
+     inkscape:label="Background"
+     style="display:inline">
+    <rect
+       style="opacity:1;fill:#4285f4;fill-opacity:1;stroke:none;stroke-width:0.5;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:7.79527569;stroke-opacity:1"
+       id="rect4136"
+       width="100"
+       height="100"
+       x="0"
+       y="0"
+       ry="5" />
+  </g>
+  <g
+     inkscape:label="Layer 1"
+     inkscape:groupmode="layer"
+     id="layer1"
+     transform="translate(0,-952.36218)">
+    <path
+       style="fill:#ffffff;fill-opacity:1"
+       d="m 29.531474,1039.1513 c -3.443457,-1.4053 -12.367057,-5.5905 -13.835143,-6.4886 -1.644141,-1.006 -2.294699,-1.9712 -2.32754,-3.4533 -0.0095,-0.4273 0.582517,-2.4958 1.983572,-6.9309 2.134703,-6.7574 2.55557,-8.1981 3.949981,-13.5219 2.849821,-10.88061 4.946208,-21.70228 4.432853,-22.88289 -0.08774,-0.20175 -0.291841,-0.4626 -0.45357,-0.57964 -0.604529,-0.43747 -1.887342,-2.24188 -2.422213,-3.40705 -1.449396,-3.15738 -1.983203,-7.51133 -1.334298,-10.88301 0.848718,-4.40986 3.892215,-8.15373 7.769476,-9.55738 1.691698,-0.61242 3.84982,-0.8979 5.736774,-0.75883 1.254539,0.0924 1.906276,0.26036 5.244153,1.3513 4.944405,1.61596 4.748425,1.61707 9.141227,-0.0522 4.050426,-1.53918 5.826193,-1.92507 8.354273,-1.81544 3.755899,0.16287 6.843921,1.72883 10.28718,5.21672 2.085183,2.11223 2.984831,3.50023 3.951785,6.09696 0.548363,1.4726 0.931726,1.74189 3.675994,2.58206 3.531497,1.08119 5.473194,1.81062 6.609541,2.48307 5.475683,3.24019 7.602602,8.89268 5.590341,14.85685 -1.777484,5.26832 -6.996414,10.00898 -11.924289,10.83148 -0.617261,0.1031 -1.166412,0.3149 -1.375387,0.5305 -1.232529,1.2719 -6.135554,11.2629 -9.762758,19.8937 -0.734298,1.7473 -1.501646,3.5481 -1.705256,4.002 -0.203564,0.4538 -1.541185,4.0833 -2.972418,8.0654 -2.819346,7.8442 -3.13485,8.5274 -4.301778,9.3151 -1.189719,0.8032 -2.696533,0.7149 -8.09894,-0.4744 -8.600265,-1.8931 -12.883632,-3.0609 -16.21356,-4.4197 z m 11.365521,-1.6893 c 4.300839,1.2579 7.523939,2.0849 8.773891,2.2507 0.759363,0.1006 0.896146,0.063 1.186494,-0.3265 0.662315,-0.889 1.394198,-2.5772 2.380744,-5.4913 l 1.010007,-2.9842 -16.527545,-5.5762 -16.527538,-5.5763 -0.556246,2.0146 c -0.305969,1.108 -0.878919,3.2272 -1.273298,4.7092 l -0.717038,2.6945 2.156545,1.0315 c 1.186094,0.5673 2.834368,1.3263 3.662756,1.6868 2.146031,0.9334 11.977462,4.2646 16.43109,5.5669 z m -0.200607,-15.276 c 1.308156,0.3464 4.493529,1.2722 7.078678,2.0573 4.728318,1.4362 6.75154,1.9082 7.618318,1.7775 0.940264,-0.1419 2.334569,-2.5735 5.431959,-9.4729 4.086282,-9.1022 8.123899,-17.48313 8.669688,-17.99569 0.140732,-0.13215 0.762973,-0.31207 1.382756,-0.39981 3.371544,-0.4773 5.327703,-1.10456 6.892168,-2.21004 1.905767,-1.34666 3.07925,-2.66925 3.974022,-4.47898 0.476597,-0.96397 0.577578,-1.31504 0.615983,-2.14166 0.09996,-2.1515 -0.789403,-4.95849 -2.225858,-7.02522 -1.12473,-1.61822 -2.113858,-2.45841 -3.623503,-3.07789 -1.572487,-0.64526 -2.542492,-0.66202 -6.112429,-0.10554 -1.622298,0.25289 -3.044615,0.42775 -3.160706,0.38858 -0.116099,-0.0391 -0.310614,-0.66833 -0.432269,-1.39813 -0.716285,-4.29667 -1.416117,-6.23782 -2.987042,-8.28531 -2.806238,-3.6575 -6.068623,-5.11738 -10.450369,-4.67643 -2.4869,0.25027 -5.528229,1.46583 -7.370408,2.94585 -0.424067,0.34068 -1.485516,1.29639 -2.35877,2.12379 -0.890642,0.84388 -1.654197,1.44752 -1.73911,1.37491 -0.08327,-0.0712 -0.839056,-1.02437 -1.679562,-2.11813 -1.620162,-2.10834 -2.529249,-2.96549 -3.988944,-3.76103 -2.367121,-1.29011 -5.785916,-1.00366 -8.611608,0.72145 -1.900996,1.16061 -3.014677,2.62441 -3.795888,4.98924 -0.687028,2.07978 -0.741501,3.823 -0.18387,5.88506 0.486169,1.7978 1.226698,3.07769 2.609652,4.51034 2.924586,3.02968 2.948395,3.73284 0.48839,14.42452 -2.477669,10.76842 -3.620638,16.71182 -3.479247,18.09162 0.08143,0.7945 1.802076,1.9129 5.496717,3.5729 3.97343,1.7853 8.109179,3.2688 11.941252,4.2837 z m 4.078352,-18.2599 c 0.425415,-2.6149 0.591311,-3.2581 1.630272,-6.32102 1.215179,-3.58292 1.628973,-4.37542 2.37186,-4.54431 0.524424,-0.11922 0.794934,0.80154 0.602367,2.0504 -0.201146,1.30456 -0.958612,3.57653 -1.748244,5.24383 -1.47153,3.1072 -3.002441,6.1695 -3.15896,6.319 -0.09403,0.09 0.04224,-1.1469 0.302743,-2.7479 z M 32.3735,999.82326 c -0.05828,-0.24351 0.07675,-1.0953 0.318392,-2.00854 0.230832,-0.87218 0.71549,-2.9104 1.077091,-4.52932 1.118091,-5.00568 1.542691,-5.90068 2.625986,-5.53518 1.332445,0.44955 1.287237,1.37792 -0.293791,6.03277 -0.677548,1.99568 -1.41418,3.8959 -1.775939,4.58283 -1.037699,1.97048 -1.708934,2.47158 -1.951744,1.45744 z m 24.800619,8.36754 c -0.06959,-0.2674 0.04965,-1.0263 0.3157,-2.0094 0.23512,-0.869 0.794177,-3.2416 1.242254,-5.2725 0.826687,-3.7469 1.091701,-4.51155 1.661528,-4.79384 0.475129,-0.2354 1.33147,0.11412 1.569516,0.64062 0.309539,0.68462 0.161544,1.33935 -1.245185,5.50882 -1.331146,3.9454 -2.075034,5.5875 -2.799746,6.1804 -0.42501,0.3478 -0.603181,0.287 -0.74498,-0.2513 z"
+       id="path4145"
+       inkscape:connector-curvature="0" />
+  </g>
 </svg>
