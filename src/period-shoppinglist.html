@@ -94,10 +94,17 @@
             },
 
             observers: [
-                '_calculateShoppinglist(key,dayproductgroups,dayproductgroupproducts,productgroups,products)'
+                '_calculateShoppinglist(key,dayproductgroups.*,dayproductgroupproducts.*,productgroups.*,products.*)'
             ],
 
             _calculateShoppinglist: function(key,dayproductgroups,dayproductgroupproducts,productgroups,products){
+                
+                var key = this.key;
+                var dayproductgroups = this.dayproductgroups;
+                var dayproductgroupproducts= this.dayproductgroupproducts;
+                var productgroups = this.productgroups;
+                var products = this.products;
+
                 
                 var oldshoppinglistproducts = {}
                 if(typeof shoppinglistproducts != 'undefined'){
