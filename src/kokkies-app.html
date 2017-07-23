@@ -110,7 +110,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         <app-drawer-layout id="app" fullbleed>
 
             <!-- Drawer content -->
-            <app-drawer>
+            <app-drawer id="drawer" class$="[[hideMenu]]">
                 <app-toolbar>Menu</app-toolbar>
                 <iron-selector selected="[[mainpage]]" attr-for-selected="name" class="drawer-list" role="navigation">
                     <a name="periods" href="/periods">Periodes</a>
@@ -178,7 +178,6 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
                 this.$.auth.signOut();
             },
             resetPassword: function(e){
-                console.log(e)
                 var that = this;
                 this.$.auth.sendPasswordResetEmail(e.detail.email).then(
                     function(){
@@ -223,6 +222,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
                     this.pageTitle = 'Login';
                     this.hideBackButton = 'hidden';
                     this.hideMenuButton = 'hidden';
+                    this.hideMenu = 'hidden';
                 }
                 else if(this.routeData.page=='products'){
                     this.mainpage = 'products';
@@ -231,12 +231,14 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
                         this.pageTitle = 'Producten';
                         this.hideBackButton = 'hidden';
                         this.hideMenuButton = '';
+                        this.hideMenu = '';
                     }
                     else{
                         this.page = 'product-detail';
                         this.pageTitle = 'Product detail';
                         this.hideBackButton = '';
                         this.hideMenuButton = '';
+                        this.hideMenu = '';
                     }
                 }
                 else if(this.routeData.page=='periods'){
@@ -246,12 +248,14 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
                         this.pageTitle = 'Periodes';
                         this.hideBackButton = 'hidden';
                         this.hideMenuButton = '';
+                        this.hideMenu = '';
                     }
                     else{
                         this.page = 'period-detail';
                         this.pageTitle = 'Periode detail';
                         this.hideBackButton = '';
                         this.hideMenuButton = '';
+                        this.hideMenu = '';
                     }
                 }
                 else{
