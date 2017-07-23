@@ -110,7 +110,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         <app-drawer-layout id="app" fullbleed>
 
             <!-- Drawer content -->
-            <app-drawer id="drawer" class$="[[hideMenu]]">
+            <app-drawer id="drawer" slot="drawer" class$="[[hideMenu]]">
                 <app-toolbar>Menu</app-toolbar>
                 <iron-selector selected="[[mainpage]]" attr-for-selected="name" class="drawer-list" role="navigation">
                     <a name="periods" href="/periods">Periodes</a>
@@ -122,7 +122,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
             <!-- Main content -->
             <app-header-layout has-scrolling-region>
 
-                <app-header condenses reveals effects="waterfall">
+                <app-header condenses reveals effects="waterfall" slot="header">
                     <app-toolbar hidden="[[!signedIn]]">
                         <paper-icon-button icon="arrow-back" on-tap="back" class$="[[hideBackButton]]"></paper-icon-button>
                         <paper-icon-button icon="menu" drawer-toggle class$="[[hideMenuButton]]"></paper-icon-button>
@@ -219,7 +219,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
                 if(this.routeData.page=='' || this.routeData.page=='login'){
                     //this.set('route.path','/login')
                     this.page = 'login';
-                    this.pageTitle = 'Login';
+                    this.pageTitle = 'Kokkies';
                     this.hideBackButton = 'hidden';
                     this.hideMenuButton = 'hidden';
                     this.hideMenu = 'hidden';
