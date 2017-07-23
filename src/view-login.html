@@ -14,6 +14,7 @@
 
     <template>
 
+        <style include="shared-styles"></style>
         <style>
             :host {
                 display: block;
@@ -30,45 +31,78 @@
             paper-material{
                 padding: 10px;
             }
-            paper-button > * {
+            .buttons{
+                margin-top: 10px;
+                text-align: center;
+            }
+            .coloredbackground paper-button > * {
                 vertical-align: middle;
                 text-transform: none;
                 color: #ffffff;
             }
+            .coloredbackground paper-input-container{
+                 --paper-input-container-color: #dddddd;
+                 --paper-input-container-input-color: #ffffff;
+            }
+            .info {
+                margin-top: 40px;
+                text-align: center;
+                color: #ffffff;
+            }
+            .info a{
+                color: #1f0d9e;
+            }
 
         </style>
 
-        <paper-material>
+        <paper-material class="coloredbackground">
             <paper-input label="email" value="{{email}}"></paper-input>
             <paper-input label="password" value="{{password}}" type="password"></paper-input>
 
-            <paper-button on-tap="signIn" disabled="[[disabled]]">
-                <iron-icon icon="account-circle"></iron-icon>
-                <span>Sign in</span>
-            </paper-button>
-            
-            <div>
-                <a href="#" on-tap='registerDialog'> register</a>
+            <div class="buttons">
+                <paper-button raised on-tap="signIn" disabled="[[disabled]]">
+                    <iron-icon icon="account-circle"></iron-icon>
+                    <span>Sign in</span>
+                </paper-button>
+            </div>
+
+            <div class="info">
+                <div>No account: <a href="#" on-tap='registerDialog'> register</a></div>
+                <!--<div>Forgot your password? Click<a href="#" on-tap='resetPasswordDialog'> here</a></div>-->
             </div>
         </paper-material>
-
 
 
 
         <paper-dialog id="registerDialog">
             <paper-button class="close" dialog-dismiss>close</paper-button>
 
-            <paper-input label="email" value="{{email}}"></paper-input>
-            <paper-input label="password" value="{{password}}" type="password"></paper-input>
+            <paper-input label="email" value="{{newEmail}}"></paper-input>
+            <paper-input label="password" value="{{newPassword}}" type="password"></paper-input>
             <paper-input label="repeat password" value="{{repeatPassword}}" type="password"></paper-input>
 
-            <paper-button on-tap="register" disabled="[[disabled]]">
-                <iron-icon icon="account-circle"></iron-icon>
-                <span>Register</span>
-            </paper-button>
+            <div class="buttons">
+                <paper-button raised on-tap="register" disabled="[[disabled]]">
+                    Register
+                </paper-button>
+            </div>
 
         </paper-dialog>
 
+
+
+        <paper-dialog id="resetPassword">
+            <paper-button class="close" dialog-dismiss>close</paper-button>
+
+            <paper-input label="email" value="{{resetEmail}}"></paper-input>
+
+            <div class="buttons">
+                <paper-button raised on-tap="resetPassword" disabled="[[disabled]]">
+                    Send new password
+                </paper-button>
+            </div>
+
+        </paper-dialog>
 
     </template>
 
@@ -92,7 +126,6 @@
             },
             signIn: function() {
                 this.fire('sign-in', {'email':this.email,'password':this.password}, { bubbles: false });
-                this.email = '';
                 this.password= '';
             },
 
@@ -102,11 +135,18 @@
 
             register: function(){
                 if(this.password==this.repeatPassword){
-                    console.log('register')
-                    this.fire('register', {'email':this.email,'password':this.password}, { bubbles: false });
+                    this.fire('register', {'email':this.newEmail,'password':this.newPassword}, { bubbles: false });
                 }
             },
 
+            resetPasswordDialog: function(){
+                this.$.resetPassword.open();
+            },
+
+            resetPassword: function(){
+                this.fire('reset-password', {'email':this.resetEmail}, { bubbles: false });
+                this.$.resetPassword.close();
+            },
         });
 
     </script>
