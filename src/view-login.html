@@ -9,21 +9,27 @@
 <link rel="import" href="../bower_components/paper-input/paper-input.html">
 <link rel="import" href="../bower_components/paper-material/paper-material.html">
 <link rel="import" href="../bower_components/paper-dialog/paper-dialog.html">
+<link rel="import" href="../bower_components/paper-toast/paper-toast.html">
 
 <dom-module id="view-login">
 
     <template>
 
+        <style include="iron-flex iron-flex-alignment"></style>
         <style include="shared-styles"></style>
         <style>
             :host {
                 display: block;
+            }
+            .page {
                 position: absolute;
                 top: 0;
                 left: 0;
                 right: 0;
                 bottom: 0;
+                z-index: 100;
                 background: var(--app-primary-color);
+                color: #ffffff;
 
                 @apply(--layout);
                 @apply(--layout-center-center);
@@ -35,12 +41,12 @@
                 margin-top: 10px;
                 text-align: center;
             }
-            .coloredbackground paper-button > * {
+            .page paper-button > * {
                 vertical-align: middle;
                 text-transform: none;
                 color: #ffffff;
             }
-            .coloredbackground paper-input-container{
+            .page paper-input-container{
                  --paper-input-container-color: #dddddd;
                  --paper-input-container-input-color: #ffffff;
             }
@@ -52,57 +58,71 @@
             .info a{
                 color: #1f0d9e;
             }
+            .hidden{
+                display: none;
+            }
 
         </style>
 
-        <paper-material class="coloredbackground">
-            <paper-input label="email" value="{{email}}"></paper-input>
-            <paper-input label="password" value="{{password}}" type="password"></paper-input>
+        <firebase-auth id="auth" app-name="kokkies" user="{{user}}" signed-in="{{signedIn}}"></firebase-auth>
 
-            <div class="buttons">
-                <paper-button raised on-tap="signIn" disabled="[[disabled]]">
-                    <iron-icon icon="account-circle"></iron-icon>
-                    <span>Sign in</span>
-                </paper-button>
+        <div class$="[[_hideLogin(signedIn)]]">
+
+            <div class="page vertical layout">
+                <h1>Kokkies</h1>
+
+                <paper-material>
+                    <paper-input label="email" value="{{email}}"></paper-input>
+                    <paper-input label="password" value="{{password}}" type="password"></paper-input>
+
+                    <div class="buttons">
+                        <paper-button raised on-tap="signIn" disabled="[[disabled]]">
+                            <iron-icon icon="account-circle"></iron-icon>
+                            <span>Sign in</span>
+                        </paper-button>
+                    </div>
+
+                    <div class="info">
+                        <div>No account: <a href="#" on-tap='registerDialog'> register</a></div>
+                        <!--<div>Forgot your password? Click<a href="#" on-tap='resetPasswordDialog'> here</a></div>-->
+                    </div>
+                </paper-material>
             </div>
 
-            <div class="info">
-                <div>No account: <a href="#" on-tap='registerDialog'> register</a></div>
-                <!--<div>Forgot your password? Click<a href="#" on-tap='resetPasswordDialog'> here</a></div>-->
-            </div>
-        </paper-material>
+
+            <paper-dialog id="registerDialog">
+                <paper-button class="close" dialog-dismiss>close</paper-button>
+
+                <paper-input label="email" value="{{newEmail}}"></paper-input>
+                <paper-input label="password" value="{{newPassword}}" type="password"></paper-input>
+                <paper-input label="repeat password" value="{{repeatPassword}}" type="password"></paper-input>
+
+                <div class="buttons">
+                    <paper-button raised on-tap="register" disabled="[[disabled]]">
+                        Register
+                    </paper-button>
+                </div>
+
+            </paper-dialog>
 
 
 
-        <paper-dialog id="registerDialog">
-            <paper-button class="close" dialog-dismiss>close</paper-button>
+            <paper-dialog id="resetPassword">
+                <paper-button class="close" dialog-dismiss>close</paper-button>
 
-            <paper-input label="email" value="{{newEmail}}"></paper-input>
-            <paper-input label="password" value="{{newPassword}}" type="password"></paper-input>
-            <paper-input label="repeat password" value="{{repeatPassword}}" type="password"></paper-input>
+                <paper-input label="email" value="{{resetEmail}}"></paper-input>
 
-            <div class="buttons">
-                <paper-button raised on-tap="register" disabled="[[disabled]]">
-                    Register
-                </paper-button>
-            </div>
+                <div class="buttons">
+                    <paper-button raised on-tap="resetPassword" disabled="[[disabled]]">
+                        Send new password
+                    </paper-button>
+                </div>
 
-        </paper-dialog>
+            </paper-dialog>
 
+            <paper-toast id="toast"></paper-toast>
 
-
-        <paper-dialog id="resetPassword">
-            <paper-button class="close" dialog-dismiss>close</paper-button>
-
-            <paper-input label="email" value="{{resetEmail}}"></paper-input>
-
-            <div class="buttons">
-                <paper-button raised on-tap="resetPassword" disabled="[[disabled]]">
-                    Send new password
-                </paper-button>
-            </div>
-
-        </paper-dialog>
+        </div>
 
     </template>
 
@@ -121,21 +141,32 @@
                 signedIn: {
                     type: Boolean,
                     reflectToAttribute: true,
-                    value: false
+                    value: false,
+                    notify: true,
+                },
+                user: {
+                    type: Boolean,
+                    notify: true,
                 }
             },
-            signIn: function() {
-                this.fire('sign-in', {'email':this.email,'password':this.password}, { bubbles: false });
-                this.password= '';
+
+            signIn: function(e){
+                var that = this;
+                this.$.auth.signInWithEmailAndPassword(this.email,this.password).catch(function(error) {
+                    that.$.toast.show({text: error, duration: 3000});
+                });
             },
 
             registerDialog: function(){
                 this.$.registerDialog.open();
             },
 
-            register: function(){
-                if(this.password==this.repeatPassword){
-                    this.fire('register', {'email':this.newEmail,'password':this.newPassword}, { bubbles: false });
+            register: function(e){
+                var that = this;
+                if(this.newPassword==this.repeatPassword){
+                    this.$.auth.createUserWithEmailAndPassword(this.newEmail,this.newPassword).catch(function(error) {
+                        that.$.toast.show({text: error, duration: 3000});
+                    });
                 }
             },
 
@@ -143,10 +174,31 @@
                 this.$.resetPassword.open();
             },
 
-            resetPassword: function(){
-                this.fire('reset-password', {'email':this.resetEmail}, { bubbles: false });
-                this.$.resetPassword.close();
+            resetPassword: function(e){
+                var that = this;
+                this.$.auth.sendPasswordResetEmail(this.resetEmail).then(
+                    function(){
+                        that.$.toast.show({text: 'A recovery email was sent', duration: 3000});
+                    },
+                    function(error) {
+                        that.$.toast.show({text: error, duration: 3000});
+                });
             },
+
+            signOut: function(){
+                this.$.auth.signOut();
+            },
+            
+            _hideLogin: function(signedIn){
+                if(signedIn){
+                    return 'hidden';
+                }
+                else{
+                    return '';
+                }
+    
+            },
+
         });
 
     </script>

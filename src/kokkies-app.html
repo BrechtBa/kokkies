@@ -1,11 +1,6 @@
 <!--
 @license
-Copyright (c) 2016 The Polymer Project Authors. All rights reserved.
-This code may only be used under the BSD style license found at http://polymer.github.io/LICENSE.txt
-The complete set of authors may be found at http://polymer.github.io/AUTHORS.txt
-The complete set of contributors may be found at http://polymer.github.io/CONTRIBUTORS.txt
-Code distributed by Google as part of the polymer project is also
-subject to an additional IP rights grant found at http://polymer.github.io/PATENTS.txt
+
 -->
 <link rel="import" href="../bower_components/polymer/polymer.html">
 <link rel="import" href="../bower_components/app-route/app-location.html">
@@ -58,6 +53,9 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
             app-header paper-icon-button {
                 --paper-icon-button-ink-color: white;
             }
+            app-drawer-layout:not([narrow]) [drawer-toggle] {
+                display: none;
+            }
             .drawer-list {
                 margin: 0 20px;
             }
@@ -94,7 +92,6 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         
         
         <firebase-app name="kokkies" auth-domain="kokkies-c0e33.firebaseapp.com" database-url="https://kokkies-c0e33.firebaseio.com" api-key="AIzaSyCBdtXwGw5bSK0MOqSOeRUgGMd0HYs4mWs"></firebase-app>
-        <firebase-auth id="auth" app-name="kokkies" provider="google" user="{{user}}" signed-in="{{signedIn}}"></firebase-auth>
 
 
         <firebase-document app-name="kokkies" path="/[[user.uid]]/products" data="{{products}}"></firebase-document>
@@ -106,11 +103,13 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         <firebase-document app-name="kokkies" path="/[[user.uid]]/periods" data="{{periods}}"></firebase-document>
          <!--<app-indexeddb-mirror key="shoppinglist" data="{{periodsFirebase}}" persisted-data="{{periods}}"></app-indexeddb-mirror>-->
         
-        
+        <view-login id="login" name="login" user="{{user}}" on-sign-in="signIn" on-register="register" on-reset-password="resetPassword" signed-in="[[signedIn]]" disabled=[[!online]]></view-login>
+                    
+
         <app-drawer-layout id="app" fullbleed>
 
             <!-- Drawer content -->
-            <app-drawer id="drawer" slot="drawer" class$="[[hideMenu]]">
+            <app-drawer id="drawer" slot="drawer">
                 <app-toolbar>Menu</app-toolbar>
                 <iron-selector selected="[[mainpage]]" attr-for-selected="name" class="drawer-list" role="navigation">
                     <a name="periods" href="/periods">Periodes</a>
@@ -125,13 +124,12 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
                 <app-header condenses reveals effects="waterfall" slot="header">
                     <app-toolbar hidden="[[!signedIn]]">
                         <paper-icon-button icon="arrow-back" on-tap="back" class$="[[hideBackButton]]"></paper-icon-button>
-                        <paper-icon-button icon="menu" drawer-toggle class$="[[hideMenuButton]]"></paper-icon-button>
+                        <paper-icon-button icon="menu" drawer-toggle></paper-icon-button>
                         <div title>{{pageTitle}}</div>
                     </app-toolbar>
                 </app-header>
 
                 <iron-pages role="main" selected="[[page]]" attr-for-selected="name">
-                    <view-login                 id="login"                  name="login" on-sign-in="signIn" on-register="register" on-reset-password="resetPassword" signed-in="[[signedIn]]" disables=[[!online]]></view-login>
                     <view-periods               id="periods"                name="periods"              user="[[user]]"  periods="{{periods}}" route="{{periodsSubroute}}"></view-periods>
                     <view-period-detail         id="periodDetail"           name="period-detail"        user="[[user]]"  products="{{products}}" route="{{periodsSubroute}}"></view-period-detail>
                     <view-products              id="products"               name="products"             user="[[user]]"  products="{{products}}" route="{{productsSubroute}}"></view-products>
@@ -155,38 +153,20 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
                     //observer: '_pageChanged'
                 },
             },
+
             behaviours:[
                 'AppNetworkStatusBehavior'
             ],
+
             observers: [
                 '_routeChanged(route.*)',
                 '_signedInChanged(signedIn)',
             ],
-            signIn: function(e){
-                var that = this;
-                this.$.auth.signInWithEmailAndPassword(e.detail.email,e.detail.password).catch(function(error) {
-                    that.$.toast.show({text: error, duration: 3000});
-                });
-            },
-            register: function(e){
-                var that = this;
-                this.$.auth.createUserWithEmailAndPassword(e.detail.email,e.detail.password).catch(function(error) {
-                    that.$.toast.show({text: error, duration: 3000});
-                });
-            },
+
             signOut: function(){
-                this.$.auth.signOut();
+                this.$.login.signOut();
             },
-            resetPassword: function(e){
-                var that = this;
-                this.$.auth.sendPasswordResetEmail(e.detail.email).then(
-                    function(){
-                        that.$.toast.show({text: 'A recovery email was sent', duration: 3000});
-                    },
-                    function(error) {
-                        that.$.toast.show({text: error, duration: 3000});
-                });
-            },
+
             back: function(e){
                 if(this.page=='period-detail'){
                     this.$.periodDetail.back()
@@ -198,6 +178,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
                     this.set('route.path','/products');
                 }
             },
+
             handleDeleteProduct: function(e,key){
                 console.log('delete product: ' + key);
             },
@@ -221,8 +202,6 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
                     this.page = 'login';
                     this.pageTitle = 'Kokkies';
                     this.hideBackButton = 'hidden';
-                    this.hideMenuButton = 'hidden';
-                    this.hideMenu = 'hidden';
                 }
                 else if(this.routeData.page=='products'){
                     this.mainpage = 'products';
@@ -230,15 +209,12 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
                         this.page = 'products';
                         this.pageTitle = 'Producten';
                         this.hideBackButton = 'hidden';
-                        this.hideMenuButton = '';
-                        this.hideMenu = '';
+
                     }
                     else{
                         this.page = 'product-detail';
                         this.pageTitle = 'Product detail';
                         this.hideBackButton = '';
-                        this.hideMenuButton = '';
-                        this.hideMenu = '';
                     }
                 }
                 else if(this.routeData.page=='periods'){
@@ -247,15 +223,11 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
                         this.page = 'periods';
                         this.pageTitle = 'Periodes';
                         this.hideBackButton = 'hidden';
-                        this.hideMenuButton = '';
-                        this.hideMenu = '';
                     }
                     else{
                         this.page = 'period-detail';
                         this.pageTitle = 'Periode detail';
                         this.hideBackButton = '';
-                        this.hideMenuButton = '';
-                        this.hideMenu = '';
                     }
                 }
                 else{
