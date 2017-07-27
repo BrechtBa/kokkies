@@ -354,6 +354,12 @@
                 html += '            span.date {\n';
                 html += '                margin-left: 3px;\n';
                 html += '            }\n';
+
+                html += '            .comment {\n';
+                html += '                color: #555555;\n';
+                html += '                font-style: italic;\n';
+                html += '            }\n';
+
                 html += '            .planning div.productgroup {\n';
                 html += '                position: relative;\n';
                 html += '                text-align: left;\n';
@@ -365,8 +371,9 @@
                 html += '                position: absolute;\n';
                 html += '                right: 1px;\n';
                 html += '                bottom: 1px;\n';
-                html += '                color: #555555;\n';
                 html += '                font-size: 0.8em;\n';
+                html += '                max-height: 30px;\n';
+                html += '                overflow-y: hidden;\n';
                 html += '            }\n';
                 html += '            .planning div.quantity {\n';
                 html += '                position: absolute;\n';
@@ -383,9 +390,6 @@
                 html += '            .detail .productgroup {\n';
                 html += '                margin-top: 10px;\n';
                 html += '            }\n';
-                html += '            .detail .productgroup .product {\n';
-                html += '                border-bottom: 1px solid;\n';
-                html += '            }\n';
                 html += '            .detail .productgroup .name {\n';
                 html += '                display: inline-block;\n';
                 html += '                min-width: 400px;\n';
@@ -394,6 +398,12 @@
                 html += '            .detail .productgroup .quantity {\n';
                 html += '                display: inline-block;\n';
                 html += '                font-weight: 700;\n';
+                html += '            }\n';
+                html += '            .detail .productgroup .comment {\n';
+                html += '                margin-left: 20px;\n';
+                html += '            }\n';
+                html += '            .detail .productgroup .product {\n';
+                html += '                border-bottom: 1px solid;\n';
                 html += '            }\n';
                 html += '            .detail .productgroup .product span {\n';
                 html += '                font-weight: 300;\n';
@@ -405,7 +415,7 @@
                 html += '            }\n';
                 html += '            .detail .productgroup .product span.quantity {\n';
                 html += '                display: inline-block;\n';
-                html += '                width: 50px;\n';
+                html += '                width: 70px;\n';
                 html += '                text-align: right;\n';
                 html += '            }\n';
                 html += '            .detail .productgroup .product span.unit {\n';

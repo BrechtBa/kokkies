@@ -44,6 +44,9 @@
                 min-width: 150px;
                 margin-top: 20px;
             }
+            .quantity{
+                width: 100px;
+            }
             .unit{
                 width: 50px;
                 margin-left: 5px;
@@ -68,7 +71,7 @@
             </div>
             <div class="flex">&nbsp;</div>
             <div class="quantity"><paper-input label="Gebruikt" value="{{dayproductgroupproduct.used}}"></paper-input></div>
-            <div class="unit">{{_getObjectProperty(products,product.key,'unit')}}</div>
+            <div class="unit">{{_getObjectProperty(products,key,'unit')}}</div>
         </div>
 
 

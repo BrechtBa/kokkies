@@ -29,7 +29,7 @@
                 max-width: 200px;
             }
             .quantity{
-                width: 40px;
+                width: 60px;
                 text-align: right;
             }
             .unit{
@@ -57,6 +57,7 @@
             </template>
             <div class="flex">&nbsp;</div>
             <div class="ordered"><paper-input label="besteld" value="{{product.ordered}}"></paper-input></div>
+            <div class="unit">{{_getObjectProperty(products,key,'unit')}}</div>
             <div class="checked"><paper-checkbox checked="{{_isChecked(product.ordered,quantity)}}" disabled></paper-checkbox></div>
         </paper-material>
 
@@ -101,7 +102,7 @@
             },
 
             _isChecked: function(ordered,quantity){
-                return ordered>= quantity;
+                return ordered >= 0.9*quantity;
             },
 
             _round: function(val){

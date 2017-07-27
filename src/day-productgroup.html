@@ -49,6 +49,9 @@
                 margin-right: 4px;
                 margin-top: 0px;
             }
+            .comment{
+                color: #555555;
+            }
             .name{
                 min-width: 200px;
             }
@@ -77,6 +80,10 @@
             </div>
 
             <iron-collapse>
+                <div class="comment">
+                     [[_getObjectProperty(productgroups,key,'comment')]]
+                </div>
+
                 <div class="content product-list">
 
                     <template is="dom-repeat" items="{{_getProducts(key,productgroups)}}" as="product">
@@ -193,6 +200,13 @@
                     html+= '                            <div class="quantity">'+ this.productgroup.quantity + '</div>\n';
                 }
 
+                var comment = this._getObjectProperty(this.productgroups,this.key,'comment');
+                html += '                           <div class="comment">';
+                if(typeof comment != 'undefined'){
+                    html += comment;
+                }
+                html += '</div>\n';
+
                 html += '                           <div class="products">\n'
                 var products = Polymer.dom(this.root).querySelectorAll('day-productgroup-product');
 
@@ -202,14 +216,6 @@
                     html += products[i].detailHtml();
                     html += '                           </div>\n';
                 }
-
-                var comment = this._getObjectProperty(this.productgroups,this.key,'comment');
-                html += '                           <div class="comment">';
-                if(typeof comment != 'undefined'){
-                    html += comment;
-                }
-                html += '</div>\n';
-
 
                 html += '                           </div>\n'
 
