@@ -97,13 +97,12 @@
             },
             observers: [
                 '_routeKeyChanged(routeData.key,products)',
-                'tempItemChanged(tempItem.*)'
             ],
             isNewItem: function(key){
                 return (key == 'new')
             },
             saveItem: function(e){
-                this.set('products.'+this.tempKey,this.tempItem);
+                this.set('products.'+this.tempKey,JSON.parse(JSON.stringify(this.tempItem)));
                 this.set('route.path','');
             },
             cancelItem: function(e){
@@ -117,9 +116,6 @@
                 // fire an event to delete the product
                 this.fire('delete-product',this.tempKey);
                 this.set('route.path','');
-            },
-            tempItemChanged: function(change){
-                this.set('products.'+this.tempKey, JSON.parse(JSON.stringify(this.tempItem)) )
             },
             _routeKeyChanged: function(key,products){
                 if(typeof key!='undefined' && key!=''){
@@ -141,7 +137,7 @@
                     else{
                         this.tempKey = key;
                         if(typeof this.products != 'undefined' && typeof this.products[key] != 'undefined'){
-                            this.tempItem = this.products[key];
+                            this.tempItem = JSON.parse(JSON.stringify(this.products[key]));
                         }
                     }
                 }
