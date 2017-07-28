@@ -103,10 +103,10 @@
         <firebase-document app-name="kokkies" path="/[[user.uid]]/periods" data="{{periods}}"></firebase-document>
          <!--<app-indexeddb-mirror key="shoppinglist" data="{{periodsFirebase}}" persisted-data="{{periods}}"></app-indexeddb-mirror>-->
         
-        <view-login id="login" name="login" user="{{user}}" on-sign-in="signIn" on-register="register" on-reset-password="resetPassword" signed-in="[[signedIn]]" disabled=[[!online]]></view-login>
+        <view-login id="login" name="login" user="{{user}}" on-sign-in="signIn" on-register="register" on-reset-password="resetPassword" signed-in="{{signedIn}}" disabled=[[!online]]></view-login>
                     
 
-        <app-drawer-layout id="app" fullbleed>
+        <app-drawer-layout id="app" responsive-width="780px" fullbleed>
 
             <!-- Drawer content -->
             <app-drawer id="drawer" slot="drawer">
@@ -185,7 +185,7 @@
             
             _signedInChanged: function(signedIn){
                 if(signedIn){
-                    if(typeof this.page=='undefined' || this.page=='login'){
+                    if(typeof this.page=='undefined' || this.page=='login'  || this.page==''){
                         this.set('route.path','/periods')
                     }
                 }

@@ -41,25 +41,30 @@
                 margin-bottom: -8px;
             }
             .name{
-                min-width: 150px;
+                min-width: 100px;
                 margin-top: 20px;
             }
             .quantity{
-                width: 100px;
+                width: 80px;
             }
             .unit{
                 width: 50px;
                 margin-left: 5px;
                 margin-top: 20px;
             }
+            .shoppinglist{
+                width: 150px;
+            }
         </style>
 
         <firebase-document app-name="kokkies" path="/[[user.uid]]/dayproductgroupproducts/[[period]]/[[day]]/[[meal]]/[[productgroup]]/[[key]]" data="{{dayproductgroupproduct}}"></firebase-document>
 
-        <div class=" horizontal layout center">
+        <div class="horizontal layout center wrap">
             <div class="name">{{_getObjectProperty(products,key,'name')}}</div>
-            <div class="quantity"><paper-input label="Hoeveelheid" value="{{_computeQuantity(quantity,productgroup,key,productgroups)}}" disabled></paper-input></div>
-            <div class="unit">{{_getObjectProperty(products,key,'unit')}}</div>
+            <div class="horizontal layout">
+                <div class="quantity"><paper-input label="Hoeveelheid" value="{{_computeQuantity(quantity,productgroup,key,productgroups)}}" disabled></paper-input></div>
+                <div class="unit">{{_getObjectProperty(products,key,'unit')}}</div>
+            </div>
             <div class="shoppinglist">
                 <paper-dropdown-menu label="Winkellijst">
                     <paper-listbox class="dropdown-content" attr-for-selected="key" selected="{{dayproductgroupproduct.shoppinglist}}">
@@ -70,8 +75,10 @@
                 </paper-dropdown-menu>
             </div>
             <div class="flex">&nbsp;</div>
-            <div class="quantity"><paper-input label="Gebruikt" value="{{dayproductgroupproduct.used}}"></paper-input></div>
-            <div class="unit">{{_getObjectProperty(products,key,'unit')}}</div>
+            <div class="horizontal layout">
+                <div class="quantity"><paper-input label="Gebruikt" value="{{dayproductgroupproduct.used}}"></paper-input></div>
+                <div class="unit">{{_getObjectProperty(products,key,'unit')}}</div>
+            </div>
         </div>
 
 

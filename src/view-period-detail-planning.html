@@ -41,7 +41,11 @@
             :host {
                 display: block;
                 position: relative;
-                padding: 10px;
+            }
+            @media screen and (min-width: 560px) {
+                :host {
+                    padding: 10px;
+                }
             }
             .add{
                 float: right;
@@ -99,7 +103,7 @@
 
         <div class="spacer"></div>
 
-        <paper-material class="vertical layout">
+        <paper-material>
             <div class="horizontal layout">
                 <div class="collapse btn" on-tap="_toggleCollapse"><iron-icon icon="expand-more"></iron-icon></div>
                 <div class="day flex">Algemeen</div>

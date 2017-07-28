@@ -56,10 +56,10 @@
                 min-width: 200px;
             }
             .quantity{
-                width: 80px;
+                width: 50px;
             }
             .product-list{
-                margin-left: 60px;
+                margin-left: 10px;
             }
             .edit-uncollapsed{
                 position: absolute;
@@ -72,7 +72,7 @@
 
         <paper-material class="vertical layout">
             
-            <div class="horizontal layout center">
+            <div class="horizontal layout center wrap">
                 <div class="collapse btn drag-handle" on-tap="_toggleCollapse"><iron-icon icon="editor:drag-handle"></iron-icon></div>
                 <div class="collapse btn" on-tap="_toggleCollapse"><iron-icon icon="expand-more"></iron-icon></div>
                 <div class="name">[[_getObjectProperty(productgroups,key,'name')]]</div>
@@ -86,7 +86,7 @@
 
                 <div class="content product-list">
 
-                    <template is="dom-repeat" items="{{_getProducts(key,productgroups)}}" as="product">
+                    <template is="dom-repeat" items="{{_getProducts(key,productgroups.*)}}" as="product">
 
                         <day-productgroup-product user="[[user]]" period="[[period]]" day="[[day]]" meal="[[meal]]" productgroup="[[key]]" key="[[product.key]]" products="{{products}}" productgroups="{{productgroups}}" quantity="{{productgroup.quantity}}" shoppinglists="{{shoppinglists}}"></day-productgroup-product>
 
@@ -152,6 +152,7 @@
             },
 
             _getProducts: function(key,productgroups){
+                var productgroups = this.productgroups;
                 return this._toArray(this._getObjectProperty(productgroups,key,'products'));
             },
 

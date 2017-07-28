@@ -41,7 +41,7 @@
                 font-weight: bold;
             }
             .weekday{
-                width: 100px;
+                width: 90px;
             }
             .collapse{
                 width: 40px;
@@ -52,8 +52,8 @@
             }
             .edit-uncollapsed{
                 position: absolute;
-                top: 10px;
-                right: 10px;
+                top: -5px;
+                right: 5px;
             }
         </style>
 
@@ -62,11 +62,13 @@
 
 
         <paper-material class="vertical layout">
-            <div class="horizontal layout">
+            <div class="horizontal layout center wrap">
                 <div class="collapse btn" on-tap="_toggleCollapse"><iron-icon icon="expand-more"></iron-icon></div>
                 <div class="day flex">Dag [[number]]</div>
-                <div class="weekday">[[date.weekday]]</div>
-                <div class="date flex">[[date.date]]</div>
+                <div class="horizontal layout">
+                    <div class="weekday">[[date.weekday]]</div>
+                    <div class="date flex">[[date.date]]</div>
+                </div>
             </div>
 
             <iron-collapse>

@@ -33,7 +33,7 @@
                 text-align: right;
             }
             .unit{
-                width: 40px;
+                width: 30px;
                 margin-left: 3px;
             }
             .ordered{
@@ -47,17 +47,20 @@
 
         <firebase-document app-name="kokkies" path="/[[user.uid]]/shoppinglistproducts/[[period]]/[[shoppinglist]]/[[key]]" data="{{product}}"></firebase-document>
 
-        <paper-material class="horizontal layout center">
+        <paper-material class="horizontal layout center wrap">
             <div class="name flex">{{_getObjectProperty(products,key,'name')}}</div>
-            <div class="quantity">{{_round(quantity)}}</div>
-            <div class="unit">{{_getObjectProperty(products,key,'unit')}}</div>
-            <template is="dom-if" if="{{_hasSecondunit(products,key)}}">
-                <div class="quantity">~ [[_getSecondQuantity(products,key,quantity)]]</div>
-                <div class="unit">{{_getObjectProperty(products,key,'secondunit')}}</div>
-            </template>
-            <div class="flex">&nbsp;</div>
-            <div class="ordered"><paper-input label="besteld" value="{{product.ordered}}"></paper-input></div>
-            <div class="unit">{{_getObjectProperty(products,key,'unit')}}</div>
+            <div class="flex horizontal layout center">
+                <div class="quantity">{{_round(quantity)}}</div>
+                <div class="unit">{{_getObjectProperty(products,key,'unit')}}</div>
+                <template is="dom-if" if="{{_hasSecondunit(products,key)}}">
+                    <div class="quantity">~ [[_getSecondQuantity(products,key,quantity)]]</div>
+                    <div class="unit">{{_getObjectProperty(products,key,'secondunit')}}</div>
+                </template>
+            </div>
+            <div class="horizontal layout center">
+                <div class="ordered"><paper-input label="besteld" value="{{product.ordered}}"></paper-input></div>
+                <div class="unit">{{_getObjectProperty(products,key,'unit')}}</div>
+            </div>
             <div class="checked"><paper-checkbox checked="{{_isChecked(product.ordered,quantity)}}" disabled></paper-checkbox></div>
         </paper-material>
 

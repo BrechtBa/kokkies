@@ -46,6 +46,9 @@
                 right: 20px;
                 background-color: #cccccc;
             }
+            .add.large{
+
+            }
             .cicle-button{
                 width: 50px;
                 min-width: 0;
@@ -83,7 +86,7 @@
         </template>
 
         <template is="dom-if" if="{{_isEmpty(meal.productgroups)}}">
-            <paper-button raised class="add" on-tap="addProductgroupDialog">Gerecht toevoegen</paper-button>
+            <paper-button raised class="add large" on-tap="addProductgroupDialog">Gerecht toevoegen</paper-button>
         </template>
 
         <paper-input class="comment" label="Opmerkingen" value="{{meal.comment}}"></paper-input>

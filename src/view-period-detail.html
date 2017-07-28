@@ -39,7 +39,12 @@
         <style>
             :host {
                 display: block;
-                padding: 10px;
+                position: relative;
+            }
+            @media screen and (min-width: 560px) {
+                :host {
+                    padding: 10px;
+                }
             }
             .period{
                 margin-left: 10px;
@@ -66,9 +71,8 @@
                 color: #222222;
                 margin-left: 5px;
             }
-            .detail .content a{
+            a{
                 text-decoration: none;
-                color: #039be5;
             }
 
             iron-icon{
@@ -102,41 +106,35 @@
             <div name="base">
                 <div class="horizontal layout wrap">
 
-                    <paper-material class="detail flex vertical layout">
-                        <img class="icon" src="../images/planning.png">
-                        <div class="content flex vertical layout">
-                            <h1>Planning</h1>
-                            <div class="flex">Maak de planning, bepaal hoeveel van elk gerecht wanneer wordt gemaakt en bepaal wanneer er voor producten gewinkeld wordt.</div>
-                            <div class="actions horizontal layout">
-                                <div class="flex"></div>
-                                <a href="/periods/[[periodKey]]/planning">AAN DE SLAG</a>
+                    <a href="/periods/[[periodKey]]/planning" class="flex">
+                        <paper-material class="detail vertical layout">
+                            <img class="icon" src="../images/planning.png">
+                            <div class="content flex vertical layout">
+                                <h1>Planning</h1>
+                                <div class="flex">Maak de planning, bepaal hoeveel van elk gerecht wanneer wordt gemaakt en bepaal wanneer er voor producten gewinkeld wordt.</div>
                             </div>
-                        </div>
-                    </paper-material>
+                        </paper-material>
+                    </a>
 
-                    <paper-material class="detail flex vertical layout">
-                        <img class="icon" src="../images/productgroups.png">
-                        <div class="content flex vertical layout">
-                            <h1>Gerechten</h1>
-                            <div class="flex">Stel nieuwe gerechten samen uit beschikbare producten of pas bestaande gerechten aan.</div>
-                            <div class="actions horizontal layout">
-                                <div class="flex"></div>
-                                <a href="/periods/[[periodKey]]/productgroups">AAN DE SLAG</a>
+                    <a href="/periods/[[periodKey]]/productgroups" class="flex">
+                        <paper-material class="detail vertical layout">
+                            <img class="icon" src="../images/productgroups.png">
+                            <div class="content flex vertical layout">
+                                <h1>Gerechten</h1>
+                                <div class="flex">Stel nieuwe gerechten samen uit beschikbare producten of pas bestaande gerechten aan.</div>
                             </div>
-                        </div>
-                    </paper-material>
+                        </paper-material>
+                    </a>
 
-                    <paper-material class="detail flex vertical layout">
-                        <img class="icon" src="../images/shoppinglists.png">
-                        <div class="content flex vertical layout">
-                            <h1>Winkellijstjes</h1>
-                            <div class="flex">Maak nieuwe winkellijstjes en bekijk de verchillende gegenereerde lijstjes.</div>
-                            <div class="actions horizontal layout">
-                                <div class="flex"></div>
-                                <a href="/periods/[[periodKey]]/shoppinglists">AAN DE SLAG</a>
+                    <a href="/periods/[[periodKey]]/shoppinglists" class="flex">
+                        <paper-material class="detail vertical layout">
+                            <img class="icon" src="../images/shoppinglists.png">
+                            <div class="content flex vertical layout">
+                                <h1>Winkellijstjes</h1>
+                                <div class="flex">Maak nieuwe winkellijstjes en bekijk de verchillende gegenereerde lijstjes.</div>
                             </div>
-                        </div>
-                    </paper-material>
+                        </paper-material>
+                    </a>
 
                 </div>
             </div>
