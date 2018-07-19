@@ -129,7 +129,13 @@
                                         if(typeof shoppinglistproducts[product] == 'undefined'){
                                             shoppinglistproducts[product] = {'quantity':0}
                                         }
-                                        shoppinglistproducts[product].quantity += productgroupquantity*productgroups[productgroup].products[product].quantity
+                                        try{
+                                            shoppinglistproducts[product].quantity += productgroupquantity*productgroups[productgroup].products[product].quantity
+                                        }
+                                        catch(e){
+                                            console.log(e)
+                                            console.log(product)
+                                        }
                                     }
 
                                 }
